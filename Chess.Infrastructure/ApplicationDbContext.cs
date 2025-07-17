@@ -1,5 +1,7 @@
 ﻿namespace Chess.Infrastructure
 {
+    using System.Reflection;
+
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 
@@ -18,9 +20,11 @@
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(builder);
-            
+            Assembly configAssembly = Assembly.GetAssembly(typeof(ApplicationDbContext)) ??
+                          Assembly.GetExecutingAssembly();
+            builder.ApplyConfigurationsFromAssembly(configAssembly);
 
+            base.OnModelCreating(builder);
         }
     }
 }
