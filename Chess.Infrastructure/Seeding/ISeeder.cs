@@ -8,6 +8,6 @@
     /// <param name="DbContext">The database context to seed.</param>  
     public interface ISeeder<T> where T : class
     {
-        void SeedDatabase();
+        Task SeedDatabaseAsync(ApplicationDbContext dbContext);
     }
 }
