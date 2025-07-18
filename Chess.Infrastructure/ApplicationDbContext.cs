@@ -6,6 +6,7 @@
     using Microsoft.EntityFrameworkCore;
 
     using Domain.Entities;
+    using Chess.Infrastructure.Seeding;
 
     public class ApplicationDbContext : IdentityDbContext
     {
@@ -20,11 +21,8 @@
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            Assembly configAssembly = Assembly.GetAssembly(typeof(ApplicationDbContext)) ??
-                          Assembly.GetExecutingAssembly();
-            builder.ApplyConfigurationsFromAssembly(configAssembly);
-
             base.OnModelCreating(builder);
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
 }
