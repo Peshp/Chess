@@ -6,12 +6,15 @@
 
     using Domain.Enums;
     using Domain.Entities;
-    using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Seeds initial chess figures (pieces) for both white and black sides into the database.
+    /// Implements <see cref="ISeeder{Figure}"/> for use in database seeding.
+    /// </summary>
     public class FigureSeeder : ISeeder<Figure>
     {
-        public void SeedDatabase()
+        public async Task SeedDatabaseAsync(ApplicationDbContext dbContext)
         {
             ICollection<Figure> figures = new HashSet<Figure>();
 
@@ -20,15 +23,24 @@
 
             foreach (var figure in CreateFigures("Black", 1, 0, 200, 9, 7, 8, figures))
                 figures.Add(figure);
+
+            if (!dbContext.Figures.Any())
+            {
+                await dbContext.AddRangeAsync(figures);
+                await dbContext.SaveChangesAsync();
+            }
         }
 
+        /// <summary>
+        /// Generates and adds chess figures for a specified color and starting positions to the provided collection.
+        /// Creates pawns and major/minor pieces using standard chess setup parameters.
+        /// Returns the updated collection containing all generated figures.
+        /// </summary>
         private static ICollection<Figure> CreateFigures(string color, int pawnRow, int backRow, int pawnIdStart, int backIdStart, int pawnRank, int backRank, ICollection<Figure> figures)
         {
-            // Piece order and images for the back row
             var pieceTypes = new[] { FigureType.Rook, FigureType.Knight, FigureType.Bishop, FigureType.Queen, FigureType.King, FigureType.Bishop, FigureType.Knight, FigureType.Rook };
             var pieceImages = new[] { "R", "N", "B", "Q", "K", "B", "N", "R" };
 
-            // Pawns
             for (int col = 0; col < 8; col++)
             {
                 figures.Add(new Figure
@@ -43,7 +55,6 @@
                 });
             }
 
-            // Back row
             for (int col = 0; col < 8; col++)
             {
                 figures.Add(new Figure
