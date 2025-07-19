@@ -2,12 +2,16 @@
 {
     using System.ComponentModel.DataAnnotations;
 
+    using static Common.Validations.Board;
+
     public class Board
     {
         [Required]
+        [MaxLength(NameMaxLength)]
         public string Name { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(ImageMaxLength)]
         public string Image { get; set; } = string.Empty;
     }
 }
