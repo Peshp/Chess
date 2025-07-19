@@ -1,7 +1,9 @@
 ﻿namespace Chess.Domain.Entities
 {
-    using Enums;
     using System.ComponentModel.DataAnnotations;
+
+    using Enums;
+    using static Common.Validations.Figure;
 
     public class Figure
     {
@@ -23,12 +25,15 @@
         public int Col { get; set; }
 
         [Required]
+        [MaxLength(ColorMaxLength)]
         public string Color { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(FigureImageMaxLength)]
         public string FigureImage { get; set; } = string.Empty;
 
         [Required]
+        [MaxLength(CurrentPositionMaxLength)]
         public string CurrentPosition { get; set; } = string.Empty;
 
         public ICollection<string> MoveHistory { get; set; } 
