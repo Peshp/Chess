@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Chess.Infrastructure;
+using Chess.Infrastructure.Seeding;
+using Chess.Domain.Entities;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,17 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    context.Database.Migrate();
+
+    var seeder = new FigureSeeder();
+    await seeder.SeedDatabaseAsync(context);
+}
 
 if (app.Environment.IsDevelopment())
 {

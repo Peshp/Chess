@@ -9,7 +9,7 @@
     {
         public Figure()
         {
-            MoveHistory = new HashSet<string>();
+            MoveHistory = new List<string>();
         }
 
         [Key]

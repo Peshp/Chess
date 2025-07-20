@@ -16,12 +16,12 @@
     {
         public async Task SeedDatabaseAsync(ApplicationDbContext dbContext)
         {
-            ICollection<Figure> figures = new HashSet<Figure>();
+            List<Figure> figures = new List<Figure>();
 
-            foreach (var figure in CreateFigures("White", 6, 7, 100, 1, 2, 1, figures))
+            foreach (var figure in CreateFigures("White", 6, 7, 100, 1, 2, 1))
                 figures.Add(figure);
 
-            foreach (var figure in CreateFigures("Black", 1, 0, 200, 9, 7, 8, figures))
+            foreach (var figure in CreateFigures("Black", 1, 0, 200, 9, 7, 8))
                 figures.Add(figure);
 
             if (!dbContext.Figures.Any())
@@ -36,8 +36,10 @@
         /// Creates pawns and major/minor pieces using standard chess setup parameters.
         /// Returns the updated collection containing all generated figures.
         /// </summary>
-        private static ICollection<Figure> CreateFigures(string color, int pawnRow, int backRow, int pawnIdStart, int backIdStart, int pawnRank, int backRank, ICollection<Figure> figures)
+        private static ICollection<Figure> CreateFigures(string color, int pawnRow, int backRow, int pawnIdStart, int backIdStart, int pawnRank, int backRank)
         {
+            List<Figure> figures = new List<Figure>();
+
             var pieceTypes = new[] { FigureType.Rook, FigureType.Knight, FigureType.Bishop, FigureType.Queen, FigureType.King, FigureType.Bishop, FigureType.Knight, FigureType.Rook };
             var pieceImages = new[] { "R", "N", "B", "Q", "K", "B", "N", "R" };
 
