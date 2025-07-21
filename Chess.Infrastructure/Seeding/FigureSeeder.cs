@@ -14,7 +14,7 @@
     /// </summary>
     public class FigureSeeder : ISeeder<Figure>
     {
-        public async Task SeedDatabaseAsync(ApplicationDbContext dbContext)
+        public void SeedDatabase()
         {
             List<Figure> figures = new List<Figure>();
 
@@ -23,12 +23,6 @@
 
             foreach (var figure in CreateFigures("Black", 1, 0, 200, 9, 7, 8))
                 figures.Add(figure);
-
-            if (!dbContext.Figures.Any())
-            {
-                await dbContext.AddRangeAsync(figures);
-                await dbContext.SaveChangesAsync();
-            }
         }
 
         /// <summary>
