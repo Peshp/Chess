@@ -14,7 +14,7 @@
     /// </summary>
     public class FigureSeeder : ISeeder<Figure>
     {
-        public void SeedDatabase()
+        public ICollection<Figure> SeedDatabase()
         {
             List<Figure> figures = new List<Figure>();
 
@@ -23,6 +23,8 @@
 
             foreach (var figure in CreateFigures("Black", 1, 0, 200, 9, 7, 8))
                 figures.Add(figure);
+
+            return figures;
         }
 
         /// <summary>
