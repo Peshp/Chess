@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Chess.Infrastructure.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(ChessDbContext))]
     [Migration("20250721151931_SeedDatabaseFigureEntity")]
     partial class SeedDatabaseFigureEntity
     {
