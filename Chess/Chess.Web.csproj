@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Chess.Application\Chess.Application.csproj" />
     <ProjectReference Include="..\Chess.Infrastructure\Chess.Infrastructure.csproj" />
   </ItemGroup>
 
