@@ -2,7 +2,232 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@model ChessBoardViewModel
+
+@{
+    var boardSize = 8;
+    string boardImage = Url.Content("~/images/board.png");
+    string piecesPath = Url.Content("~/images/pieces/");
+
+}
+
+<style>
+    body {
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .page-content-center {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .chess-board-container {
+        position: relative;
+        width: 600px;
+        height: 600px;
+        background-image: url('@boardImage');
+        background-size: cover;
+        border: 2px solid #333;
+        flex-shrink: 0;
+    }
+
+    .board-square {
+        position: absolute;
+        width: 12.5%;
+        height: 12.5%;
+    }
+
+    .chess-piece {
+        width: 100%;
+        height: 100%;
+        pointer-events: auto;
+        cursor: grab;
+        user-select: none;
+        transition: box-shadow 0.2s, border 0.2s;
+    }
+
+        .chess-piece.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
+    .king-in-check {
+        box-shadow: 0 0 25px 5px red;
+        border: 3px solid red;
+        border-radius: 6px;
+    }
+
+    /* Move history styling */
+    .move-history-panel {
+        margin-left: 32px;
+        width: 300px;
+        background: #f7f7f7;
+        border: 2px solid #333;
+        border-radius: 10px;
+        min-height: 600px;
+        max-height: 600px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        padding: 18px 16px 16px 16px;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        font-size: 1rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .move-history-panel h3 {
+            font-size: 1.2rem;
+            margin: 0 0 8px 0;
+            text-align: center;
+            font-weight: 600;
+        }
+
+    .move-history-list {
+        list-style: decimal inside;
+        padding-left: 0;
+        margin: 0;
+        white-space: pre-line;
+        flex: 1;
+    }
+
+        .move-history-list li {
+            margin-bottom: 4px;
+            padding: 0 0.25em;
+            word-break: break-word;
+        }
+
+    .move-history-empty {
+        color: #888;
+        font-style: italic;
+        text-align: center;
+        margin-top: 1.5em;
+    }
+</style>
+
+<div class="page-content-center" style="gap: 32px;">
+    <!-- Chess board -->
+    <div class="chess-board-container" id="chess-board">
+        @for (int row = 0; row < boardSize; row++)
+        {
+            for (int col = 0; col < boardSize; col++)
+            {
+                var figure = GetFigureAt(row, col);
+                <div class="board-square"
+                     data-row="@row"
+                     data-col="@col"
+                     style="left:@(col * 12.5)%; top:@(row * 12.5)%"
+                     ondrop="onDrop(event)"
+                     ondragover="event.preventDefault();">
+                    @if (figure != null && !string.IsNullOrEmpty(figure.FigureImage))
+                    {
+                        <img src="@($"{piecesPath}{figure.FigureImage}")"
+                             alt="@figure.Type"
+                             class="chess-piece"
+                             draggable="true"
+                             data-color="@figure.Color"
+                             data-type="@figure.Type"
+                             data-row="@figure.Row"
+                             data-col="@figure.Col"
+                             data-square-color="@(IsWhiteSquare(figure.Row, figure.Col) ? "White" : "Black")"
+                             ondragstart="onDragStart(event)" />
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    <!-- Move history panel -->
+    <div class="move-history-panel">
+        <h3>Move History</h3>
+        @if (Model.Figures.SelectMany(f => f.MoveHistory).Any())
+        {
+            <ol class="move-history-list">
+                @{
+                    // Collect all moves, with color and piece info for display
+                    var allMoves = new List<(string Move, string Piece, string Color)>();
+                    foreach (var figure in Model.Figures)
+                    {
+                        if (figure.MoveHistory != null)
+                        {
+                            foreach (var move in figure.MoveHistory)
+                            {
+                                allMoves.Add((move, figure.Type.ToString(), figure.Color));
+                            }
+                        }
+                    }
+                    // Optionally, you could sort or group moves if you wish (not shown)
+                }
+                @foreach (var move in allMoves)
+                {
+                    <li>
+                        <span style="font-weight:600">@move.Color.Substring(0, 1)</span>
+                        <span style="font-weight:500">@move.Piece</span>: @move.Move
+                    </li>
+                }
+            </ol>
+        }
+        else
+        {
+            <div class="move-history-empty">No moves yet.</div>
+        }
+    </div>
 </div>
+
+<form id="moveForm" method="post" asp-action="Move">
+    <input type="hidden" name="fromRow" id="fromRow" />
+    <input type="hidden" name="fromCol" id="fromCol" />
+    <input type="hidden" name="toRow" id="toRow" />
+    <input type="hidden" name="toCol" id="toCol" />
+    <div class="page-content-center" style="display:none">
+        <div class="chess-board-container" id="chess-board">
+            @for (int row = 0; row < boardSize; row++)
+            {
+                for (int col = 0; col < boardSize; col++)
+                {
+                    var figure = GetFigureAt(row, col);
+                    <div class="board-square"
+                         data-row="@row"
+                         data-col="@col"
+                         style="left:@(col * 12.5)%; top:@(row * 12.5)%"
+                         onclick="onSquareClick(@row, @col)">
+                        @if (figure != null && !string.IsNullOrEmpty(figure.FigureImage))
+                        {
+                            <img src="@($"{piecesPath}{figure.FigureImage}")"
+                                 alt="@figure.Type"
+                                 class="chess-piece"
+                                 draggable="false"
+                                 data-color="@figure.Color"
+                                 data-type="@figure.Type"
+                                 data-row="@figure.Row"
+                                 data-col="@figure.Col"
+                                 data-history="@string.Join(";", figure.MoveHistory ?? new List<string>())" />
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</form>
+<div style="text-align:center; font-size:1.5rem; margin-top:1rem;">
+    <span id="turn-indicator">White to move</span>
+</div>
+<script>
+    var selectedSquare = null;
+    function onSquareClick(row, col) {
+        if (selectedSquare == null) {
+            selectedSquare = { row: row, col: col };
+            document.getElementById('fromRow').value = row;
+            document.getElementById('fromCol').value = col;
+        } else {
+            document.getElementById('toRow').value = row;
+            document.getElementById('toCol').value = col;
+            document.getElementById('moveForm').submit();
+            selectedSquare = null;
+        }
+    }
+</script>
+
