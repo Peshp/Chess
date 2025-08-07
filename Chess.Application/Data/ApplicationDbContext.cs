@@ -1,6 +1,6 @@
-﻿namespace Chess.Application.Data
+﻿namespace Chess.Infrastructure.Data
 {
-    using Chess.Application.Entities;
+    using Chess.Infrastructure.Entities;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
 

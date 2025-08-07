@@ -1,4 +1,4 @@
-﻿namespace Chess.Application.Entities
+﻿namespace Chess.Infrastructure.Entities
 {
     using System.ComponentModel.DataAnnotations;
 
