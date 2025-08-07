@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-Chess-45f9cb92-c196-4586-982c-7d46cbafe7b9</UserSecretsId>
+    <UserSecretsId>aspnet-Chess-b2dc0e4d-ef59-48a8-b4ae-76031b2fd3af</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,8 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Chess.Application\Chess.Application.csproj" />
-    <ProjectReference Include="..\Chess.Domain\Chess.Domain.csproj" />
-    <ProjectReference Include="..\Chess.Infrastructure\Chess.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

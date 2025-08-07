@@ -1,6 +1,7 @@
-using Chess.Data;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Chess.Application.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
