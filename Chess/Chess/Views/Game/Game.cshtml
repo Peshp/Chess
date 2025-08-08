@@ -1,0 +1,19 @@
+﻿@model BoardViewModel
+
+@{
+    ViewData["Title"] = "Chess Board";
+}
+
+<link rel="stylesheet" href="~/css/game.css" />
+
+
+<div class="chess-board-container">
+    <img src="~/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
+    @foreach (var figure in Model.Figures)
+    {
+        <img src="~/@figure.Image"
+             alt="@figure.Name"
+             class="figure-img"
+             style="top:@figure.PositionY%; left:@figure.PositionX%;" />
+    }
+</div>

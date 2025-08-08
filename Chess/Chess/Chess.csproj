@@ -15,4 +15,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.18" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Chess.Application\Chess.Application.csproj" />
+    <ProjectReference Include="..\Chess.Domain\Chess.Domain.csproj" />
+    <ProjectReference Include="..\Chess.infrastructure\Chess.infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
