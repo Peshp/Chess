@@ -4,14 +4,44 @@
     ViewData["Title"] = "Chess Board";
 }
 
-<link rel="stylesheet" href="~/css/game.css" />
+<style>
+    .chess-board-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px; /* Limit size */
+        margin: 20px auto;
+        border: 5px solid #333;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        background-color: #f8f9fa; /* fallback background */
+    }
 
+    .chess-board-background {
+        width: 100%;
+        display: block;
+        object-fit: contain;
+    }
+
+    .figure-img {
+        position: absolute;
+        width: 12.5%; 
+        height: auto;
+        transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+        .figure-img:hover {
+            transform: scale(1.1); 
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
+        }
+</style>
 
 <div class="chess-board-container">
-    <img src="~/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
+    <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
     @foreach (var figure in Model.Figures)
     {
-        <img src="~/@figure.Image"
+        <img src="~/images/pieces/@figure.Image"
              alt="@figure.Name"
              class="figure-img"
              style="top:@figure.PositionY%; left:@figure.PositionX%;" />
