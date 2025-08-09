@@ -10,8 +10,8 @@
 
         public string Color { get; set; } = string.Empty;
 
-        public int PositionX { get; set; }
+        public double PositionX { get; set; }
 
-        public int PositionY { get; set; }
+        public double PositionY { get; set; }
     }
 }

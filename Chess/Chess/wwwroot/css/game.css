@@ -1,8 +1,6 @@
 ﻿.chess-board-container {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    margin: 0 auto;
+    width: 600px;
+    height: 600px;
 }
 
 .chess-board-background {
