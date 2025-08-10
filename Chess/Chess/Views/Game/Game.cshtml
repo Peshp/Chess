@@ -8,13 +8,13 @@
     .chess-board-container {
         position: relative;
         width: 100%;
-        max-width: 600px; /* Limit size */
+        max-width: 600px; 
         margin: 20px auto;
         border: 5px solid #333;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        background-color: #f8f9fa; /* fallback background */
+        background-color: #f8f9fa; 
     }
 
     .chess-board-background {
@@ -31,10 +31,10 @@
         cursor: pointer;
     }
 
-        .figure-img:hover {
+        /* .figure-img:hover {
             transform: scale(1.1); 
             filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
-        }
+        } */
 </style>
 
 <div class="chess-board-container">
@@ -43,7 +43,11 @@
     {
         <img src="~/images/pieces/@figure.Image"
              alt="@figure.Name"
+             id="piece-@figure.Id"
              class="figure-img"
+             draggable="true"
              style="top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
+
+<script src="~/js/game.js"></script>
