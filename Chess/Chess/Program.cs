@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 using Chess.Infrastructure.Data;
 using Chess.Application.interfaces;
-using Chess.Application.Servicces;
+using Chess.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
