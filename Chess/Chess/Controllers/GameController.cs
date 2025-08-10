@@ -1,7 +1,8 @@
 ﻿namespace Chess.Controllers
 {
     using Application.interfaces;
-    using Chess.Domain.ViewModels.Web;
+    using Application.DTOs;
+    using Domain.ViewModels.Web;
     using Microsoft.AspNetCore.Mvc;
 
     public class GameController : Controller
@@ -19,5 +20,13 @@
 
             return View(board);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> MakeMove([FromBody] MoveRequest request)
+        {
+            bool success = await _gameService.TryMove(request.PieceId, request.ToX, request.ToY);
+            return Json(new { success });
+        }
+
     }
 }
