@@ -24,7 +24,7 @@
         [HttpPost]
         public async Task<IActionResult> MakeMove([FromBody] MoveRequest request)
         {
-            bool success = await _gameService.TryMove(request.PieceId, request.ToX, request.ToY);
+            bool success = await _gameService.TryMove(request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
             return Json(new { success });
         }
 
