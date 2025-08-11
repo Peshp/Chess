@@ -1,13 +1,13 @@
 ﻿namespace Chess.Application.Services
 {
-    using Microsoft.EntityFrameworkCore;
-    using System.Threading.Tasks;
-
+    using Application;
     using Application.interfaces;
     using Domain.ViewModels.Web;
-    using Infrastructure.Data;
-    using Application;
     using infrastructure.Entities;
+    using Infrastructure.Data;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Internal;
+    using System.Threading.Tasks;
 
     public class GameService : IGameService
     {
@@ -73,7 +73,7 @@
                 Figures = groupedFigures.Select(entry =>
                 {
                     var key = (entry.Figure.Color, entry.Figure.Name, entry.Count);
-                    var pos = piecePositions.ContainsKey(key) ? piecePositions[key] : (entry.Count * 1.0, 0.0); // fallback to spread out
+                    var pos = piecePositions.ContainsKey(key) ? piecePositions[key] : (entry.Count * 1.0, 0.0); 
 
                     return new FigureViewModel
                     {
@@ -90,32 +90,39 @@
             return viewModel;
         }
 
-        public async Task<List<Figure>> GetFigures()
+        //public async Task<List<FigureViewModel>> GetFigures()
+        //{ 
+        //    var figures = await _context.Figures.ToArrayAsync();
+
+        //    Figures = groupedFigures.Select(entry =>
+        //    {
+        //        var key = (entry.Figure.Color, entry.Figure.Name, entry.Count);
+        //        var pos = piecePositions.ContainsKey(key) ? piecePositions[key] : (entry.Count * 1.0, 0.0);
+
+        //        return new FigureViewModel
+        //        {
+        //            Id = entry.Figure.Id,
+        //            Name = entry.Figure.Name,
+        //            Color = entry.Figure.Color,
+        //            Image = entry.Figure.Image,
+        //            PositionX = pos.Item1 * 12.5,
+        //            PositionY = pos.Item2 * 12.5,
+        //        };
+        //    }).ToList()
+
+        //    return viewModels;
+        //}
+
+        public async Task<bool> TryMove(int pieceId, double toX, double toY)
         {
-            var figures = await _context.Figures.ToListAsync();
-
-            //var viewModels = figures.Select(figure => new FigureViewModel
-            //{
-            //    Id = figure.Id,
-            //    Name = figure.Name,
-            //    Color = figure.Color,
-            //    Image = figure.Image,
-            //    PositionX = figure.PositionX,
-            //    PositionY = figure.PositionY
-            //}).ToList();
-
-            return figures;
-        }
-
-        public async Task<bool> TryMove(int pieceId, int toX, int toY)
-        {
-            var figures = await GetFigures();
-            var engine = new ChessEngine(figures);
+            var board = await GetBoard(); 
+            var engine = new ChessEngine(board.Figures);
 
             bool success = engine.TryMove(pieceId, toX, toY);
 
             return success;
         }
+
 
     }
 }
