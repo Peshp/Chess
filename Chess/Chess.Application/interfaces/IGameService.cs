@@ -7,8 +7,8 @@
     {
         Task<BoardViewModel> GetBoard();
 
-        Task<List<Figure>> GetFigures();
+        //Task<List<FigureViewModel>> GetFigures();
 
-        Task<bool> TryMove(int pieceId, int toX, int toY);
+        Task<bool> TryMove(int pieceId, double toX, double toY);
     }
 }
