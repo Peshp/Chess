@@ -1,20 +1,20 @@
 ﻿namespace Chess.Application
 {
-    using infrastructure.Entities;
+    using Domain.ViewModels.Web;
+    //using infrastructure.Entities;
 
     public class ChessEngine
     {
-        private List<Figure> _figures;
+        private List<FigureViewModel> _figures;
 
-        public ChessEngine(List<Figure> figures)
+        public ChessEngine(List<FigureViewModel> figures)
         {
             _figures = figures;
         }
 
-        public bool TryMove(int pieceId, int toX, int toY)
+        public bool TryMove(int pieceId, double toX, double toY)
         {
             var piece = _figures.FirstOrDefault(f => f.Id == pieceId);
-            if (piece == null) return false;
 
             if (IsValidMove(piece, toX, toY))
             {
@@ -26,12 +26,25 @@
             return false;
         }
 
-        private bool IsValidMove(Figure piece, int toX, int toY)
+        private bool IsValidMove(FigureViewModel piece, double toX, double toY)
         {
-            // TODO: Add real chess rules here
-            return true;
+            // TODO: Add real chess rules her
+            bool valid = true;
+            if (piece.Name == "Pawn")
+                valid = Pawn(piece, toX, toY);
+
+            return valid;
         }
 
-        public List<Figure> GetUpdatedFigures() => _figures;
+        public List<FigureViewModel> GetUpdatedFigures() => _figures;
+
+        private bool Pawn(FigureViewModel pawn, double toX, double toY)
+        {
+            FigureViewModel isEmpty = _figures.FirstOrDefault(f =>
+                f.PositionX == toX &&
+                f.PositionY == toY);
+
+            return true;
+        }
     }
 }
