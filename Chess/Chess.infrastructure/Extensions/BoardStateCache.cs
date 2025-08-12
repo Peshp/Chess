@@ -2,8 +2,8 @@
 {
     using Chess.infrastructure.Entities;
 
-    public class BoardStateCache
+    public static class BoardStateCache
     {
-        public List<Figure> figures = new List<Figure>();
+        public static List<Figure> Figures { get; set; } = new List<Figure>();
     }
 }
