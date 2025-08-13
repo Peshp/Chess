@@ -57,22 +57,20 @@ namespace Chess.infrastructure.Migrations
                     b.Property<int>("BoardId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Color")
+                        .HasColumnType("int");
 
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("PositionX")
+                        .HasColumnType("float");
 
-                    b.Property<int>("PositionX")
-                        .HasColumnType("int");
+                    b.Property<double>("PositionY")
+                        .HasColumnType("float");
 
-                    b.Property<int>("PositionY")
+                    b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -86,321 +84,321 @@ namespace Chess.infrastructure.Migrations
                         {
                             Id = 1,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 0.0,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 2,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 12.5,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 3,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 25.0,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 4,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 37.5,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 5,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 50.0,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 6,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 62.5,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 7,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 75.0,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 8,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 87.5,
+                            PositionY = 12.5,
+                            Type = 0
                         },
                         new
                         {
                             Id = 9,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wR.png",
-                            Name = "Rook",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 0.0,
+                            PositionY = 0.0,
+                            Type = 3
                         },
                         new
                         {
                             Id = 10,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wR.png",
-                            Name = "Rook",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wN.png",
+                            PositionX = 12.5,
+                            PositionY = 0.0,
+                            Type = 1
                         },
                         new
                         {
                             Id = 11,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wN.png",
-                            Name = "Knight",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wB.png",
+                            PositionX = 25.0,
+                            PositionY = 0.0,
+                            Type = 2
                         },
                         new
                         {
                             Id = 12,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wN.png",
-                            Name = "Knight",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wQ.png",
+                            PositionX = 37.5,
+                            PositionY = 0.0,
+                            Type = 4
                         },
                         new
                         {
                             Id = 13,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wB.png",
-                            Name = "Bishop",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wK.png",
+                            PositionX = 50.0,
+                            PositionY = 0.0,
+                            Type = 5
                         },
                         new
                         {
                             Id = 14,
                             BoardId = 1,
-                            Color = "White",
+                            Color = 0,
                             Image = "wB.png",
-                            Name = "Bishop",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 62.5,
+                            PositionY = 0.0,
+                            Type = 2
                         },
                         new
                         {
                             Id = 15,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wQ.png",
-                            Name = "Queen",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wN.png",
+                            PositionX = 75.0,
+                            PositionY = 0.0,
+                            Type = 1
                         },
                         new
                         {
                             Id = 16,
                             BoardId = 1,
-                            Color = "White",
-                            Image = "wK.png",
-                            Name = "King",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 0,
+                            Image = "wR.png",
+                            PositionX = 87.5,
+                            PositionY = 0.0,
+                            Type = 3
                         },
                         new
                         {
                             Id = 17,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 0.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 18,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 12.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 19,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 25.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 20,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 37.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 21,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 50.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 22,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 62.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 23,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 75.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 24,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bP.png",
-                            Name = "Pawn",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 87.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 25,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bR.png",
-                            Name = "Rook",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 0.0,
+                            PositionY = 87.5,
+                            Type = 3
                         },
                         new
                         {
                             Id = 26,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bR.png",
-                            Name = "Rook",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bN.png",
+                            PositionX = 12.5,
+                            PositionY = 87.5,
+                            Type = 1
                         },
                         new
                         {
                             Id = 27,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bN.png",
-                            Name = "Knight",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bB.png",
+                            PositionX = 25.0,
+                            PositionY = 87.5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 28,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bN.png",
-                            Name = "Knight",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bQ.png",
+                            PositionX = 37.5,
+                            PositionY = 87.5,
+                            Type = 4
                         },
                         new
                         {
                             Id = 29,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bB.png",
-                            Name = "Bishop",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bK.png",
+                            PositionX = 50.0,
+                            PositionY = 87.5,
+                            Type = 5
                         },
                         new
                         {
                             Id = 30,
                             BoardId = 1,
-                            Color = "Black",
+                            Color = 1,
                             Image = "bB.png",
-                            Name = "Bishop",
-                            PositionX = 0,
-                            PositionY = 0
+                            PositionX = 62.5,
+                            PositionY = 87.5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 31,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bQ.png",
-                            Name = "Queen",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bN.png",
+                            PositionX = 75.0,
+                            PositionY = 87.5,
+                            Type = 1
                         },
                         new
                         {
                             Id = 32,
                             BoardId = 1,
-                            Color = "Black",
-                            Image = "bK.png",
-                            Name = "King",
-                            PositionX = 0,
-                            PositionY = 0
+                            Color = 1,
+                            Image = "bR.png",
+                            PositionX = 87.5,
+                            PositionY = 87.5,
+                            Type = 3
                         });
                 });
 
