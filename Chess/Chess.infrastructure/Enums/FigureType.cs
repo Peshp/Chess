@@ -1,11 +1,11 @@
 ﻿namespace Chess.infrastructure.Enums
 {
-    public enum Type
+    public enum FigureType
     {
         Pawn,
+        Rook,
         Knight,
         Bishop,
-        Rook, 
         Queen,
         King
     }

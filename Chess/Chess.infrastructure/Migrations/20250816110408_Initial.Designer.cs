@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chess.infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250813131622_InttoDouble")]
-    partial class InttoDouble
+    [Migration("20250816110408_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -88,160 +88,160 @@ namespace Chess.infrastructure.Migrations
                             Id = 1,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
+                            Image = "wR.png",
                             PositionX = 0.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            PositionY = 87.5,
+                            Type = 1
                         },
                         new
                         {
                             Id = 2,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 1.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wN.png",
+                            PositionX = 12.5,
+                            PositionY = 87.5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 3,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 2.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wB.png",
+                            PositionX = 25.0,
+                            PositionY = 87.5,
+                            Type = 3
                         },
                         new
                         {
                             Id = 4,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 3.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wQ.png",
+                            PositionX = 37.5,
+                            PositionY = 87.5,
+                            Type = 4
                         },
                         new
                         {
                             Id = 5,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 4.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wK.png",
+                            PositionX = 50.0,
+                            PositionY = 87.5,
+                            Type = 5
                         },
                         new
                         {
                             Id = 6,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 5.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wB.png",
+                            PositionX = 62.5,
+                            PositionY = 87.5,
+                            Type = 3
                         },
                         new
                         {
                             Id = 7,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 6.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wN.png",
+                            PositionX = 75.0,
+                            PositionY = 87.5,
+                            Type = 2
                         },
                         new
                         {
                             Id = 8,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wP.png",
-                            PositionX = 7.0,
-                            PositionY = 1.0,
-                            Type = 0
+                            Image = "wR.png",
+                            PositionX = 87.5,
+                            PositionY = 87.5,
+                            Type = 1
                         },
                         new
                         {
                             Id = 9,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wR.png",
+                            Image = "wP.png",
                             PositionX = 0.0,
-                            PositionY = 0.0,
-                            Type = 3
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 10,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wN.png",
-                            PositionX = 1.0,
-                            PositionY = 0.0,
-                            Type = 1
+                            Image = "wP.png",
+                            PositionX = 12.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 11,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wB.png",
-                            PositionX = 2.0,
-                            PositionY = 0.0,
-                            Type = 2
+                            Image = "wP.png",
+                            PositionX = 25.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 12,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wQ.png",
-                            PositionX = 3.0,
-                            PositionY = 0.0,
-                            Type = 4
+                            Image = "wP.png",
+                            PositionX = 37.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 13,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wK.png",
-                            PositionX = 4.0,
-                            PositionY = 0.0,
-                            Type = 5
+                            Image = "wP.png",
+                            PositionX = 50.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 14,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wB.png",
-                            PositionX = 5.0,
-                            PositionY = 0.0,
-                            Type = 2
+                            Image = "wP.png",
+                            PositionX = 62.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 15,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wN.png",
-                            PositionX = 6.0,
-                            PositionY = 0.0,
-                            Type = 1
+                            Image = "wP.png",
+                            PositionX = 75.0,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
                             Id = 16,
                             BoardId = 1,
                             Color = 0,
-                            Image = "wR.png",
-                            PositionX = 7.0,
-                            PositionY = 0.0,
-                            Type = 3
+                            Image = "wP.png",
+                            PositionX = 87.5,
+                            PositionY = 75.0,
+                            Type = 0
                         },
                         new
                         {
@@ -250,7 +250,7 @@ namespace Chess.infrastructure.Migrations
                             Color = 1,
                             Image = "bP.png",
                             PositionX = 0.0,
-                            PositionY = 6.0,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -259,8 +259,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 1.0,
-                            PositionY = 6.0,
+                            PositionX = 12.5,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -269,8 +269,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 2.0,
-                            PositionY = 6.0,
+                            PositionX = 25.0,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -279,8 +279,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 3.0,
-                            PositionY = 6.0,
+                            PositionX = 37.5,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -289,8 +289,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 4.0,
-                            PositionY = 6.0,
+                            PositionX = 50.0,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -299,8 +299,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 5.0,
-                            PositionY = 6.0,
+                            PositionX = 62.5,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -309,8 +309,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 6.0,
-                            PositionY = 6.0,
+                            PositionX = 75.0,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -319,8 +319,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bP.png",
-                            PositionX = 7.0,
-                            PositionY = 6.0,
+                            PositionX = 87.5,
+                            PositionY = 12.5,
                             Type = 0
                         },
                         new
@@ -330,18 +330,18 @@ namespace Chess.infrastructure.Migrations
                             Color = 1,
                             Image = "bR.png",
                             PositionX = 0.0,
-                            PositionY = 7.0,
-                            Type = 3
+                            PositionY = 0.0,
+                            Type = 1
                         },
                         new
                         {
                             Id = 26,
                             BoardId = 1,
                             Color = 1,
-                            Image = "BN.png",
-                            PositionX = 1.0,
-                            PositionY = 7.0,
-                            Type = 1
+                            Image = "bN.png",
+                            PositionX = 12.5,
+                            PositionY = 0.0,
+                            Type = 2
                         },
                         new
                         {
@@ -349,9 +349,9 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bB.png",
-                            PositionX = 2.0,
-                            PositionY = 7.0,
-                            Type = 2
+                            PositionX = 25.0,
+                            PositionY = 0.0,
+                            Type = 3
                         },
                         new
                         {
@@ -359,8 +359,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bQ.png",
-                            PositionX = 3.0,
-                            PositionY = 7.0,
+                            PositionX = 37.5,
+                            PositionY = 0.0,
                             Type = 4
                         },
                         new
@@ -369,8 +369,8 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bK.png",
-                            PositionX = 4.0,
-                            PositionY = 7.0,
+                            PositionX = 50.0,
+                            PositionY = 0.0,
                             Type = 5
                         },
                         new
@@ -379,9 +379,9 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bB.png",
-                            PositionX = 5.0,
-                            PositionY = 7.0,
-                            Type = 2
+                            PositionX = 62.5,
+                            PositionY = 0.0,
+                            Type = 3
                         },
                         new
                         {
@@ -389,9 +389,9 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bN.png",
-                            PositionX = 6.0,
-                            PositionY = 7.0,
-                            Type = 1
+                            PositionX = 75.0,
+                            PositionY = 0.0,
+                            Type = 2
                         },
                         new
                         {
@@ -399,9 +399,9 @@ namespace Chess.infrastructure.Migrations
                             BoardId = 1,
                             Color = 1,
                             Image = "bR.png",
-                            PositionX = 7.0,
-                            PositionY = 7.0,
-                            Type = 3
+                            PositionX = 87.5,
+                            PositionY = 0.0,
+                            Type = 1
                         });
                 });
 

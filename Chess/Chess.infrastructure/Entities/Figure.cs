@@ -1,5 +1,6 @@
 ﻿namespace Chess.infrastructure.Entities
 {
+    using infrastructure.Enums;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,10 +10,10 @@
         public int Id { get; set; }
 
         [Required]
-        public string Name { get; set; } = string.Empty;
+        public FigureType Type { get; set; }
 
         [Required]
-        public string Color { get; set; } = string.Empty;
+        public FigureColor Color { get; set; }
 
         public string Image { get; set; } = string.Empty;
 
@@ -22,8 +23,8 @@
 
         public Board Board { get; set; } = null!;
 
-        public int PositionX { get; set; }
+        public double PositionX { get; set; }
 
-        public int PositionY { get; set; }
+        public double PositionY { get; set; }
     }
 }

@@ -10,5 +10,7 @@
 
         public double ToY { get; set; }
 
+        public BoardViewModel board { get; set; }
+
     }
 }

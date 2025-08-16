@@ -1,4 +1,5 @@
-﻿@model BoardViewModel
+﻿@using System.Text.Json
+@model BoardViewModel
 
 @{
     ViewData["Title"] = "Chess Board";
@@ -8,33 +9,30 @@
     .chess-board-container {
         position: relative;
         width: 100%;
-        max-width: 600px; 
+        max-width: 600px;
         margin: 20px auto;
         border: 5px solid #333;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        background-color: #f8f9fa; 
+        background-color: #f8f9fa;
     }
 
     .chess-board-background {
         width: 100%;
         display: block;
         object-fit: contain;
+        z-index: 1;
     }
 
     .figure-img {
         position: absolute;
-        width: 12.5%; 
-        height: auto;
+        width: 12.5%;
+        height: 12.5%;
         transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
         cursor: pointer;
+        z-index: 10;
     }
-
-        /* .figure-img:hover {
-            transform: scale(1.1); 
-            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
-        } */
 </style>
 
 <div class="chess-board-container">
@@ -42,12 +40,22 @@
     @foreach (var figure in Model.Figures)
     {
         <img src="~/images/pieces/@figure.Image"
-             alt="@figure.Type"
+             alt="@figure.Name"
              id="piece-@figure.Id"
              class="figure-img"
              draggable="true"
              style="top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
+
+<script id="board-data" type="application/json">
+    @Html.Raw(JsonSerializer.Serialize(Model))
+</script>
+
+<script>
+    const boardViewModel = JSON.parse(document.getElementById('board-data').textContent);
+</script>
+
+
 
 <script src="~/js/game.js"></script>
