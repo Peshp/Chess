@@ -43,18 +43,12 @@
             return viewModel;
         }
 
-        
-
-        public async Task<bool> TryMove(int pieceId, double toX, double toY, BoardViewModel board)
+        public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
         {
             var engine = new ChessEngine(board.Figures);
 
-            bool success = engine.TryMove(pieceId, toX, toY);
-
-            return success;
+            return engine.TryMove(pieceId, toX, toY);
         }
-
-
     }
 }
 

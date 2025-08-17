@@ -4,6 +4,7 @@
     using Application.DTOs;
     using Domain.ViewModels.Web;
     using Microsoft.AspNetCore.Mvc;
+    using Domain.Extensions;
 
     public class GameController : Controller
     {
@@ -16,18 +17,42 @@
 
         public async Task<IActionResult> Game()
         {
-            BoardViewModel board = await _gameService.GetBoard();
-
+            BoardViewModel board = HttpContext.Session.GetBoard();
+            if (board == null)
+            {
+                board = await _gameService.GetBoard();
+                HttpContext.Session.SetBoard(board);
+            }
             return View(board);
         }
 
         [HttpPost]
         public async Task<IActionResult> MakeMove([FromBody] MoveRequest request)
         {
-            bool success = await _gameService.TryMove
-                (request.pieceId, request.ToX * 12.5, request.ToY * 12.5, request.board);
+            var board = HttpContext.Session.GetBoard();
+            if (board == null)
+                return Json(new { success = false });
+
+            bool success = await _gameService.TryMove(board, request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
+
+            if (success)
+                HttpContext.Session.SetBoard(board);
+
             return Json(new { success });
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> EndGame()
+        //{
+        //    var board = HttpContext.Session.GetBoard();
+        //    if (board != null)
+        //    {
+        //        // TODO: Implement SaveBoard in GameService to persist to DB
+        //        await _gameService.SaveBoard(board);
+        //        HttpContext.Session.Remove("Board");
+        //    }
+        //    return Json(new { success = true });
+        //}
 
     }
 }
