@@ -1,11 +1,15 @@
-﻿namespace Chess.infrastructure.Entities
+﻿namespace Chess.infrastructure.Entities;
+
+public class Board
 {
-    public class Board
+    public Board()
     {
-        public int Id { get; set; }
-
-        public string Image { get; set; } = string.Empty;
-
-        public List<Figure> Figures { get; set; } = new List<Figure>();
+        Figures = new HashSet<Figure>();
     }
+
+    public int Id { get; set; }
+
+    public string Image { get; set; } = string.Empty;
+
+    public ICollection<Figure> Figures { get; set; }
 }

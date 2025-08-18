@@ -1,8 +1,7 @@
-﻿namespace Chess.infrastructure.Enums
+﻿namespace Chess.infrastructure.Enums;
+
+public enum FigureColor
 {
-    public enum FigureColor
-    {
-        White,
-        Black
-    }
+    White,
+    Black
 }

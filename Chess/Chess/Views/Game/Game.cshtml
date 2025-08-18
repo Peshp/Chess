@@ -1,39 +1,10 @@
-﻿@using System.Text.Json
-@model BoardViewModel
+﻿@model BoardViewModel
 
 @{
     ViewData["Title"] = "Chess Board";
 }
 
-<style>
-    .chess-board-container {
-        position: relative;
-        width: 100%;
-        max-width: 600px;
-        margin: 20px auto;
-        border: 5px solid #333;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        background-color: #f8f9fa;
-    }
-
-    .chess-board-background {
-        width: 100%;
-        display: block;
-        object-fit: contain;
-        z-index: 1;
-    }
-
-    .figure-img {
-        position: absolute;
-        width: 12.5%;
-        height: 12.5%;
-        transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
-        cursor: pointer;
-        z-index: 10;
-    }
-</style>
+<link rel="stylesheet" href="~/css/game.css" />
 
 <div class="chess-board-container">
     <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
@@ -47,15 +18,5 @@
              style="top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
-
-<script id="board-data" type="application/json">
-    @Html.Raw(JsonSerializer.Serialize(Model))
-</script>
-
-<script>
-    const boardViewModel = JSON.parse(document.getElementById('board-data').textContent);
-</script>
-
-
 
 <script src="~/js/game.js"></script>

@@ -44,6 +44,12 @@
         if (result.success) {
             piece.style.left = `${gridX * 12.5}%`;
             piece.style.top = `${gridY * 12.5}%`;
+
+            // Remove captured piece from DOM
+            if (result.capturedPieceId) {
+                const captured = document.getElementById(`piece-${result.capturedPieceId}`);
+                if (captured) captured.remove();
+            }
         }
     });
 });

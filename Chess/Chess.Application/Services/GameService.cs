@@ -1,54 +1,53 @@
-﻿namespace Chess.Application.Services
+﻿namespace Chess.Application.Services;
+
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Application;
+using Application.interfaces;
+using Domain.ViewModels.Web;
+using infrastructure.Entities;
+using Infrastructure.Data;
+
+public class GameService : IGameService
 {
-    using Application;
-    using Application.interfaces;
-    using Domain.ViewModels.Web;
-    using infrastructure.Entities;
-    using Infrastructure.Data;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Internal;
-    using System.Threading.Tasks;
+    private readonly ApplicationDbContext _context;
 
-    public class GameService : IGameService
+    public GameService(ApplicationDbContext context)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+    }
 
-        public GameService(ApplicationDbContext context)
+    public async Task<BoardViewModel> GetBoard()
+    {
+        var board = await _context.Boards.Where(b => b.Id == 1).ToArrayAsync();
+        var figures = await _context.Figures.ToArrayAsync();
+
+        BoardViewModel viewModel = new BoardViewModel
         {
-            _context = context;
-        }
-
-        public async Task<BoardViewModel> GetBoard()
-        {
-            var board = await _context.Boards.Where(b => b.Id == 1).ToArrayAsync();
-            var figures = await _context.Figures.ToArrayAsync();
-
-            BoardViewModel viewModel = new BoardViewModel
+            BoardImage = board[0].Image,
+            Figures = figures.Select(entry =>
             {
-                BoardImage = board[0].Image,
-                Figures = figures.Select(entry =>
+                return new FigureViewModel
                 {
-                    return new FigureViewModel
-                    {
-                        Id = entry.Id,
-                        Name = entry.Type.ToString(),
-                        Color = entry.Color.ToString(),
-                        Image = entry.Image,
-                        PositionX = entry.PositionX,
-                        PositionY = entry.PositionY,
-                    };
-                }).ToList()
-            };
+                    Id = entry.Id,
+                    Name = entry.Type.ToString(),
+                    Color = entry.Color.ToString(),
+                    Image = entry.Image,
+                    PositionX = entry.PositionX,
+                    PositionY = entry.PositionY,
+                };
+            }).ToList()
+        };
 
-            return viewModel;
-        }
+        return viewModel;
+    }
 
-        public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
-        {
-            var engine = new ChessEngine(board.Figures);
+    public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
+    {
+        var engine = new ChessEngine(board);
 
-            return engine.TryMove(pieceId, toX, toY);
-        }
+        return await engine.TryMove(pieceId, toX, toY);
     }
 }
 

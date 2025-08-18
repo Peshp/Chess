@@ -1,12 +1,10 @@
-﻿namespace Chess.Domain.ViewModels.Web
+﻿namespace Chess.Domain.ViewModels.Web;
+
+using System.Text.Json.Serialization;
+
+public class BoardViewModel
 {
-    using System.Text.Json.Serialization;
+    public List<FigureViewModel> Figures { get; set; }
 
-    public class BoardViewModel
-    {
-        public List<FigureViewModel> Figures { get; set; }
-
-        public string BoardImage { get; set; }
-    }
-
+    public string BoardImage { get; set; }
 }

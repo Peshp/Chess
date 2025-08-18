@@ -1,25 +1,23 @@
-﻿namespace Chess.Domain.Extensions
+﻿namespace Chess.Domain.Extensions;
+
+using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Domain.ViewModels.Web;
+
+public static class SessionExtensions
 {
-    using Domain.ViewModels.Web;
-    using Microsoft.AspNetCore.Http;
-    using System.Text;
-    using System.Text.Json;
-
-    public static class SessionExtensions
+    public static void SetBoard(this ISession session, BoardViewModel board)
     {
-        public static void SetBoard(this ISession session, BoardViewModel board)
-        {
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(board);
-            session.Set("Board", bytes);
-        }
+        var bytes = JsonSerializer.SerializeToUtf8Bytes(board);
+        session.Set("Board", bytes);
+    }
 
-        public static BoardViewModel GetBoard(this ISession session)
+    public static BoardViewModel GetBoard(this ISession session)
+    {
+        if (session.TryGetValue("Board", out var bytes))
         {
-            if (session.TryGetValue("Board", out var bytes))
-            {
-                return JsonSerializer.Deserialize<BoardViewModel>(bytes);
-            }
-            return null;
+            return JsonSerializer.Deserialize<BoardViewModel>(bytes);
         }
+        return null;
     }
 }
