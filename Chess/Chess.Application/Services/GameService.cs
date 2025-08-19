@@ -2,11 +2,9 @@
 
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Application;
 using Application.interfaces;
 using Domain.ViewModels.Web;
-using infrastructure.Entities;
 using Infrastructure.Data;
 
 public class GameService : IGameService
@@ -45,7 +43,7 @@ public class GameService : IGameService
 
     public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
     {
-        var engine = new ChessEngine(board);
+        ChessEngine engine = new ChessEngine(board);
 
         return await engine.TryMove(pieceId, toX, toY);
     }
