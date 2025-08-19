@@ -25,3 +25,34 @@
     cursor: pointer;
     z-index: 10;
 }
+
+.captured-pieces {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px;
+    background: #222426;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 160px;
+    max-width: 250px;
+    margin-left: 36px;
+}
+
+
+.captured-piece-group {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.captured-figure-img {
+    width: 32px;
+    height: 32px;
+    opacity: 0.9;
+    filter: grayscale(0.2);
+    transition: transform 0.2s;
+    cursor: default;
+    display: inline-block;
+    vertical-align: middle;
+}
