@@ -33,13 +33,28 @@ public class GameController : Controller
         if (board == null)
             return Json(new { success = false });
 
-        bool success = await _gameService.TryMove
-            (board, request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
+        bool success = await _gameService.TryMove(board, request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
 
         if (success)
             HttpContext.Session.SetBoard(board);
 
-        return Json(new { success });
+        return Json(new
+        {
+            success,
+            figures = board.Figures.Select(f => new {
+                id = f.Id,
+                x = f.PositionX,
+                y = f.PositionY,
+                name = f.Name,
+                image = f.Image
+            }),
+            captured = board.CapturedFigures.Select(f => new {
+                id = f.Id,
+                name = f.Name,
+                color = f.Color,
+                image = f.Image
+            })
+        });
     }
 
     //[HttpPost]

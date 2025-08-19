@@ -6,6 +6,7 @@
 
 <link rel="stylesheet" href="~/css/game.css" />
 
+
 <div class="chess-board-container">
     <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
     @foreach (var figure in Model.Figures)
@@ -16,6 +17,15 @@
              class="figure-img"
              draggable="true"
              style="top:@figure.PositionY%; left:@figure.PositionX%;" />
+    }
+</div>
+
+<div class="captured-pieces">
+    @foreach (var figure in Model.CapturedFigures)
+    {
+        <img src="~/images/pieces/@figure.Image"
+             alt="@figure.Name"
+             class="captured-figure-img" />
     }
 </div>
 

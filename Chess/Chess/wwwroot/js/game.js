@@ -1,27 +1,51 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     const board = document.querySelector('.chess-board-container');
+    const capturedDiv = document.querySelector('.captured-pieces');
 
-    document.querySelectorAll('.figure-img').forEach(piece => {
-        piece.setAttribute('draggable', true);
-
-        piece.addEventListener('dragstart', (event) => {
-            event.dataTransfer.setData("pieceId", event.target.id);
-            event.dataTransfer.setData("startX", event.target.style.left);
-            event.dataTransfer.setData("startY", event.target.style.top);
+    function bindDragEvents() {
+        board.querySelectorAll('.figure-img').forEach(piece => {
+            piece.setAttribute('draggable', true);
+            piece.addEventListener('dragstart', (event) => {
+                event.dataTransfer.setData("pieceId", event.target.id);
+            });
         });
-    });
+    }
 
-    board.addEventListener('dragover', (event) => {
-        event.preventDefault();
-    });
+    function renderBoard(figures, captured) {
+        board.querySelectorAll('.figure-img').forEach(img => img.remove());
 
-    board.addEventListener('drop', async (event) => {
+        figures.forEach(f => {
+            const img = document.createElement('img');
+            img.src = `/images/pieces/${f.image}`;
+            img.alt = f.name || '';
+            img.id = `piece-${f.id}`;
+            img.className = 'figure-img';
+            img.draggable = true;
+            img.style.left = `${f.x}%`;
+            img.style.top = `${f.y}%`;
+            board.appendChild(img);
+        });
+
+        bindDragEvents();
+
+        if (capturedDiv) {
+            capturedDiv.innerHTML = '<h4>Captured Pieces:</h4>';
+            captured.forEach(f => {
+                const img = document.createElement('img');
+                img.src = `/images/pieces/${f.image}`;
+                img.alt = f.name || '';
+                img.className = 'captured-figure-img';
+                capturedDiv.appendChild(img);
+            });
+        }
+    }
+
+    board.addEventListener('dragover', event => event.preventDefault());
+
+    board.addEventListener('drop', async event => {
         event.preventDefault();
 
         const pieceId = event.dataTransfer.getData("pieceId");
-        const piece = document.getElementById(pieceId);
-        if (!piece) return;
-
         const boardRect = board.getBoundingClientRect();
         const x = event.clientX - boardRect.left;
         const y = event.clientY - boardRect.top;
@@ -42,14 +66,9 @@
         const result = await response.json();
 
         if (result.success) {
-            piece.style.left = `${gridX * 12.5}%`;
-            piece.style.top = `${gridY * 12.5}%`;
-
-            // Remove captured piece from DOM
-            if (result.capturedPieceId) {
-                const captured = document.getElementById(`piece-${result.capturedPieceId}`);
-                if (captured) captured.remove();
-            }
+            renderBoard(result.figures, result.captured);
         }
     });
+
+    bindDragEvents();
 });
