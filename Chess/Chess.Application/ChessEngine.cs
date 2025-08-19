@@ -13,10 +13,17 @@ public class ChessEngine
 
     public async Task<bool> TryMove(int pieceId, double toX, double toY)
     {
-        var piece = _board.Figures.FirstOrDefault(f => f.Id == pieceId);
+        FigureViewModel piece = _board.Figures.FirstOrDefault(f => f.Id == pieceId);
 
-        if (IsValidMove(piece, toX, toY).Result)
+        if (await IsValidMove(piece, toX, toY))
         {
+            var target = FindPiece(toX, toY);
+            if (target != null && target.Color != piece.Color)
+            {
+                _board.Figures.Remove(target);
+                _board.CapturedFigures.Add(target);
+            }
+
             piece.PositionX = toX;
             piece.PositionY = toY;
 
@@ -29,7 +36,7 @@ public class ChessEngine
     private async Task<bool> IsValidMove(FigureViewModel piece, double toX, double toY)
     {
         // TODO: real chess rules
-        bool valid = valid = IsEmpty(piece, toX, toY); 
+        bool valid = false; 
         if (piece.Name == "Pawn")
             valid = IsValidPawnMove(piece, toX, toY);       
 
@@ -41,29 +48,29 @@ public class ChessEngine
         double direction = piece.Color == "White" ? -12.5 : 12.5;
         double startRow = piece.Color == "White" ? 75 : 12.5;
 
-        // Forward moves
-        if (toX == piece.PositionX)
+        if (FindPiece(toX, toY) == null && piece.PositionX == toX)
         {
-            if (toY == piece.PositionY + direction && IsEmpty(piece, toX, toY))
+            if (piece.PositionY + direction == toY)
                 return true;
-            if (piece.PositionY == startRow && toY == piece.PositionY + 2 * direction && IsEmpty(piece, toX, toY))
+
+            if (piece.PositionY == startRow &&
+                piece.PositionY + direction * 2 == toY)
                 return true;
         }
 
-        // Diagonal captures
-        if ((toX == piece.PositionX - 12.5 || toX == piece.PositionX + 12.5) && toY == piece.PositionY + direction)
+        if ((toX == piece.PositionX - 12.5 || toX == piece.PositionX + 12.5) 
+            && toY == piece.PositionY + direction)
         {
-            var target = FindPiece(piece, toX, toY);
+            var target = FindPiece(toX, toY);
             if (target != null && target.Color != piece.Color)
+            {
                 return true;
+            }              
         }
 
         return false;
     }
 
-    private FigureViewModel? FindPiece(FigureViewModel piece, double toX, double toY)
+    private FigureViewModel? FindPiece(double toX, double toY)
         => _board.Figures.Find(f => f.PositionX == toX && f.PositionY == toY);
-
-    private bool IsEmpty(FigureViewModel piece, double toX, double toY)
-        => FindPiece == null;
 }
