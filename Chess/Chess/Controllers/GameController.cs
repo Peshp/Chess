@@ -53,7 +53,7 @@ public class GameController : Controller
                 name = f.Name,
                 color = f.Color,
                 image = f.Image
-            })
+            }),
         });
     }
 
