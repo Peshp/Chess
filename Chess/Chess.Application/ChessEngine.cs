@@ -20,8 +20,8 @@ public class ChessEngine
             var target = FindPiece(toX, toY);
             if (target != null && target.Color != piece.Color)
             {
-                _board.Figures.Remove(target);
                 _board.CapturedFigures.Add(target);
+                _board.Figures.Remove(target);              
             }
 
             piece.PositionX = toX;
@@ -38,7 +38,11 @@ public class ChessEngine
         // TODO: real chess rules
         bool valid = false; 
         if (piece.Name == "Pawn")
-            valid = IsValidPawnMove(piece, toX, toY);       
+            valid = IsValidPawnMove(piece, toX, toY);
+        if (piece.Name == "Bishop")
+            valid = IsValidBishopMove(piece, toX, toY);
+        if(piece.Name == "Rook")
+            valid = IsValidRookMove(piece, toX, toY);
 
         return valid;
     }
@@ -67,6 +71,57 @@ public class ChessEngine
                 return true;
             }              
         }
+
+        return false;
+    }
+
+    private bool IsValidBishopMove(FigureViewModel piece, double toX, double toY)
+    {
+        if(FindPiece(toX, toY) == null)
+        {
+            if (piece.PositionX > toX && piece.PositionY > toY ||
+                    piece.PositionX < toX && piece.PositionY < toY ||
+                    piece.PositionX > toX && piece.PositionY < toY ||
+                    piece.PositionX < toX && piece.PositionY > toY)
+                return true;                          
+        }
+        if (piece.PositionX > toX && piece.PositionY > toY ||
+                    piece.PositionX < toX && piece.PositionY < toY ||
+                    piece.PositionX > toX && piece.PositionY < toY ||
+                    piece.PositionX < toX && piece.PositionY > toY)
+        {
+            var target = FindPiece(toX, toY);
+            if (target != null && target.Color != piece.Color)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsValidRookMove(FigureViewModel piece, double toX, double toY)
+    {
+        if (FindPiece(toX, toY) == null)
+        {
+            if (piece.PositionX > toX && piece.PositionY == toY ||
+                    piece.PositionX < toX && piece.PositionY == toY ||
+                    piece.PositionX == toX && piece.PositionY < toY ||
+                    piece.PositionX == toX && piece.PositionY > toY)
+                return true;
+        }
+        if (piece.PositionX > toX && piece.PositionY == toY ||
+                    piece.PositionX < toX && piece.PositionY == toY ||
+                    piece.PositionX == toX && piece.PositionY < toY ||
+                    piece.PositionX == toX && piece.PositionY > toY)
+        {
+            var target = FindPiece(toX, toY);
+            if (target != null && target.Color != piece.Color)
+            {
+                return true;
+            }
+        }
+            
 
         return false;
     }
