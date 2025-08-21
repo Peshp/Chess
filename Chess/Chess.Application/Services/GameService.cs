@@ -6,6 +6,7 @@ using Application;
 using Application.interfaces;
 using Domain.ViewModels.Web;
 using Infrastructure.Data;
+using Chess.Application.ChessEngine;
 
 public class GameService : IGameService
 {
