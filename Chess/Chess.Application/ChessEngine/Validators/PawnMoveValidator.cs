@@ -6,6 +6,8 @@ public class PawnMoveValidator : IMoveValidator
 {
     public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
     {
+        piece.IsMoved = true;
+
         double direction = piece.Color == "White" ? -12.5 : 12.5;
         double startRow = piece.Color == "White" ? 75 : 12.5;
 
@@ -28,7 +30,7 @@ public class PawnMoveValidator : IMoveValidator
             var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
             if (target != null && target.Color != piece.Color)
                 return true;
-        }
+        }       
 
         return false;
     }
