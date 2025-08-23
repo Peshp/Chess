@@ -23,14 +23,13 @@ public class ChessEngine
         };
     }
 
-    public string CurrentTurn { get; private set; } = "White";
-
     public async Task<bool> TryMove(int pieceId, double toX, double toY)
     {
         var piece = _board.Figures.FirstOrDefault(f => f.Id == pieceId);
         if (piece == null) return false;
 
-        if (piece.Color != CurrentTurn)
+        // Turn logic: Only allow move if it's that color's turn!
+        if (piece.Color != _board.CurrentTurn)
             return false;
 
         if (await IsValidMove(piece, toX, toY))
@@ -45,7 +44,9 @@ public class ChessEngine
             piece.PositionX = toX;
             piece.PositionY = toY;
 
-            CurrentTurn = (CurrentTurn == "White") ? "Black" : "White";
+            // Switch turn after successful move
+            _board.CurrentTurn = (_board.CurrentTurn == "White") ? "Black" : "White";
+
             return true;
         }
         return false;
