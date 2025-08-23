@@ -9,4 +9,6 @@ public class BoardViewModel
     public List<FigureViewModel> CapturedFigures { get; set; } = new();
 
     public string BoardImage { get; set; }
+
+    public string CurrentTurn { get; set; } = "White";
 }
