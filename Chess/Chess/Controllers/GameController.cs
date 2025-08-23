@@ -46,7 +46,8 @@ public class GameController : Controller
                 x = f.PositionX,
                 y = f.PositionY,
                 name = f.Name,
-                image = f.Image
+                image = f.Image,
+                isMoved = f.IsMoved
             }),
             captured = board.CapturedFigures.Select(f => new {
                 id = f.Id,
