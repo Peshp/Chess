@@ -15,4 +15,6 @@ public class FigureViewModel
     public double PositionY { get; set; }
 
     public string Color { get; set; }
+
+    public bool IsMoved { get; set; }
 }
