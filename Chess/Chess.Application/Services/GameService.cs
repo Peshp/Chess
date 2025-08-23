@@ -32,6 +32,7 @@ public class GameService : IGameService
                     Id = entry.Id,
                     Name = entry.Type.ToString(),
                     Color = entry.Color.ToString(),
+                    IsMoved = false,
                     Image = entry.Image,
                     PositionX = entry.PositionX,
                     PositionY = entry.PositionY,
