@@ -11,4 +11,6 @@ public class BoardViewModel
     public string BoardImage { get; set; }
 
     public string CurrentTurn { get; set; } = "White";
+
+    public bool IsCheck { get; set; }
 }
