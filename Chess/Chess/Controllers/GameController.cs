@@ -35,17 +35,24 @@ public class GameController : Controller
 
         bool success = await _gameService.TryMove(board, request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
 
+        bool isCheck = false;
         if (success)
+        {
             HttpContext.Session.SetBoard(board);
+            isCheck = await _gameService.IsCheck(board, board.CurrentTurn);
+        }
 
         return Json(new
         {
             success,
+            isCheck, // frontend can use this!
+            currentTurn = board.CurrentTurn,
             figures = board.Figures.Select(f => new {
                 id = f.Id,
                 x = f.PositionX,
                 y = f.PositionY,
                 name = f.Name,
+                color = f.Color, 
                 image = f.Image,
                 isMoved = f.IsMoved
             }),
