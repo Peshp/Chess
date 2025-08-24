@@ -48,5 +48,11 @@ public class GameService : IGameService
 
         return await engine.TryMove(pieceId, toX, toY);
     }
+
+    public async Task<bool> IsCheck(BoardViewModel board, string color)
+    {
+        var engine = new ChessEngine(board);
+        return await engine.IsCheck(color);
+    }
 }
 
