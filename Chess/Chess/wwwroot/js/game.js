@@ -1,6 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     const board = document.querySelector('.chess-board-container');
     const capturedDiv = document.querySelector('.captured-pieces');
+    let selectedPieceId = null; 
 
     function bindDragEvents() {
         board.querySelectorAll('.figure-img').forEach(piece => {
@@ -8,12 +9,46 @@
             piece.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData("pieceId", event.target.id);
             });
+            piece.addEventListener('click', (event) => {
+                board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
+                selectedPieceId = event.target.id;
+                event.target.classList.add('selected');
+            });
+        });
+    }
+
+    function bindSquareClickEvents() {
+        board.querySelectorAll('.board-square').forEach(square => {
+            square.addEventListener('click', async (event) => {
+                if (selectedPieceId) {
+                    const gridX = parseInt(square.getAttribute('data-x'));
+                    const gridY = parseInt(square.getAttribute('data-y'));
+
+                    const response = await fetch('/Game/MakeMove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            pieceId: selectedPieceId.replace("piece-", ""),
+                            toX: gridX,
+                            toY: gridY
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        renderBoard(result.figures, result.captured);
+                    }
+
+                    board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
+                    selectedPieceId = null;
+                }
+            });
         });
     }
 
     function renderBoard(figures, captured) {
         board.querySelectorAll('.figure-img').forEach(img => img.remove());
-
         figures.forEach(f => {
             const img = document.createElement('img');
             img.src = `/images/pieces/${f.image}`;
@@ -23,10 +58,12 @@
             img.draggable = true;
             img.style.left = `${f.x}%`;
             img.style.top = `${f.y}%`;
+            img.style.position = 'absolute';
             board.appendChild(img);
         });
 
         bindDragEvents();
+        bindSquareClickEvents();
 
         if (capturedDiv) {
             capturedDiv.innerHTML = '<h4>Captured Pieces:</h4>';
@@ -71,4 +108,5 @@
     });
 
     bindDragEvents();
+    bindSquareClickEvents();
 });
