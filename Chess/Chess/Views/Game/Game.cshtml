@@ -6,28 +6,28 @@
 
 <link rel="stylesheet" href="~/css/game.css" />
 
-
-<div class="chess-board-container">
+<div class="chess-board-container" style="position:relative;">
     <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
+    @for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            <div class="board-square"
+                 data-x="@x"
+                 data-y="@y"
+                 style="position:absolute; width:12.5%; height:12.5%; top:@(y * 12.5)% ; left:@(x * 12.5)%;"></div>
+        }
+    }
     @foreach (var figure in Model.Figures)
     {
         <img src="~/images/pieces/@figure.Image"
              alt="@figure.Name"
              id="piece-@figure.Id"
-             class="figure-img"s
+             class="figure-img"
              data-name="@figure.Name"
              data-color="@figure.Color"
              draggable="true"
-             style="top:@figure.PositionY%; left:@figure.PositionX%;" />
-    }
-</div>
-
-<div class="captured-pieces">
-    @foreach (var figure in Model.CapturedFigures)
-    {
-        <img src="~/images/pieces/@figure.Image"
-             alt="@figure.Name"
-             class="captured-figure-img" />
+             style="position:absolute; top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
 
