@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Chess.infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigrate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -177,12 +177,12 @@ namespace Chess.infrastructure.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Color = table.Column<int>(type: "int", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BoardId = table.Column<int>(type: "int", nullable: false),
-                    PositionX = table.Column<int>(type: "int", nullable: false),
-                    PositionY = table.Column<int>(type: "int", nullable: false)
+                    PositionX = table.Column<double>(type: "float", nullable: false),
+                    PositionY = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -202,41 +202,41 @@ namespace Chess.infrastructure.Migrations
 
             migrationBuilder.InsertData(
                 table: "Figures",
-                columns: new[] { "Id", "BoardId", "Color", "Image", "Name", "PositionX", "PositionY" },
+                columns: new[] { "Id", "BoardId", "Color", "Image", "PositionX", "PositionY", "Type" },
                 values: new object[,]
                 {
-                    { 1, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 2, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 3, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 4, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 5, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 6, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 7, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 8, 1, "White", "wP.png", "Pawn", 0, 0 },
-                    { 9, 1, "White", "wR.png", "Rook", 0, 0 },
-                    { 10, 1, "White", "wR.png", "Rook", 0, 0 },
-                    { 11, 1, "White", "wN.png", "Knight", 0, 0 },
-                    { 12, 1, "White", "wN.png", "Knight", 0, 0 },
-                    { 13, 1, "White", "wB.png", "Bishop", 0, 0 },
-                    { 14, 1, "White", "wB.png", "Bishop", 0, 0 },
-                    { 15, 1, "White", "wQ.png", "Queen", 0, 0 },
-                    { 16, 1, "White", "wK.png", "King", 0, 0 },
-                    { 17, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 18, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 19, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 20, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 21, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 22, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 23, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 24, 1, "Black", "bP.png", "Pawn", 0, 0 },
-                    { 25, 1, "Black", "bR.png", "Rook", 0, 0 },
-                    { 26, 1, "Black", "bR.png", "Rook", 0, 0 },
-                    { 27, 1, "Black", "bN.png", "Knight", 0, 0 },
-                    { 28, 1, "Black", "bN.png", "Knight", 0, 0 },
-                    { 29, 1, "Black", "bB.png", "Bishop", 0, 0 },
-                    { 30, 1, "Black", "bB.png", "Bishop", 0, 0 },
-                    { 31, 1, "Black", "bQ.png", "Queen", 0, 0 },
-                    { 32, 1, "Black", "bK.png", "King", 0, 0 }
+                    { 1, 1, 0, "wR.png", 0.0, 87.5, 1 },
+                    { 2, 1, 0, "wN.png", 12.5, 87.5, 2 },
+                    { 3, 1, 0, "wB.png", 25.0, 87.5, 3 },
+                    { 4, 1, 0, "wQ.png", 37.5, 87.5, 4 },
+                    { 5, 1, 0, "wK.png", 50.0, 87.5, 5 },
+                    { 6, 1, 0, "wB.png", 62.5, 87.5, 3 },
+                    { 7, 1, 0, "wN.png", 75.0, 87.5, 2 },
+                    { 8, 1, 0, "wR.png", 87.5, 87.5, 1 },
+                    { 9, 1, 0, "wP.png", 0.0, 75.0, 0 },
+                    { 10, 1, 0, "wP.png", 12.5, 75.0, 0 },
+                    { 11, 1, 0, "wP.png", 25.0, 75.0, 0 },
+                    { 12, 1, 0, "wP.png", 37.5, 75.0, 0 },
+                    { 13, 1, 0, "wP.png", 50.0, 75.0, 0 },
+                    { 14, 1, 0, "wP.png", 62.5, 75.0, 0 },
+                    { 15, 1, 0, "wP.png", 75.0, 75.0, 0 },
+                    { 16, 1, 0, "wP.png", 87.5, 75.0, 0 },
+                    { 17, 1, 1, "bP.png", 0.0, 12.5, 0 },
+                    { 18, 1, 1, "bP.png", 12.5, 12.5, 0 },
+                    { 19, 1, 1, "bP.png", 25.0, 12.5, 0 },
+                    { 20, 1, 1, "bP.png", 37.5, 12.5, 0 },
+                    { 21, 1, 1, "bP.png", 50.0, 12.5, 0 },
+                    { 22, 1, 1, "bP.png", 62.5, 12.5, 0 },
+                    { 23, 1, 1, "bP.png", 75.0, 12.5, 0 },
+                    { 24, 1, 1, "bP.png", 87.5, 12.5, 0 },
+                    { 25, 1, 1, "bR.png", 0.0, 0.0, 1 },
+                    { 26, 1, 1, "bN.png", 12.5, 0.0, 2 },
+                    { 27, 1, 1, "bB.png", 25.0, 0.0, 3 },
+                    { 28, 1, 1, "bQ.png", 37.5, 0.0, 4 },
+                    { 29, 1, 1, "bK.png", 50.0, 0.0, 5 },
+                    { 30, 1, 1, "bB.png", 62.5, 0.0, 3 },
+                    { 31, 1, 1, "bN.png", 75.0, 0.0, 2 },
+                    { 32, 1, 1, "bR.png", 87.5, 0.0, 1 }
                 });
 
             migrationBuilder.CreateIndex(

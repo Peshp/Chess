@@ -1,9 +1,16 @@
-﻿namespace Chess.Domain.ViewModels.Web
-{
-    public class BoardViewModel
-    {
-        public string BoardImage { get; set; } = string.Empty;
+﻿namespace Chess.Domain.ViewModels.Web;
 
-        public List<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();
-    }
+using System.Text.Json.Serialization;
+
+public class BoardViewModel
+{
+    public List<FigureViewModel> Figures { get; set; } = new();
+
+    public List<FigureViewModel> CapturedFigures { get; set; } = new();
+
+    public string BoardImage { get; set; }
+
+    public string CurrentTurn { get; set; } = "White";
+
+    public bool IsCheck { get; set; }
 }

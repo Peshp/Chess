@@ -1,14 +1,12 @@
-﻿namespace Chess.Application.interfaces
+﻿namespace Chess.Application.interfaces;
+
+using Domain.ViewModels.Web;
+
+public interface IGameService
 {
-    using Domain.ViewModels.Web;
-    using infrastructure.Entities;
+    Task<BoardViewModel> GetBoard();
 
-    public interface IGameService
-    {
-        Task<BoardViewModel> GetBoard();
+    Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
 
-        //Task<List<FigureViewModel>> GetFigures();
-
-        Task<bool> TryMove(int pieceId, double toX, double toY);
-    }
+    Task<bool> IsCheck(BoardViewModel board, string color);
 }

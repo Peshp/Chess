@@ -4,49 +4,30 @@
     ViewData["Title"] = "Chess Board";
 }
 
-<style>
-    .chess-board-container {
-        position: relative;
-        width: 100%;
-        max-width: 600px; 
-        margin: 20px auto;
-        border: 5px solid #333;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        background-color: #f8f9fa; 
-    }
+<link rel="stylesheet" href="~/css/game.css" />
 
-    .chess-board-background {
-        width: 100%;
-        display: block;
-        object-fit: contain;
-    }
-
-    .figure-img {
-        position: absolute;
-        width: 12.5%; 
-        height: auto;
-        transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
-        cursor: pointer;
-    }
-
-        /* .figure-img:hover {
-            transform: scale(1.1); 
-            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
-        } */
-</style>
-
-<div class="chess-board-container">
+<div class="chess-board-container" style="position:relative;">
     <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
+    @for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            <div class="board-square"
+                 data-x="@x"
+                 data-y="@y"
+                 style="position:absolute; width:12.5%; height:12.5%; top:@(y * 12.5)% ; left:@(x * 12.5)%;"></div>
+        }
+    }
     @foreach (var figure in Model.Figures)
     {
         <img src="~/images/pieces/@figure.Image"
              alt="@figure.Name"
              id="piece-@figure.Id"
              class="figure-img"
+             data-name="@figure.Name"
+             data-color="@figure.Color"
              draggable="true"
-             style="top:@figure.PositionY%; left:@figure.PositionX%;" />
+             style="position:absolute; top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
 
