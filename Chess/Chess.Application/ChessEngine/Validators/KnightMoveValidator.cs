@@ -8,15 +8,10 @@ public class KnightMoveValidator : IMoveValidator
     {
         double dx = Math.Abs(piece.PositionX - toX);
         double dy = Math.Abs(piece.PositionY - toY);
-
         bool isKnightMove = (dx == 25 && dy == 12.5) || (dx == 12.5 && dy == 25);
         if (!isKnightMove)
             return false;
-
         var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
-        if (target == null)
-            return true;
-
-        return target.Color != piece.Color; 
+        return target == null || target.Color != piece.Color;
     }
 }
