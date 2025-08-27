@@ -1,6 +1,6 @@
 ﻿namespace Chess.Application.ChessEngine.Validators;
 
-using Domain.ViewModels.Web;
+using Presentation.ViewModels.Web;
 
 public class RookMoveValidator : IMoveValidator
 {

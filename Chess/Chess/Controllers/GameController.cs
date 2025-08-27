@@ -2,9 +2,9 @@
 
 using Microsoft.AspNetCore.Mvc;
 using Application.interfaces;
-using Application.Requests;
-using Domain.ViewModels.Web;
-using Domain.Extensions;
+using Presentation.Extensions;
+using Presentation.Requests;
+using Presentation.ViewModels.Web;
 
 public class GameController : Controller
 {

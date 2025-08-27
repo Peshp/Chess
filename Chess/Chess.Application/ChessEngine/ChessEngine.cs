@@ -1,7 +1,7 @@
 ﻿namespace Chess.Application.ChessEngine;
 
 using Application.ChessEngine.Validators;
-using Domain.ViewModels.Web;
+using Presentation.ViewModels.Web;
 
 public class ChessEngine
 {
@@ -113,8 +113,10 @@ public class ChessEngine
         {
             double x = king.PositionX + step * i;
             var originalX = king.PositionX;
+
             king.PositionX = x;
             bool inCheck = await IsCheck(king.Color);
+
             king.PositionX = originalX;
             if (inCheck) return false;
         }
@@ -126,6 +128,7 @@ public class ChessEngine
         double direction = toX > king.PositionX ? 1 : -1;
         double rookX = direction == 1 ? 87.5 : 0;
         double rookY = king.PositionY;
+
         var rook = _board.Figures.FirstOrDefault(f =>
             f.PositionX == rookX && f.PositionY == rookY && f.Color == king.Color && f.Name == "Rook");
         double toSquare = direction == 1 ? -12.5 : 12.5;
@@ -133,6 +136,7 @@ public class ChessEngine
         king.PositionX = toX;
         king.PositionY = toY;
         king.IsMoved = true;
+
         if (rook != null)
         {
             rook.PositionX = toX + toSquare;

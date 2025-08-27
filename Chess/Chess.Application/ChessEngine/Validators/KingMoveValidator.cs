@@ -1,7 +1,6 @@
 ﻿namespace Chess.Application.ChessEngine.Validators;
 
-using Chess.Domain.ViewModels.Web;
-using Chess.infrastructure.Entities;
+using Presentation.ViewModels.Web;
 
 public class KingMoveValidator : IMoveValidator
 {

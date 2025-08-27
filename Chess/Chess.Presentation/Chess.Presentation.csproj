@@ -7,8 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Chess.infrastructure\Chess.infrastructure.csproj" />
-    <ProjectReference Include="..\Chess.Presentation\Chess.Presentation.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
   </ItemGroup>
 
 </Project>
