@@ -1,18 +1,15 @@
-﻿namespace Chess.Web
+namespace Chess.Web
 {
-    using System.Reflection;
+    using System;
 
     using Chess.Data;
     using Chess.Data.Common;
     using Chess.Data.Common.Repositories;
-    using Chess.Data.Models;
     using Chess.Data.Repositories;
-    using Chess.Data.Seeding;
-    using Chess.Services.Mapping;
-    using Chess.Web.ViewModels;
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -24,6 +21,11 @@
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+            //builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
             Configure(app);
@@ -35,8 +37,7 @@
             services.AddDbContext<ApplicationDbContext>(
                 options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
-                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<IdentityUser>(IdentityOptionsProvider.GetIdentityOptions).AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.Configure<CookiePolicyOptions>(
                 options =>

@@ -7,7 +7,6 @@
     using System.Threading.Tasks;
 
     using Chess.Data.Common.Models;
-    using Chess.Data.Models;
 
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore;
