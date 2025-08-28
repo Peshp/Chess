@@ -30,5 +30,13 @@
              style="position:absolute; top:@figure.PositionY%; left:@figure.PositionX%;" />
     }
 </div>
+<div class="captured-pieces">
+    @foreach (var figure in Model.CapturedFigures)
+    {
+        <img src="~/images/pieces/@figure.Image"
+             alt="@figure.Name"
+             class="captured-figure-img" />
+    }
+</div>
 
 <script src="~/js/game.js"></script>

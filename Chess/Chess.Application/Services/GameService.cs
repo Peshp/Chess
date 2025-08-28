@@ -3,9 +3,9 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Application.interfaces;
-using Domain.ViewModels.Web;
 using Infrastructure.Data;
 using Application.ChessEngine;
+using Presentation.ViewModels.Web;
 
 public class GameService : IGameService
 {

@@ -1,6 +1,6 @@
 ﻿namespace Chess.Application.interfaces;
 
-using Domain.ViewModels.Web;
+using Presentation.ViewModels.Web;
 
 public interface IGameService
 {

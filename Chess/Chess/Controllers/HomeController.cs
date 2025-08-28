@@ -2,7 +2,7 @@ namespace Chess.Controllers;
 
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Chess.Domain.ViewModels;
+using Presentation.ViewModels;
 
 public class HomeController : Controller
 {

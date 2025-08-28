@@ -1,4 +1,4 @@
-﻿namespace Chess.Application.Requests;
+﻿namespace Chess.Presentation.Requests;
 
 public class MoveRequest
 {
