@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Chess.Data;
 namespace Chess.Web
 {
     using System;

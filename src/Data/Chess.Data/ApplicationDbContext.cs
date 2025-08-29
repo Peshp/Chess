@@ -38,6 +38,9 @@
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
+            EntityIndexesConfiguration.Configure(builder);
         }
     }
 }
