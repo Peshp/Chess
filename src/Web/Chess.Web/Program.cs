@@ -8,6 +8,9 @@
     using Chess.Data.Models;
     using Chess.Data.Repositories;
     using Chess.Data.Seeding;
+    using Chess.Services.Data.Services.Contracts;
+    using Chess.Services.Services;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
@@ -30,6 +33,8 @@
             builder.Services
                 .AddDefaultIdentity<ApplicationUser>(options => IdentityOptionsProvider.GetIdentityOptions(options))
                 .AddEntityFrameworkStores<ChessDbContext>();
+
+            builder.Services.AddScoped<IGameService, GameService>():
 
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();

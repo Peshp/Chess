@@ -1,0 +1,63 @@
+﻿﻿.chess-board-container {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px auto;
+    border: 5px solid #333;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+    background-color: #f8f9fa;
+}
+
+.chess-board-background {
+    width: 100%;
+    display: block;
+    object-fit: contain;
+    z-index: 1;
+}
+
+.figure-img {
+    position: absolute;
+    width: 12.5%;
+    height: 12.5%;
+    transition: transform 0.2s ease-in-out, filter 0.2s ease-in-out;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.captured-pieces {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px;
+    background: #222426;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 160px;
+    max-width: 250px;
+    margin-left: 36px;
+}
+
+.captured-piece-group {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.captured-figure-img {
+    width: 32px;
+    height: 32px;
+    opacity: 0.9;
+    filter: grayscale(0.2);
+    transition: transform 0.2s;
+    cursor: default;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.board-square {
+    border: 1px solid rgba(0,0,0,0.1);
+    cursor: pointer;
+    z-index: 0;
+}

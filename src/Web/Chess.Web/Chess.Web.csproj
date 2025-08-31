@@ -37,7 +37,6 @@
     <ProjectReference Include="..\..\Data\Chess.Data.Models\Chess.Data.Models.csproj" />
     <ProjectReference Include="..\..\Data\Chess.Data\Chess.Data.csproj" />
     <ProjectReference Include="..\..\Services\Chess.Services.Data\Chess.Services.Data.csproj" />
-    <ProjectReference Include="..\..\Services\Chess.Services\Chess.Services.csproj" />
     <ProjectReference Include="..\Chess.Web.Infrastructure\Chess.Web.Infrastructure.csproj" />
     <ProjectReference Include="..\Chess.Web.ViewModels\Chess.Web.ViewModels.csproj" />
   </ItemGroup>
