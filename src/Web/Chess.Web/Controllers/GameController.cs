@@ -1,9 +1,11 @@
 ﻿namespace Chess.Web.Controllers
 {
     using System;
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Chess.Services.Data.Models;
+    using Chess.Services.Data.Services.Contracts;
     using Chess.Services.Services;
     using Chess.Web.ViewModels.Chess;
 
@@ -36,7 +38,7 @@
             if (board == null)
                 return Json(new { success = false });
 
-            bool success = await _gameService.TryMove(board, request.pieceId, request.ToX * 12.5, request.ToY * 12.5);
+            bool success = await _gameService.TryMove(board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
 
             bool isCheck = false;
             if (success)

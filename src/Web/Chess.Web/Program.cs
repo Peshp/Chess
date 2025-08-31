@@ -34,7 +34,9 @@
                 .AddDefaultIdentity<ApplicationUser>(options => IdentityOptionsProvider.GetIdentityOptions(options))
                 .AddEntityFrameworkStores<ChessDbContext>();
 
-            builder.Services.AddScoped<IGameService, GameService>():
+            builder.Services.AddSession();
+
+            builder.Services.AddScoped<IGameService, GameService>();
 
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
@@ -81,6 +83,7 @@
             app.UseCookiePolicy();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();

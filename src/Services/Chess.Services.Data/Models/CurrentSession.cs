@@ -9,7 +9,7 @@
     /// <summary>
     /// Provides extension methods for managing chess board data in an ISession.
     /// </summary>
-    public static class Session
+    public static class CurrentSession
     {
         /// <summary>
         /// Saves the chess board state to the session.

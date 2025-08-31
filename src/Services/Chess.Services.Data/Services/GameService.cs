@@ -1,10 +1,13 @@
 ﻿namespace Chess.Services.Services
 {
+    using System.Linq;
     using System.Threading.Tasks;
 
     using Chess.Data;
+    using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Web.ViewModels.Chess;
+    using Microsoft.EntityFrameworkCore;
 
     public class GameService : IGameService
     {
@@ -44,14 +47,14 @@
 
         public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
         {
-            ChessEngine engine = new ChessEngine(board);
+            EngineService engine = new EngineService(board);
 
             return await engine.TryMove(pieceId, toX, toY);
         }
 
         public async Task<bool> IsCheck(BoardViewModel board, string color)
         {
-            var engine = new ChessEngine(board);
+            var engine = new EngineService(board);
             return await engine.IsCheck(color);
         }
     }
