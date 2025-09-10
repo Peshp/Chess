@@ -5,13 +5,17 @@
 
     using global::Chess.Data.Models;
 
-    public class BoardEntitySeeder : IEntitySeeder
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
+    using Microsoft.Extensions.Configuration;
+
+    public class BoardEntitySeeder : IEntityTypeConfiguration<Board>
     {
-        public async Task Seed(ChessDbContext dbContext)
+        public void Configure(EntityTypeBuilder<Board> builder)
         {
             Board board = this.SeedBoard();
 
-            await dbContext.AddRangeAsync(board);
+            builder.HasData(board);
         }
 
         private Board SeedBoard()
