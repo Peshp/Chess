@@ -6,13 +6,16 @@
     using global::Chess.Data.Models;
     using global::Chess.Data.Models.Enums;
 
-    public class FigureEntitySeeder : IEntitySeeder
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+    public class FigureEntitySeeder : IEntityTypeConfiguration<Figure>
     {
-        public async Task Seed(ChessDbContext dbContext)
+        public void Configure(EntityTypeBuilder<Figure> builder)
         {
             List<Figure> figures = this.SeedFigures();
 
-            await dbContext.AddRangeAsync(figures);
+            builder.HasData(figures);
         }
 
         private List<Figure> SeedFigures()
