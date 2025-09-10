@@ -1,17 +1,20 @@
 ﻿namespace Chess.Data
 {
-    using Chess.Data.Models;
-    using Chess.Data.Models.Enums;
-    using Chess.Data.Seeding;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore;
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
     using System.Threading;
     using System.Threading.Tasks;
+
+    using Chess.Data.Models;
+    using Chess.Data.Models.Enums;
+    using Chess.Data.Seeding;
+    using Chess.Data.Seeding.Chess;
+
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore;
 
     public class ChessDbContext(DbContextOptions<ChessDbContext> options)
         : IdentityDbContext<ApplicationUser, IdentityRole, string>(options)
