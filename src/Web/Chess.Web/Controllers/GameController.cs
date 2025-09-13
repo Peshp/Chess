@@ -52,7 +52,8 @@
                 success,
                 isCheck,
                 currentTurn = board.CurrentTurn,
-                figures = board.Figures.Select(f => new {
+                figures = board.Figures.Select(f => new
+                {
                     id = f.Id,
                     x = f.PositionX,
                     y = f.PositionY,
@@ -61,11 +62,14 @@
                     image = f.Image,
                     isMoved = f.IsMoved,
                 }),
-                captured = board.CapturedFigures.Select(f => new {
-                    id = f.Id,
-                    name = f.Name,
+                captured = board.CapturedFigures.Select(f => new
+                {
                     color = f.Color,
                     image = f.Image,
+                }),
+                moveHistory = board.MoveHistory.Select(m => new
+                {
+                    coordinate = m.Coordinate,
                 }),
             });
         }
