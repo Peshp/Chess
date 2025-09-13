@@ -7,5 +7,7 @@
         public double PositionY { get; set; }
 
         public string Coordinate { get; set; }
+
+        public string FigureImage { get; set; }
     }
 }

@@ -23,6 +23,8 @@
 
         public DbSet<Board> Boards { get; set; }
 
+        public DbSet<Square> Squares { get; set; }
+
         public override int SaveChanges() => this.SaveChanges(true);
 
         public override int SaveChanges(bool acceptAllChangesOnSuccess)

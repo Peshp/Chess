@@ -1,5 +1,6 @@
 ﻿namespace Chess.Services.Services
 {
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -48,8 +49,28 @@
         public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
         {
             EngineService engine = new EngineService(board);
+            bool success = await engine.TryMove(pieceId, toX, toY);
 
-            return await engine.TryMove(pieceId, toX, toY);
+            FigureViewModel currentPiece = board.Figures
+                .FirstOrDefault(f => f.Id == pieceId);
+
+            if (success)
+            {
+                var model = this.context.Squares
+                    .Where(s => s.PositionX == toX && s.PositionY == toY)
+                    .Select(s => new SquareViewModel
+                    {
+                        PositionX = s.PositionX,
+                        PositionY = s.PositionY,
+                        Coordinate = s.Coordinate,
+                        FigureImage = currentPiece.Image,
+                    })
+                    .FirstOrDefault();
+
+                board.MoveHistory.Add(model);
+            }
+
+            return success;
         }
 
         public async Task<bool> IsCheck(BoardViewModel board, string color)

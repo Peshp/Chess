@@ -70,6 +70,7 @@
                 moveHistory = board.MoveHistory.Select(m => new
                 {
                     coordinate = m.Coordinate,
+                    figureImage = m.FigureImage,
                 }),
             });
         }
