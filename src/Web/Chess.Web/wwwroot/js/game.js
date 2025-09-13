@@ -1,6 +1,7 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
     const board = document.querySelector('.chess-board-container');
     const capturedDiv = document.querySelector('.captured-pieces');
+    const moveListDiv = document.getElementById('move-history-list');
     let selectedPieceId = null;
 
     function bindDragEvents() {
@@ -38,6 +39,7 @@
 
                     if (result.success) {
                         renderBoard(result.figures, result.captured);
+                        renderMoveHistory(result.moveHistory); // <-- update move history
                     }
 
                     board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
@@ -77,6 +79,14 @@
         }
     }
 
+    function renderMoveHistory(moveHistory) {
+        if (moveHistory) {
+            moveListDiv.innerHTML = moveHistory.map((move, idx) =>
+                `<div class="move-history-entry">${idx + 1}. ${move.coordinate}</div>`
+            ).join('');
+        }
+    }
+
     board.addEventListener('dragover', event => event.preventDefault());
 
     board.addEventListener('drop', async event => {
@@ -104,6 +114,7 @@
 
         if (result.success) {
             renderBoard(result.figures, result.captured);
+            renderMoveHistory(result.moveHistory); 
         }
     });
 
