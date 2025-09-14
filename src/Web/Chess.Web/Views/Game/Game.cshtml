@@ -122,17 +122,17 @@
                                         {
                                             <tr>
                                                 <td class="text-start">
-                                                    @if (Model.MoveHistory[i] != null)
+                                                    @if (Model.MoveHistory.ElementAt(i) != null)
                                                     {
-                                                        <img src="~/images/pieces/@Model.MoveHistory[i].FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;" />
-                                                        @Model.MoveHistory[i].Coordinate
+                                                        <img src="~/images/pieces/@Model.MoveHistory.ElementAt(i).FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;" />
+                                                        @Model.MoveHistory.ElementAt(i).Coordinate
                                                     }
                                                 </td>
                                                 <td class="text-end">
-                                                    @if (i + 1 < Model.MoveHistory.Count && Model.MoveHistory[i + 1] != null)
+                                                    @if (i + 1 < Model.MoveHistory.Count)
                                                     {
-                                                        <img src="~/images/pieces/@Model.MoveHistory[i + 1].FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-left:2px;" />
-                                                        @Model.MoveHistory[i + 1].Coordinate
+                                                        <img src="~/images/pieces/@Model.MoveHistory.ElementAt(i + 1).FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-left:2px;" />
+                                                        @Model.MoveHistory.ElementAt(i + 1).Coordinate
                                                     }
                                                 </td>
                                             </tr>
