@@ -13,14 +13,14 @@
     {
         public void Configure(EntityTypeBuilder<Figure> builder)
         {
-            List<Figure> figures = this.SeedFigures();
+            var figures = this.SeedFigures();
 
             builder.HasData(figures);
         }
 
-        private List<Figure> SeedFigures()
+        private IEnumerable<Figure> SeedFigures()
         {
-            List<Figure> figures = new List<Figure>()
+            var figures = new[]
             {
                 // White major pieces
                 new Figure { Id = 1,  BoardId = 1, Type = FigureType.Rook,   Color = FigureColor.White, Image = "wR.png", PositionX = 0.0,    PositionY = 87.5 },
