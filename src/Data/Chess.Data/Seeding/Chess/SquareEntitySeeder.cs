@@ -14,7 +14,7 @@
             builder.HasData(this.SeedSquares());
         }
 
-        private List<Square> SeedSquares()
+        private IEnumerable<Square> SeedSquares()
         {
             var files = new char[] { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
             var squares = new List<Square>();
