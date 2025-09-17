@@ -29,38 +29,63 @@
 
         public async Task<bool> TryMove(int pieceId, double toX, double toY)
         {
-            var piece = this.board.Figures.FirstOrDefault(f => f.Id == pieceId);
-            if (piece == null) return false;
-            if (piece.Color != this.board.CurrentTurn) return false;
-            if (!this.moveValidators.TryGetValue(piece.Name, out var validator)) return false;
+            var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
+            if (piece.Color != board.CurrentTurn)
+            {
+                return false;
+            }
+
+            if (!moveValidators.TryGetValue(piece.Name, out var validator))
+            {
+                return false;
+            }
 
             if (piece.Name == "King" &&
                 validator is King kingValidator &&
                 kingValidator.IsCastleAttempt(piece, toX, toY))
             {
-                if (!kingValidator.CanCastle(piece, this.board, toX, toY)) return false;
-                if (!await IsCastleLegal(piece, toX, toY)) return false;
+                if (!kingValidator.CanCastle(piece, board, toX, toY))
+                {
+                    return false;
+                }
+                if (!await IsCastleLegal(piece, toX, toY))
+                {
+                    return false;
+                }
+
                 PerformCastleMove(piece, toX, toY);
-                this.board.CurrentTurn = (this.board.CurrentTurn == "White") ? "Black" : "White";
+                SwitchTurn();
                 return true;
             }
 
-            if (!await IsValidMove(piece, toX, toY)) return false;
-            if (await IsSelfCheckAfterMove(piece, toX, toY)) return false;
+            if (!await IsValidMove(piece, toX, toY))
+            {
+                return false;
+            }
+
+            if (await IsSelfCheckAfterMove(piece, toX, toY))
+            {
+                return false;
+            }
 
             var target = FindPiece(toX, toY);
             if (target != null && target.Color != piece.Color)
             {
-                this.board.CapturedFigures.Add(target);
-                this.board.Figures.Remove(target);
+                board.CapturedFigures.Add(target);
+                board.Figures.Remove(target);
             }
 
             piece.PositionX = toX;
             piece.PositionY = toY;
             piece.IsMoved = true;
 
-            this.board.CurrentTurn = (this.board.CurrentTurn == "White") ? "Black" : "White";
+            SwitchTurn();
             return true;
+        }
+
+        private void SwitchTurn()
+        {
+            board.CurrentTurn = (board.CurrentTurn == "White") ? "Black" : "White";
         }
 
         private async Task<bool> IsSelfCheckAfterMove(FigureViewModel piece, double toX, double toY)
@@ -69,43 +94,62 @@
             var originalY = piece.PositionY;
             var captured = FindPiece(toX, toY);
 
-            if (captured != null) this.board.Figures.Remove(captured);
+            if (captured != null)
+            {
+                board.Figures.Remove(captured);
+            }
+
             piece.PositionX = toX;
             piece.PositionY = toY;
 
-            bool leavesKingInCheck = await IsCheck(piece.Color);
+            bool kingInCheck = await IsCheck(piece.Color);
 
             piece.PositionX = originalX;
             piece.PositionY = originalY;
-            if (captured != null) this.board.Figures.Add(captured);
+            if (captured != null)
+            {
+                board.CapturedFigures.Add(captured);
+            }
 
-            return leavesKingInCheck;
+            return kingInCheck;
         }
 
         public async Task<bool> IsCheck(string color)
         {
-            var king = this.board.Figures.FirstOrDefault(f => f.Name == "King" && f.Color == color);
-            if (king == null) return false;
+            var king = board.Figures.FirstOrDefault(f => f.Name == "King" && f.Color == color);
+            if (king == null)
+            {
+                return false;
+            }
 
-            var opponentColor = (color == "White") ? "Black" : "White";
-            var opponentPieces = this.board.Figures.Where(f => f.Color == opponentColor);
+            string opponentColor = (color == "White") ? "Black" : "White";
+            var opponentPieces = board.Figures.Where(f => f.Color == opponentColor);
 
             foreach (var piece in opponentPieces)
             {
                 if (await IsValidMove(piece, king.PositionX, king.PositionY))
+                {
                     return true;
+                }
             }
+
             return false;
         }
 
         private FigureViewModel? FindPiece(double x, double y)
-            => this.board.Figures.FirstOrDefault(f =>
-                Math.Abs(f.PositionX - x) < 0.1 && Math.Abs(f.PositionY - y) < 0.1);
+        {
+            return board.Figures.FirstOrDefault(f =>
+                Math.Abs(f.PositionX - x) < 0.1 &&
+                Math.Abs(f.PositionY - y) < 0.1);
+        }
 
         private async Task<bool> IsValidMove(FigureViewModel piece, double toX, double toY)
         {
-            if (this.moveValidators.TryGetValue(piece.Name, out var validator))
-                return validator.IsValidMove(piece, toX, toY, this.board);
+            if (moveValidators.TryGetValue(piece.Name, out var validator))
+            {
+                return validator.IsValidMove(piece, toX, toY, board);
+            }
+
             return false;
         }
 
@@ -123,7 +167,10 @@
                 bool inCheck = await IsCheck(king.Color);
 
                 king.PositionX = originalX;
-                if (inCheck) return false;
+                if (inCheck)
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -135,9 +182,13 @@
             double rookX = direction == 1 ? 87.5 : 0;
             double rookY = king.PositionY;
 
-            var rook = this.board.Figures.FirstOrDefault(f =>
-                f.PositionX == rookX && f.PositionY == rookY && f.Color == king.Color && f.Name == "Rook");
-            double toSquare = direction == 1 ? -12.5 : 12.5;
+            var rook = board.Figures.FirstOrDefault(f =>
+                f.PositionX == rookX &&
+                f.PositionY == rookY &&
+                f.Color == king.Color &&
+                f.Name == "Rook");
+
+            double rookTargetX = toX + (direction == 1 ? -12.5 : 12.5);
 
             king.PositionX = toX;
             king.PositionY = toY;
@@ -145,7 +196,7 @@
 
             if (rook != null)
             {
-                rook.PositionX = toX + toSquare;
+                rook.PositionX = rookTargetX;
                 rook.IsMoved = true;
             }
         }
