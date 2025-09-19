@@ -21,30 +21,26 @@
 
         public async Task<BoardViewModel> GetBoard()
         {
-            var board = await context.Boards
-                .AsNoTracking()
-                .FirstOrDefaultAsync(b => b.Id == 1);
+            var board = await this.context.Boards.Where(b => b.Id == 1).ToArrayAsync();
+            var figures = await this.context.Figures.ToArrayAsync();
 
-            var figures = await context.Figures
-                .AsNoTracking()
-                .Select(entry => new FigureViewModel
-                {
-                    Id = entry.Id,
-                    Name = entry.Type.ToString(),
-                    Color = entry.Color.ToString(),
-                    IsMoved = false,
-                    Image = entry.Image,
-                    PositionX = entry.PositionX,
-                    PositionY = entry.PositionY,
-                })
-                .ToListAsync();
-
-            var viewModel = new BoardViewModel
+            BoardViewModel viewModel = new BoardViewModel
             {
-                BoardImage = board.Image,
-                Figures = figures,
-                CapturedFigures = new List<FigureViewModel>(),
-                MoveHistory = new List<SquareViewModel>(),
+                BoardImage = board[0].Image,
+                Figures = figures.Select(entry =>
+                {
+                    return new FigureViewModel
+                    {
+                        Id = entry.Id,
+                        Name = entry.Type.ToString(),
+                        Color = entry.Color.ToString(),
+                        IsMoved = false,
+                        Image = entry.Image,
+                        PositionX = entry.PositionX,
+                        PositionY = entry.PositionY,
+                    };
+                })
+                .ToList(),
             };
 
             return viewModel;
@@ -60,7 +56,7 @@
 
             if (success)
             {
-                var model = await this.context.Squares
+                var model = this.context.Squares
                     .Where(s => s.PositionX == toX && s.PositionY == toY)
                     .Select(s => new SquareViewModel
                     {
@@ -69,12 +65,18 @@
                         Coordinate = s.Coordinate,
                         FigureImage = currentPiece.Image,
                     })
-                    .FirstOrDefaultAsync();
+                    .FirstOrDefault();
 
                 board.MoveHistory.Add(model);
             }
 
             return success;
+        }
+
+        public async Task<bool> IsCheck(BoardViewModel board, string color)
+        {
+            var engine = new EngineService(board);
+            return await engine.IsCheck(color);
         }
     }
 }

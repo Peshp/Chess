@@ -5,12 +5,11 @@
 
     public class BoardViewModel
     {
+        public List<FigureViewModel> Figures { get; set; } = new();
 
-        public ICollection<FigureViewModel> Figures { get; set; }
+        public List<FigureViewModel> CapturedFigures { get; set; } = new();
 
-        public ICollection<FigureViewModel> CapturedFigures { get; set; }
-
-        public ICollection<SquareViewModel> MoveHistory { get; set; }
+        public List<SquareViewModel> MoveHistory { get; set; } = new();
 
         public string BoardImage { get; set; }
 

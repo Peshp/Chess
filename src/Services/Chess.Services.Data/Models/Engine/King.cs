@@ -5,13 +5,31 @@
 
     using Chess.Web.ViewModels.Chess;
 
+    /// <summary>
+    /// Represents the King piece and its movement validation logic.
+    /// </summary>
     public class King : IMoveValidator
     {
+        /// <summary>
+        /// Determines whether the move is a castle attempt.
+        /// </summary>
+        /// <param name="king">The king piece attempting the move.</param>
+        /// <param name="toX">The target X-coordinate.</param>
+        /// <param name="toY">The target Y-coordinate.</param>
+        /// <returns>True if the move is a castle attempt; otherwise, false.</returns>
         public bool IsCastleAttempt(FigureViewModel king, double toX, double toY)
         {
             return Math.Abs(king.PositionY - toY) == 0 && Math.Abs(king.PositionX - toX) == 25;
         }
 
+        /// <summary>
+        /// Determines whether the king can perform a castle move.
+        /// </summary>
+        /// <param name="king">The king piece attempting the castle.</param>
+        /// <param name="board">The current state of the chessboard.</param>
+        /// <param name="toX">The target X-coordinate.</param>
+        /// <param name="toY">The target Y-coordinate.</param>
+        /// <returns>True if the castle move is valid; otherwise, false.</returns>
         public bool CanCastle(FigureViewModel king, BoardViewModel board, double toX, double toY)
         {
             if (king.IsMoved)
@@ -46,6 +64,14 @@
             return true;
         }
 
+        /// <summary>
+        /// Validates whether the specified move is valid for the king piece.
+        /// </summary>
+        /// <param name="piece">The king piece attempting the move.</param>
+        /// <param name="toX">The target X-coordinate.</param>
+        /// <param name="toY">The target Y-coordinate.</param>
+        /// <param name="board">The current state of the chessboard.</param>
+        /// <returns>True if the move is valid; otherwise, false.</returns>
         public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
         {
             double dx = Math.Abs(piece.PositionX - toX);
