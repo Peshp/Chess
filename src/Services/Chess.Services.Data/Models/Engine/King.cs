@@ -10,68 +10,77 @@
     /// </summary>
     public class King : IMoveValidator
     {
-        /// <summary>
-        /// Determines whether the move is a castle attempt.
-        /// </summary>
-        /// <param name="king">The king piece attempting the move.</param>
-        /// <param name="toX">The target X-coordinate.</param>
-        /// <param name="toY">The target Y-coordinate.</param>
-        /// <returns>True if the move is a castle attempt; otherwise, false.</returns>
         public bool IsCastleAttempt(FigureViewModel king, double toX, double toY)
         {
-            return Math.Abs(king.PositionY - toY) == 0 && Math.Abs(king.PositionX - toX) == 25;
+            return Math.Abs(king.PositionX - toX) == 25 && king.PositionY == toY;
         }
 
-        /// <summary>
-        /// Determines whether the king can perform a castle move.
-        /// </summary>
-        /// <param name="king">The king piece attempting the castle.</param>
-        /// <param name="board">The current state of the chessboard.</param>
-        /// <param name="toX">The target X-coordinate.</param>
-        /// <param name="toY">The target Y-coordinate.</param>
-        /// <returns>True if the castle move is valid; otherwise, false.</returns>
         public bool CanCastle(FigureViewModel king, BoardViewModel board, double toX, double toY)
         {
             if (king.IsMoved)
-            {
                 return false;
-            }
 
             double direction = toX > king.PositionX ? 1 : -1;
             double rookX = direction == 1 ? 87.5 : 0;
             double rookY = king.PositionY;
 
             var rook = board.Figures.FirstOrDefault(f =>
-                f.PositionX == rookX && f.PositionY == rookY && f.Color == king.Color && f.Name == "Rook");
+                Math.Abs(f.PositionX - rookX) < 0.1 &&
+                Math.Abs(f.PositionY - rookY) < 0.1 &&
+                f.Color == king.Color &&
+                f.Name == "Rook"
+            );
             if (rook == null || rook.IsMoved)
-            {
                 return false;
-            }
 
+            // Check path is clear
             double step = 12.5 * direction;
             double x = king.PositionX + step;
-
             while (x != rookX)
             {
-                if (board.Figures.Any(f => f.PositionX == x && f.PositionY == king.PositionY))
-                {
+                if (board.Figures.Any(f => Math.Abs(f.PositionX - x) < 0.1 && Math.Abs(f.PositionY - king.PositionY) < 0.1))
                     return false;
-                }
-
                 x += step;
+            }
+
+            for (int i = 0; i <= 2; i++)
+            {
+                double checkX = king.PositionX + step * i;
+                double originalX = king.PositionX;
+                king.PositionX = checkX;
+                king.PositionX = originalX;
             }
 
             return true;
         }
 
-        /// <summary>
-        /// Validates whether the specified move is valid for the king piece.
-        /// </summary>
-        /// <param name="piece">The king piece attempting the move.</param>
-        /// <param name="toX">The target X-coordinate.</param>
-        /// <param name="toY">The target Y-coordinate.</param>
-        /// <param name="board">The current state of the chessboard.</param>
-        /// <returns>True if the move is valid; otherwise, false.</returns>
+        public void DoCastleMove(FigureViewModel king, BoardViewModel board, double toX, double toY)
+        {
+            double direction = toX > king.PositionX ? 1 : -1;
+            double rookStartX = direction == 1 ? 87.5 : 0;
+            double rookY = king.PositionY;
+
+            var rook = board.Figures.FirstOrDefault(f =>
+                Math.Abs(f.PositionX - rookStartX) < 0.1 &&
+                Math.Abs(f.PositionY - rookY) < 0.1 &&
+                f.Color == king.Color &&
+                f.Name == "Rook"
+            );
+
+            king.IsMoved = true;
+            king.PositionX = toX;
+            king.PositionY = toY;
+
+            if (rook != null)
+            {
+                rook.IsMoved = true;
+                if (direction == 1)
+                    rook.PositionX = toX - 12.5;
+                else
+                    rook.PositionX = toX + 12.5;
+            }
+        }
+
         public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
         {
             double dx = Math.Abs(piece.PositionX - toX);
@@ -86,10 +95,8 @@
                 return target == null || target.Color != piece.Color;
             }
 
-            if (this.IsCastleAttempt(piece, toX, toY))
-            {
-                return this.CanCastle(piece, board, toX, toY);
-            }
+            if (IsCastleAttempt(piece, toX, toY))
+                return CanCastle(piece, board, toX, toY);
 
             return false;
         }
