@@ -72,11 +72,5 @@
 
             return success;
         }
-
-        public async Task<bool> IsCheck(BoardViewModel board, string color)
-        {
-            var engine = new EngineService(board);
-            return await engine.IsCheck(color);
-        }
     }
 }
