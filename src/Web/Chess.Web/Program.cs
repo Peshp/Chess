@@ -1,14 +1,16 @@
 ﻿namespace Chess.Web
 {
+    using System;
+
     using Chess.Data;
     using Chess.Data.Common;
     using Chess.Data.Common.Repositories;
     using Chess.Data.Models;
     using Chess.Data.Repositories;
     using Chess.Data.Seeding;
-    using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Services.Services;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
@@ -17,7 +19,6 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
-    using System;
 
     public class Program
     {
@@ -36,8 +37,6 @@
             builder.Services.AddSession();
 
             builder.Services.AddScoped<IGameService, GameService>();
-            builder.Services.AddScoped<ICheckService, CheckService>();
-            builder.Services.AddScoped<ICastleService, CastleService>();
 
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
