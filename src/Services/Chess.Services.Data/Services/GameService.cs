@@ -1,14 +1,14 @@
 ﻿namespace Chess.Services.Services
 {
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     using Chess.Data;
     using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Web.ViewModels.Chess;
     using Microsoft.EntityFrameworkCore;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class GameService : IGameService
     {
@@ -46,18 +46,15 @@
             return viewModel;
         }
 
-        public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
+        public async Task AddToMoveHistory(BoardViewModel board, int pieceId, double toX, double toY)
         {
-            EngineService engine = new EngineService(board);
-            bool success = await engine.TryMove(pieceId, toX, toY);
+            FigureViewModel currentPiece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
 
-            FigureViewModel currentPiece = board.Figures
-                .FirstOrDefault(f => f.Id == pieceId);
+            int xIndex = (int)Math.Round(toX / 12.5);
+            int yIndex = (int)Math.Round(toY / 12.5);
 
-            if (success)
-            {
-                var model = this.context.Squares
-                    .Where(s => s.PositionX == toX && s.PositionY == toY)
+            var model = await this.context.Squares
+                    .Where(s => s.PositionX == xIndex && s.PositionY == yIndex)
                     .Select(s => new SquareViewModel
                     {
                         PositionX = s.PositionX,
@@ -65,18 +62,12 @@
                         Coordinate = s.Coordinate,
                         FigureImage = currentPiece.Image,
                     })
-                    .FirstOrDefault();
+                    .FirstOrDefaultAsync();
 
+            if (model != null) 
+            {
                 board.MoveHistory.Add(model);
             }
-
-            return success;
-        }
-
-        public async Task<bool> IsCheck(BoardViewModel board, string color)
-        {
-            var engine = new EngineService(board);
-            return await engine.IsCheck(color);
         }
     }
 }
