@@ -8,7 +8,6 @@
     using Chess.Data.Models;
     using Chess.Data.Repositories;
     using Chess.Data.Seeding;
-    using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Services.Services;
 
@@ -38,9 +37,6 @@
             builder.Services.AddSession();
 
             builder.Services.AddScoped<IGameService, GameService>();
-            builder.Services.AddScoped<IEngineService, EngineService>();
-            builder.Services.AddScoped<ICheckService, CheckService>();
-            builder.Services.AddScoped<ICastleService, CastleService>();
 
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();

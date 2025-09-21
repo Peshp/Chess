@@ -46,12 +46,17 @@
             return viewModel;
         }
 
-        public async Task AddToMoveHistory(BoardViewModel board, int pieceId, double toX, double toY)
+        public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
         {
+            EngineService engine = new EngineService(board);
+            bool success = await engine.TryMove(pieceId, toX, toY);
+
             FigureViewModel currentPiece = board.Figures
                 .FirstOrDefault(f => f.Id == pieceId);
 
-            var model = this.context.Squares
+            if (success)
+            {
+                var model = this.context.Squares
                     .Where(s => s.PositionX == toX && s.PositionY == toY)
                     .Select(s => new SquareViewModel
                     {
@@ -62,7 +67,16 @@
                     })
                     .FirstOrDefault();
 
-            board.MoveHistory.Add(model);
+                board.MoveHistory.Add(model);
+            }
+
+            return success;
+        }
+
+        public async Task<bool> IsCheck(BoardViewModel board, string color)
+        {
+            var engine = new EngineService(board);
+            return await engine.IsCheck(color);
         }
     }
 }

@@ -4,15 +4,13 @@
     const moveListDiv = document.getElementById('move-history-list');
     let selectedPieceId = null;
 
-    function bindPieceEvents() {
+    function bindDragEvents() {
         board.querySelectorAll('.figure-img').forEach(piece => {
             piece.setAttribute('draggable', true);
-
-            piece.addEventListener('dragstart', event => {
+            piece.addEventListener('dragstart', (event) => {
                 event.dataTransfer.setData("pieceId", event.target.id);
             });
-
-            piece.addEventListener('click', event => {
+            piece.addEventListener('click', (event) => {
                 board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
                 selectedPieceId = event.target.id;
                 event.target.classList.add('selected');
@@ -22,40 +20,37 @@
 
     function bindSquareClickEvents() {
         board.querySelectorAll('.board-square').forEach(square => {
-            square.addEventListener('click', async event => {
-                if (!selectedPieceId) return;
+            square.addEventListener('click', async (event) => {
+                if (selectedPieceId) {
+                    const gridX = parseInt(square.getAttribute('data-x'));
+                    const gridY = parseInt(square.getAttribute('data-y'));
 
-                const gridX = parseInt(square.getAttribute('data-x'));
-                const gridY = parseInt(square.getAttribute('data-y'));
+                    const response = await fetch('/Game/MakeMove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            pieceId: selectedPieceId.replace("piece-", ""),
+                            toX: gridX,
+                            toY: gridY
+                        })
+                    });
 
-                await tryMove(selectedPieceId.replace("piece-", ""), gridX, gridY);
+                    const result = await response.json();
 
-                board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
-                selectedPieceId = null;
+                    if (result.success) {
+                        renderBoard(result.figures, result.captured);
+                        renderMoveHistory(result.moveHistory);
+                    }
+
+                    board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
+                    selectedPieceId = null;
+                }
             });
         });
     }
 
-    async function tryMove(pieceId, toX, toY) {
-        const response = await fetch('/Game/MakeMove', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pieceId, toX, toY })
-        });
-
-        const result = await response.json();
-
-        if (result.success || result.moveResult) {
-            renderBoard(result.figures, result.captured);
-            renderMoveHistory(result.moveHistory);
-        }
-    }
-
     function renderBoard(figures, captured) {
-        // Remove old pieces
         board.querySelectorAll('.figure-img').forEach(img => img.remove());
-
-        // Add updated pieces
         figures.forEach(f => {
             const img = document.createElement('img');
             img.src = `/images/pieces/${f.image}`;
@@ -69,9 +64,10 @@
             board.appendChild(img);
         });
 
-        bindPieceEvents();
+        bindDragEvents();
+        bindSquareClickEvents();
 
-        // Update captured
+        // update captured pieces
         if (capturedDiv) {
             capturedDiv.innerHTML = '';
             captured.forEach(f => {
@@ -86,6 +82,7 @@
 
     function renderMoveHistory(moveHistory) {
         if (moveHistory && moveHistory.length > 0) {
+            // Render as a table, two columns: white, black
             let html = `
                 <div class="table-responsive">
                   <table class="table table-sm align-middle mb-0">
@@ -120,7 +117,6 @@
         }
     }
 
-    // Drag and drop logic
     board.addEventListener('dragover', event => event.preventDefault());
 
     board.addEventListener('drop', async event => {
@@ -134,10 +130,24 @@
         const gridX = Math.floor(x / (boardRect.width / 8));
         const gridY = Math.floor(y / (boardRect.height / 8));
 
-        await tryMove(pieceId.replace("piece-", ""), gridX, gridY);
+        const response = await fetch('/Game/MakeMove', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                pieceId: pieceId.replace("piece-", ""),
+                toX: gridX,
+                toY: gridY
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            renderBoard(result.figures, result.captured);
+            renderMoveHistory(result.moveHistory);
+        }
     });
 
-    // Initial binding
-    bindPieceEvents();
+    bindDragEvents();
     bindSquareClickEvents();
 });
