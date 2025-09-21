@@ -1,23 +1,23 @@
 ﻿namespace Chess.Web.Controllers
 {
-    using System;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     using Chess.Services.Data.Models;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Services.Services;
     using Chess.Web.ViewModels.Chess;
-
     using Microsoft.AspNetCore.Mvc;
+    using System;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     public class GameController : BaseController
     {
         private readonly IGameService _gameService;
+        private readonly IEngineService engineService;
 
-        public GameController(IGameService gameService)
+        public GameController(IGameService gameService, IEngineService engineService)
         {
             _gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.engineService = engineService;
         }
 
         public async Task<IActionResult> Game()
@@ -38,13 +38,16 @@
             if (board == null)
                 return Json(new { success = false });
 
-            bool success = await _gameService.TryMove(board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
+            bool success = await this.engineService.TryMove
+                (board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
+            await this._gameService.AddToMoveHistory(board, request.PieceId, request.ToX, request.ToY);
 
             bool isCheck = false;
             if (success)
             {
                 HttpContext.Session.SetBoard(board);
-                isCheck = await _gameService.IsCheck(board, board.CurrentTurn);
+
+                isCheck = await this.engineService.IsCheck(board, board.CurrentTurn);
             }
 
             return Json(new
