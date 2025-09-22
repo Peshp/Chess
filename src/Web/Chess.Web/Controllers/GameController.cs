@@ -11,13 +11,15 @@
 
     public class GameController : BaseController
     {
-        private readonly IGameService _gameService;
+        private readonly IGameService gameService;
         private readonly IEngineService engineService;
+        private readonly ICastleService castleService;
 
-        public GameController(IGameService gameService, IEngineService engineService)
+        public GameController(IGameService gameService, IEngineService engineService, ICastleService castleService)
         {
-            _gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
             this.engineService = engineService;
+            this.castleService = castleService;
         }
 
         public async Task<IActionResult> Game()
@@ -25,7 +27,7 @@
             BoardViewModel board = HttpContext.Session.GetBoard();
             if (board == null)
             {
-                board = await _gameService.GetBoard();
+                board = await this.gameService.GetBoard();
                 HttpContext.Session.SetBoard(board);
             }
             return View(board);
@@ -38,9 +40,21 @@
             if (board == null)
                 return Json(new { success = false });
 
-            bool success = await this.engineService.TryMove
-                (board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
-            await this._gameService.AddToMoveHistory(board, request.PieceId, request.ToX, request.ToY);
+            double toX = request.ToX * 12.5;
+            double toY = request.ToY * 12.5;
+            var piece = await this.engineService.FindPieceById(board, request.PieceId);
+
+            bool success = false;
+
+            if(piece.Name == "King")
+            {
+                success = await this.castleService.Castle(board, request.PieceId, toX, toY);
+            }
+            else
+            {
+                success = await this.engineService.TryMove(board, request.PieceId, toX, toY);
+            }
+            await this.gameService.AddToMoveHistory(board, request.PieceId, request.ToX, request.ToY);
 
             bool isCheck = false;
             if (success)
