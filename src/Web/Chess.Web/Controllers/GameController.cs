@@ -1,25 +1,23 @@
 ﻿namespace Chess.Web.Controllers
 {
-    using Chess.Services.Data.Models;
-    using Chess.Services.Data.Services.Contracts;
-    using Chess.Services.Services;
-    using Chess.Web.ViewModels.Chess;
-    using Microsoft.AspNetCore.Mvc;
     using System;
     using System.Linq;
     using System.Threading.Tasks;
 
+    using Chess.Services.Data.Models;
+    using Chess.Services.Data.Services.Contracts;
+    using Chess.Services.Services;
+    using Chess.Web.ViewModels.Chess;
+
+    using Microsoft.AspNetCore.Mvc;
+
     public class GameController : BaseController
     {
-        private readonly IGameService gameService;
-        private readonly IEngineService engineService;
-        private readonly ICastleService castleService;
+        private readonly IGameService _gameService;
 
-        public GameController(IGameService gameService, IEngineService engineService, ICastleService castleService)
+        public GameController(IGameService gameService)
         {
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.engineService = engineService;
-            this.castleService = castleService;
+            _gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
         }
 
         public async Task<IActionResult> Game()
@@ -27,7 +25,7 @@
             BoardViewModel board = HttpContext.Session.GetBoard();
             if (board == null)
             {
-                board = await this.gameService.GetBoard();
+                board = await _gameService.GetBoard();
                 HttpContext.Session.SetBoard(board);
             }
             return View(board);
@@ -40,28 +38,13 @@
             if (board == null)
                 return Json(new { success = false });
 
-            double toX = request.ToX * 12.5;
-            double toY = request.ToY * 12.5;
-            var piece = await this.engineService.FindPieceById(board, request.PieceId);
-
-            bool success = false;
-
-            if(piece.Name == "King")
-            {
-                success = await this.castleService.Castle(board, request.PieceId, toX, toY);
-            }
-            else
-            {
-                success = await this.engineService.TryMove(board, request.PieceId, toX, toY);
-            }
-            await this.gameService.AddToMoveHistory(board, request.PieceId, request.ToX, request.ToY);
+            bool success = await _gameService.TryMove(board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
 
             bool isCheck = false;
             if (success)
             {
                 HttpContext.Session.SetBoard(board);
-
-                isCheck = await this.engineService.IsCheck(board, board.CurrentTurn);
+                isCheck = await _gameService.IsCheck(board, board.CurrentTurn);
             }
 
             return Json(new
