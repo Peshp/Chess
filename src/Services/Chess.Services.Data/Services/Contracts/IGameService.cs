@@ -8,8 +8,8 @@
     {
         Task<BoardViewModel> GetBoard();
 
-        Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
+        //void SaveBoard(BoardViewModel board);
 
-        Task<bool> IsCheck(BoardViewModel board, string color);
+        Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
     }
 }
