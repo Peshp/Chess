@@ -13,11 +13,13 @@
 
     public class GameController : BaseController
     {
-        private readonly IGameService _gameService;
+        private readonly IGameService gameService;
+        private readonly IEngineService engineService;
 
-        public GameController(IGameService gameService)
+        public GameController(IGameService gameService, IEngineService engineService)
         {
-            _gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
+            this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
         }
 
         public async Task<IActionResult> Game()
@@ -25,9 +27,10 @@
             BoardViewModel board = HttpContext.Session.GetBoard();
             if (board == null)
             {
-                board = await _gameService.GetBoard();
+                board = await gameService.GetBoard();
                 HttpContext.Session.SetBoard(board);
             }
+
             return View(board);
         }
 
@@ -38,19 +41,27 @@
             if (board == null)
                 return Json(new { success = false });
 
-            bool success = await _gameService.TryMove(board, request.PieceId, request.ToX * 12.5, request.ToY * 12.5);
+            double toX = request.ToX * 12.5;
+            double toY = request.ToY * 12.5;
+
+            bool success = await engineService.TryMove(board, request.PieceId, toX, toY);
 
             bool isCheck = false;
+            bool GameOver = false;
             if (success)
             {
+                await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
+
                 HttpContext.Session.SetBoard(board);
-                isCheck = await _gameService.IsCheck(board, board.CurrentTurn);
+                isCheck = await engineService.IsCheck(board, board.CurrentTurn);
+                GameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
             }
 
             return Json(new
             {
                 success,
                 isCheck,
+                GameOver,
                 currentTurn = board.CurrentTurn,
                 figures = board.Figures.Select(f => new
                 {
@@ -75,17 +86,11 @@
             });
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> EndGame()
-        //{
-        //    var board = HttpContext.Session.GetBoard();
-        //    if (board != null)
-        //    {
-        //        // TODO: Implement SaveBoard in GameService to persist to DB
-        //        await _gameService.SaveBoard(board);
-        //        HttpContext.Session.Remove("Board");
-        //    }
-        //    return Json(new { success = true });
-        //}
+        public async Task<IActionResult> EndGame([FromBody] Move request)
+        {
+            //TODO: Make SaveBoard method;
+
+            return View(); 
+        }
     }
 }
