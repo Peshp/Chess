@@ -5,6 +5,8 @@
 
     public class BoardViewModel
     {
+        public int Id { get; set; }
+
         public List<FigureViewModel> Figures { get; set; } = new();
 
         public List<FigureViewModel> CapturedFigures { get; set; } = new();
