@@ -8,7 +8,7 @@
     {
         Task<BoardViewModel> GetBoard();
 
-        //void SaveBoard(BoardViewModel board);
+        Task SaveBoard(BoardViewModel board);
 
         Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
     }
