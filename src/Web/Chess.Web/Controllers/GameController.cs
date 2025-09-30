@@ -88,9 +88,10 @@
 
         public async Task<IActionResult> EndGame([FromBody] Move request)
         {
-            //TODO: Make SaveBoard method;
+            BoardViewModel board = this.HttpContext.Session.GetBoard();
+            await gameService.SaveBoard(board);
 
-            return View(); 
+            return View();
         }
     }
 }
