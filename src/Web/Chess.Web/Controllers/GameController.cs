@@ -86,7 +86,7 @@
             });
         }
 
-        public async Task<IActionResult> EndGame([FromBody] Move request)
+        public async Task<IActionResult> EndGame()
         {
             BoardViewModel board = this.HttpContext.Session.GetBoard();
             await gameService.SaveBoard(board);
