@@ -26,6 +26,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
+                window.location.href = '/Game/EndGame';
             }
         }
     }
