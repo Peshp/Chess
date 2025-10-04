@@ -13,13 +13,24 @@
 
     public class GameController : BaseController
     {
-        private readonly IGameService gameService;
         private readonly IEngineService engineService;
+        private readonly IMoveService moveService;
+        private readonly ICheckService checkService;
+        private readonly ICastleService castleService;
+        private readonly IGameService gameService; // for move history etc.
 
-        public GameController(IGameService gameService, IEngineService engineService)
+        public GameController(
+            IEngineService engineService,
+            IMoveService moveService,
+            ICheckService checkService,
+            ICastleService castleService,
+            IGameService gameService)
         {
-            this.gameService = gameService ?? throw new ArgumentNullException(nameof(gameService));
-            this.engineService = engineService ?? throw new ArgumentNullException(nameof(engineService));
+            this.engineService = engineService;
+            this.moveService = moveService;
+            this.checkService = checkService;
+            this.castleService = castleService;
+            this.gameService = gameService;
         }
 
         public async Task<IActionResult> Game()
@@ -47,21 +58,22 @@
             bool success = await engineService.TryMove(board, request.PieceId, toX, toY);
 
             bool isCheck = false;
-            bool GameOver = false;
+            bool gameOver = false;
             if (success)
             {
                 await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
 
                 HttpContext.Session.SetBoard(board);
-                isCheck = await engineService.IsCheck(board, board.CurrentTurn);
-                GameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+
+                isCheck = await checkService.IsCheck(board, board.CurrentTurn);
+                gameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
             }
 
             return Json(new
             {
                 success,
                 isCheck,
-                GameOver,
+                gameOver,
                 currentTurn = board.CurrentTurn,
                 figures = board.Figures.Select(f => new
                 {
