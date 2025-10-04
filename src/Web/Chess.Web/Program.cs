@@ -11,7 +11,7 @@
     using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Services.Services;
-
+    using Chess.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Identity;
@@ -37,8 +37,7 @@
 
             builder.Services.AddSession();
 
-            builder.Services.AddScoped<IGameService, GameService>();
-            builder.Services.AddScoped<IEngineService, EngineService>();
+            builder.Services.AddApplicationService(typeof(IGameService));
 
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
