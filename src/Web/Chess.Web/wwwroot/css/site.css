@@ -1,7 +1,4 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
+﻿a.navbar-brand {
     white-space: normal;
     text-align: center;
     word-break: break-all;
@@ -24,16 +21,32 @@ a {
     border-color: #1861ac;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
-html {
-    font-size: 14px;
+/* Loyalty color for page background */
+body {
+    margin-bottom: 60px; /* Margin bottom by footer height */
+    background-color: #161512 !important; /* Loyalty background color for every page */
+    color: #fff !important; /* Ensures readable text on dark background */
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
+/* Loyalty color for header/navbar */
+.navbar-loyalty {
+    background-color: #161512 !important;
+}
+
+    .navbar-loyalty .navbar-brand,
+    .navbar-loyalty .nav-link {
+        color: #fff !important; /* White text for contrast */
     }
+
+/* Loyalty color for footer */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #161512 !important;
+    color: #fff !important;
 }
 
 .border-top {
@@ -56,19 +69,13 @@ button.accept-policy {
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
+    font-size: 14px;
     position: relative;
     min-height: 100%;
 }
 
-body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
-}
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px; /* Vertically center the text there */
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
 }
