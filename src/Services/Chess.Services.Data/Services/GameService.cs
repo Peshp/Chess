@@ -5,6 +5,7 @@
     using System.Threading.Tasks;
 
     using Chess.Data;
+    using Chess.Data.Models;
     using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Web.ViewModels.Chess;
@@ -21,7 +22,7 @@
 
         public async Task<BoardViewModel> GetBoard()
         {
-            var board = await this.context.Boards.Where(b => b.Id == 1).ToArrayAsync();
+            var board = await this.context.Boards.ToArrayAsync();
             var figures = await this.context.Figures.ToArrayAsync();
 
             BoardViewModel viewModel = new BoardViewModel
@@ -63,6 +64,26 @@
                     .FirstOrDefault();
 
             board.MoveHistory.Add(model);
+        }
+
+        public async Task SaveBoard(BoardViewModel model)
+        {
+            Board board = new Board()
+            {
+                Id = model.Id,
+                Image = model.BoardImage,
+                Movehistory = model.MoveHistory.Select(m => new Square
+                {
+                    PositionX = m.PositionX,
+                    PositionY = m.PositionY,
+                    Coordinate = m.Coordinate,
+                    BoardId = model.Id,
+                })
+                .ToList(),
+            };
+
+            await context.Boards.AddAsync(board);
+            await context.SaveChangesAsync();
         }
     }
 }

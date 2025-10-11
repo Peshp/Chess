@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chess.Data.Migrations
 {
     [DbContext(typeof(ChessDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    partial class ChessDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -477,6 +477,9 @@ namespace Chess.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BoardId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Coordinate")
                         .IsRequired()
                         .HasMaxLength(2)
@@ -490,12 +493,15 @@ namespace Chess.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Square");
+                    b.HasIndex("BoardId");
+
+                    b.ToTable("Squares");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
+                            BoardId = 1,
                             Coordinate = "a8",
                             PositionX = 0.0,
                             PositionY = 0.0
@@ -503,6 +509,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 2,
+                            BoardId = 1,
                             Coordinate = "b8",
                             PositionX = 12.5,
                             PositionY = 0.0
@@ -510,6 +517,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 3,
+                            BoardId = 1,
                             Coordinate = "c8",
                             PositionX = 25.0,
                             PositionY = 0.0
@@ -517,6 +525,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 4,
+                            BoardId = 1,
                             Coordinate = "d8",
                             PositionX = 37.5,
                             PositionY = 0.0
@@ -524,6 +533,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 5,
+                            BoardId = 1,
                             Coordinate = "e8",
                             PositionX = 50.0,
                             PositionY = 0.0
@@ -531,6 +541,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 6,
+                            BoardId = 1,
                             Coordinate = "f8",
                             PositionX = 62.5,
                             PositionY = 0.0
@@ -538,6 +549,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 7,
+                            BoardId = 1,
                             Coordinate = "g8",
                             PositionX = 75.0,
                             PositionY = 0.0
@@ -545,6 +557,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 8,
+                            BoardId = 1,
                             Coordinate = "h8",
                             PositionX = 87.5,
                             PositionY = 0.0
@@ -552,6 +565,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 9,
+                            BoardId = 1,
                             Coordinate = "a7",
                             PositionX = 0.0,
                             PositionY = 12.5
@@ -559,6 +573,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 10,
+                            BoardId = 1,
                             Coordinate = "b7",
                             PositionX = 12.5,
                             PositionY = 12.5
@@ -566,6 +581,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 11,
+                            BoardId = 1,
                             Coordinate = "c7",
                             PositionX = 25.0,
                             PositionY = 12.5
@@ -573,6 +589,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 12,
+                            BoardId = 1,
                             Coordinate = "d7",
                             PositionX = 37.5,
                             PositionY = 12.5
@@ -580,6 +597,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 13,
+                            BoardId = 1,
                             Coordinate = "e7",
                             PositionX = 50.0,
                             PositionY = 12.5
@@ -587,6 +605,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 14,
+                            BoardId = 1,
                             Coordinate = "f7",
                             PositionX = 62.5,
                             PositionY = 12.5
@@ -594,6 +613,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 15,
+                            BoardId = 1,
                             Coordinate = "g7",
                             PositionX = 75.0,
                             PositionY = 12.5
@@ -601,6 +621,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 16,
+                            BoardId = 1,
                             Coordinate = "h7",
                             PositionX = 87.5,
                             PositionY = 12.5
@@ -608,6 +629,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 17,
+                            BoardId = 1,
                             Coordinate = "a6",
                             PositionX = 0.0,
                             PositionY = 25.0
@@ -615,6 +637,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 18,
+                            BoardId = 1,
                             Coordinate = "b6",
                             PositionX = 12.5,
                             PositionY = 25.0
@@ -622,6 +645,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 19,
+                            BoardId = 1,
                             Coordinate = "c6",
                             PositionX = 25.0,
                             PositionY = 25.0
@@ -629,6 +653,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 20,
+                            BoardId = 1,
                             Coordinate = "d6",
                             PositionX = 37.5,
                             PositionY = 25.0
@@ -636,6 +661,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 21,
+                            BoardId = 1,
                             Coordinate = "e6",
                             PositionX = 50.0,
                             PositionY = 25.0
@@ -643,6 +669,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 22,
+                            BoardId = 1,
                             Coordinate = "f6",
                             PositionX = 62.5,
                             PositionY = 25.0
@@ -650,6 +677,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 23,
+                            BoardId = 1,
                             Coordinate = "g6",
                             PositionX = 75.0,
                             PositionY = 25.0
@@ -657,6 +685,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 24,
+                            BoardId = 1,
                             Coordinate = "h6",
                             PositionX = 87.5,
                             PositionY = 25.0
@@ -664,6 +693,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 25,
+                            BoardId = 1,
                             Coordinate = "a5",
                             PositionX = 0.0,
                             PositionY = 37.5
@@ -671,6 +701,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 26,
+                            BoardId = 1,
                             Coordinate = "b5",
                             PositionX = 12.5,
                             PositionY = 37.5
@@ -678,6 +709,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 27,
+                            BoardId = 1,
                             Coordinate = "c5",
                             PositionX = 25.0,
                             PositionY = 37.5
@@ -685,6 +717,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 28,
+                            BoardId = 1,
                             Coordinate = "d5",
                             PositionX = 37.5,
                             PositionY = 37.5
@@ -692,6 +725,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 29,
+                            BoardId = 1,
                             Coordinate = "e5",
                             PositionX = 50.0,
                             PositionY = 37.5
@@ -699,6 +733,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 30,
+                            BoardId = 1,
                             Coordinate = "f5",
                             PositionX = 62.5,
                             PositionY = 37.5
@@ -706,6 +741,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 31,
+                            BoardId = 1,
                             Coordinate = "g5",
                             PositionX = 75.0,
                             PositionY = 37.5
@@ -713,6 +749,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 32,
+                            BoardId = 1,
                             Coordinate = "h5",
                             PositionX = 87.5,
                             PositionY = 37.5
@@ -720,6 +757,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 33,
+                            BoardId = 1,
                             Coordinate = "a4",
                             PositionX = 0.0,
                             PositionY = 50.0
@@ -727,6 +765,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 34,
+                            BoardId = 1,
                             Coordinate = "b4",
                             PositionX = 12.5,
                             PositionY = 50.0
@@ -734,6 +773,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 35,
+                            BoardId = 1,
                             Coordinate = "c4",
                             PositionX = 25.0,
                             PositionY = 50.0
@@ -741,6 +781,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 36,
+                            BoardId = 1,
                             Coordinate = "d4",
                             PositionX = 37.5,
                             PositionY = 50.0
@@ -748,6 +789,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 37,
+                            BoardId = 1,
                             Coordinate = "e4",
                             PositionX = 50.0,
                             PositionY = 50.0
@@ -755,6 +797,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 38,
+                            BoardId = 1,
                             Coordinate = "f4",
                             PositionX = 62.5,
                             PositionY = 50.0
@@ -762,6 +805,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 39,
+                            BoardId = 1,
                             Coordinate = "g4",
                             PositionX = 75.0,
                             PositionY = 50.0
@@ -769,6 +813,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 40,
+                            BoardId = 1,
                             Coordinate = "h4",
                             PositionX = 87.5,
                             PositionY = 50.0
@@ -776,6 +821,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 41,
+                            BoardId = 1,
                             Coordinate = "a3",
                             PositionX = 0.0,
                             PositionY = 62.5
@@ -783,6 +829,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 42,
+                            BoardId = 1,
                             Coordinate = "b3",
                             PositionX = 12.5,
                             PositionY = 62.5
@@ -790,6 +837,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 43,
+                            BoardId = 1,
                             Coordinate = "c3",
                             PositionX = 25.0,
                             PositionY = 62.5
@@ -797,6 +845,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 44,
+                            BoardId = 1,
                             Coordinate = "d3",
                             PositionX = 37.5,
                             PositionY = 62.5
@@ -804,6 +853,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 45,
+                            BoardId = 1,
                             Coordinate = "e3",
                             PositionX = 50.0,
                             PositionY = 62.5
@@ -811,6 +861,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 46,
+                            BoardId = 1,
                             Coordinate = "f3",
                             PositionX = 62.5,
                             PositionY = 62.5
@@ -818,6 +869,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 47,
+                            BoardId = 1,
                             Coordinate = "g3",
                             PositionX = 75.0,
                             PositionY = 62.5
@@ -825,6 +877,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 48,
+                            BoardId = 1,
                             Coordinate = "h3",
                             PositionX = 87.5,
                             PositionY = 62.5
@@ -832,6 +885,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 49,
+                            BoardId = 1,
                             Coordinate = "a2",
                             PositionX = 0.0,
                             PositionY = 75.0
@@ -839,6 +893,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 50,
+                            BoardId = 1,
                             Coordinate = "b2",
                             PositionX = 12.5,
                             PositionY = 75.0
@@ -846,6 +901,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 51,
+                            BoardId = 1,
                             Coordinate = "c2",
                             PositionX = 25.0,
                             PositionY = 75.0
@@ -853,6 +909,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 52,
+                            BoardId = 1,
                             Coordinate = "d2",
                             PositionX = 37.5,
                             PositionY = 75.0
@@ -860,6 +917,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 53,
+                            BoardId = 1,
                             Coordinate = "e2",
                             PositionX = 50.0,
                             PositionY = 75.0
@@ -867,6 +925,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 54,
+                            BoardId = 1,
                             Coordinate = "f2",
                             PositionX = 62.5,
                             PositionY = 75.0
@@ -874,6 +933,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 55,
+                            BoardId = 1,
                             Coordinate = "g2",
                             PositionX = 75.0,
                             PositionY = 75.0
@@ -881,6 +941,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 56,
+                            BoardId = 1,
                             Coordinate = "h2",
                             PositionX = 87.5,
                             PositionY = 75.0
@@ -888,6 +949,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 57,
+                            BoardId = 1,
                             Coordinate = "a1",
                             PositionX = 0.0,
                             PositionY = 87.5
@@ -895,6 +957,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 58,
+                            BoardId = 1,
                             Coordinate = "b1",
                             PositionX = 12.5,
                             PositionY = 87.5
@@ -902,6 +965,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 59,
+                            BoardId = 1,
                             Coordinate = "c1",
                             PositionX = 25.0,
                             PositionY = 87.5
@@ -909,6 +973,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 60,
+                            BoardId = 1,
                             Coordinate = "d1",
                             PositionX = 37.5,
                             PositionY = 87.5
@@ -916,6 +981,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 61,
+                            BoardId = 1,
                             Coordinate = "e1",
                             PositionX = 50.0,
                             PositionY = 87.5
@@ -923,6 +989,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 62,
+                            BoardId = 1,
                             Coordinate = "f1",
                             PositionX = 62.5,
                             PositionY = 87.5
@@ -930,6 +997,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 63,
+                            BoardId = 1,
                             Coordinate = "g1",
                             PositionX = 75.0,
                             PositionY = 87.5
@@ -937,6 +1005,7 @@ namespace Chess.Data.Migrations
                         new
                         {
                             Id = 64,
+                            BoardId = 1,
                             Coordinate = "h1",
                             PositionX = 87.5,
                             PositionY = 87.5
@@ -1087,6 +1156,17 @@ namespace Chess.Data.Migrations
                     b.Navigation("Board");
                 });
 
+            modelBuilder.Entity("Chess.Data.Models.Square", b =>
+                {
+                    b.HasOne("Chess.Data.Models.Board", "Board")
+                        .WithMany("Movehistory")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -1141,6 +1221,8 @@ namespace Chess.Data.Migrations
             modelBuilder.Entity("Chess.Data.Models.Board", b =>
                 {
                     b.Navigation("Figures");
+
+                    b.Navigation("Movehistory");
                 });
 #pragma warning restore 612, 618
         }

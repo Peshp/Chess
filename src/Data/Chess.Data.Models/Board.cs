@@ -14,5 +14,7 @@
         public string Image { get; set; } = string.Empty;
 
         public ICollection<Figure> Figures { get; set; }
+
+        public ICollection<Square> Movehistory { get; set; }
     }
 }

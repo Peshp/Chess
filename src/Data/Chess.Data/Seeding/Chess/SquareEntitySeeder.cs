@@ -35,7 +35,8 @@
                             Id = id++,
                             PositionX = positionX,
                             PositionY = positionY,
-                            Coordinate = coordinate
+                            Coordinate = coordinate,
+                            BoardId = 1,
                         }
                     );
                 }

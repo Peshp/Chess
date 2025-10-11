@@ -48,3 +48,24 @@
     border-radius: 5px;
     margin-right: 3px;
 }
+
+.card.bg-dark,
+.card.move-history-panel {
+    background-color: #33312e !important;
+    color: #fff !important;
+}
+
+.card-header {
+    background-color: #33312e !important;
+    color: #fff !important;
+}
+
+.card-body {
+    background-color: #33312e !important;
+    color: #fff !important;
+}
+
+.move-history-panel th,
+.move-history-panel td {
+    color: #fff !important;
+}
