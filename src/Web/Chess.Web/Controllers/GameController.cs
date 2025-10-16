@@ -17,7 +17,7 @@
         private readonly IMoveService moveService;
         private readonly ICheckService checkService;
         private readonly ICastleService castleService;
-        private readonly IGameService gameService; // for move history etc.
+        private readonly IGameService gameService;
 
         public GameController(
             IEngineService engineService,
