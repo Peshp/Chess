@@ -1,0 +1,47 @@
+﻿@model BoardViewModel
+
+<div class="card move-history-panel shadow-sm" style="min-width:260px;max-width:340px;">
+    <div class="card-header py-2">
+        <span class="h6 mb-0">Move History</span>
+    </div>
+    <div class="card-body move-history-list px-2 py-2" id="move-history-list">
+        @if (Model.MoveHistory != null && Model.MoveHistory.Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-start" style="width:45%">White</th>
+                            <th class="text-end" style="width:45%">Black</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (int i = 0; i < Model.MoveHistory.Count; i += 2)
+                        {
+                            <tr>
+                                <td class="text-start">
+                                    @if (Model.MoveHistory[i] != null)
+                                    {
+                                        <img src="~/images/pieces/@Model.MoveHistory[i].FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;" />
+                                        @Model.MoveHistory[i].Coordinate
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    @if (i + 1 < Model.MoveHistory.Count && Model.MoveHistory[i + 1] != null)
+                                    {
+                                        <img src="~/images/pieces/@Model.MoveHistory[i + 1].FigureImage" alt="" style="width:20px;height:20px;vertical-align:middle;margin-left:2px;" />
+                                        @Model.MoveHistory[i + 1].Coordinate
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="text-muted">No moves yet.</div>
+        }
+    </div>
+</div>
