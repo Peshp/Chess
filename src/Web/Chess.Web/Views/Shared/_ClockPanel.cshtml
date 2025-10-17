@@ -1,0 +1,11 @@
+﻿@model ClockViewModel
+
+<div class="chess-clock-panel card text-center mb-3" style="background-color:#33312e;color:#fff;">
+    <div class="card-body p-2">
+        <span class="fw-bold">Clock</span>
+        <span class="ms-2">
+            @($"{Model.Minutes:D2}")
+            <span class="ms-1 text-muted">+@Model.Increment</span>
+        </span>
+    </div>
+</div>
