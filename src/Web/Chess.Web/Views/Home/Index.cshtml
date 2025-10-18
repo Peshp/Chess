@@ -1,38 +1,28 @@
-﻿@{
-    ViewData["Title"] = "Home";
-}
+﻿@model ClockViewModel
 
-<!-- Trigger Button -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal">
     Start game
 </button>
 
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Start a New Game</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <from asp-controller="Game" asp-action="Game" method="post">
+                <form asp-controller="Game" asp-action="Game" method="post" class="mb-3">
                     <label class="form-label mb-2">Time Control</label>
                     <div class="d-flex align-items-center gap-2">
-                        <input type="number" name="Minutes" class="form-control" style="width:80px;" min="0" max="59" placeholder="mm" aria-label="Minutes" required />
+                        <input type="number" name="Minutes" class="form-control" style="width:80px;" placeholder="mm" aria-label="Minutes" required />
                         <span>+</span>
                         <input type="number" name="Increment" class="form-control" style="width:80px;" min="0" max="60" placeholder="inc" aria-label="Increment" required />
                         <span>sec/move</span>
                     </div>
-                </from>
-                <form asp-controller="Game" asp-action="Game" method="post">
-                    <button type="submit" class="btn btn-primary btn-lg">
+                    <button type="submit" class="btn btn-primary btn-lg mt-3">
                         Start Game
                     </button>
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
