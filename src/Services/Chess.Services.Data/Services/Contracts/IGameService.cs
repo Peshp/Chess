@@ -6,7 +6,7 @@
 
     public interface IGameService
     {
-        Task<BoardViewModel> GetBoard();
+        Task<BoardViewModel> GetBoard(ClockViewModel model);
 
         Task SaveBoard(BoardViewModel board);
 
