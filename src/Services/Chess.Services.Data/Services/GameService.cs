@@ -20,7 +20,7 @@
             this.context = context;
         }
 
-        public async Task<BoardViewModel> GetBoard()
+        public async Task<BoardViewModel> GetBoard(ClockViewModel model)
         {
             var board = await this.context.Boards.ToArrayAsync();
             var figures = await this.context.Figures.ToArrayAsync();
@@ -28,6 +28,9 @@
             BoardViewModel viewModel = new BoardViewModel
             {
                 BoardImage = board[0].Image,
+                Clock = this.SetClock(model),
+                WhiteClock = SetClock(model),
+                BlackClock = SetClock(model),
                 Figures = figures.Select(entry =>
                 {
                     return new FigureViewModel
@@ -45,6 +48,22 @@
             };
 
             return viewModel;
+        }
+
+        private ClockViewModel SetClock(ClockViewModel model)
+        {
+            ClockViewModel clock = new ClockViewModel();
+            ClockViewModel whiteClock = new ClockViewModel();
+            ClockViewModel blackClock = new ClockViewModel();
+
+            clock.Minutes = model.Minutes;
+            clock.Increment = model.Increment;
+            whiteClock.Minutes = model.Minutes;
+            blackClock.Minutes = model.Minutes;
+            whiteClock.Increment = model.Increment;
+            blackClock.Increment = model.Increment;
+
+            return clock;
         }
 
         public async Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY)
