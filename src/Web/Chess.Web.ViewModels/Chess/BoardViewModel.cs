@@ -18,5 +18,11 @@
         public string CurrentTurn { get; set; } = "White";
 
         public bool IsCheck { get; set; }
+
+        public ClockViewModel WhiteClock { get; set; }
+
+        public ClockViewModel BlackClock { get; set; }
+
+        public ClockViewModel Clock { get; set; }
     }
 }
