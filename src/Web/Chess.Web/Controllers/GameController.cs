@@ -33,12 +33,12 @@
             this.gameService = gameService;
         }
 
-        public async Task<IActionResult> Game()
+        public async Task<IActionResult> Game(ClockViewModel clock)
         {
             BoardViewModel board = HttpContext.Session.GetBoard();
             if (board == null)
             {
-                board = await gameService.GetBoard();
+                board = await gameService.GetBoard(clock);
                 HttpContext.Session.SetBoard(board);
             }
 
