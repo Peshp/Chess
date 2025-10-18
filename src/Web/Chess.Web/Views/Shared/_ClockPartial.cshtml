@@ -1,0 +1,13 @@
+﻿@model ClockViewModel
+
+@{
+    var color = ViewBag.Color ?? "white";
+}
+<div class="clock-container mb-3 text-center" id="clock-@color"
+     data-minutes="@Model.Minutes"
+     data-increment="@Model.Increment">
+    <span class="clock-label">@color.ToUpper() Time:</span>
+    <span class="clock-value" id="clock-value-@color">
+        @Model.Minutes.ToString("D2"):@Model.Increment.ToString("D2")
+    </span>
+</div>
