@@ -11,36 +11,39 @@
         <div class="col-auto">
             <div class="d-flex flex-row align-items-start gap-4">
                 <div>
-                    @await Html.PartialAsync("_ClockPartial", Model.BlackClock, new ViewDataDictionary(ViewData) { { "Color", "black" } })
+                    @await Html.PartialAsync("_ClockPartial", Model.BlackClock,
+                         new ViewDataDictionary(ViewData){{"Color","black"}})
+
                     <div class="chess-board-container mb-3" id="chess-board">
-                        <img src="~/images/@Model.BoardImage" alt="Chess board" class="chess-board-background" />
+                        <img src="~/images/@Model.BoardImage"
+                             alt="Chess board" class="chess-board-background" />
                         @for (int y = 0; y < 8; y++)
                         {
                             for (int x = 0; x < 8; x++)
                             {
                                 <div class="board-square"
-                                     data-x="@x"
-                                     data-y="@y"
-                                     style="top:@(y * 12.5)%; left:@(x * 12.5)%;"></div>
+                                     data-x="@x" data-y="@y"
+                                     style="top:@(y*12.5)%;left:@(x*12.5)%;"></div>
                             }
                         }
-                        @foreach (var figure in Model.Figures)
+                        @foreach (var f in Model.Figures)
                         {
-                            <img src="~/images/pieces/@figure.Image"
-                                 alt="@figure.Name"
-                                 id="piece-@figure.Id"
-                                 class="figure-img"
-                                 data-name="@figure.Name"
-                                 data-color="@figure.Color"
-                                 draggable="true"
-                                 style="top:@figure.PositionY%; left:@figure.PositionX%;" />
+                            <img src="~/images/pieces/@f.Image"
+                                 alt="@f.Name" id="piece-@f.Id"
+                                 class="figure-img" draggable="true"
+                                 data-name="@f.Name" data-color="@f.Color"
+                                 style="top:@f.PositionY%;left:@f.PositionX%;" />
                         }
                     </div>
-                    @await Html.PartialAsync("_ClockPartial", Model.WhiteClock, new ViewDataDictionary(ViewData) { { "Color", "white" } })
 
-                    @await Html.PartialAsync("_CapturedPiecesPanel", Model)
+                    @await Html.PartialAsync("_ClockPartial", Model.WhiteClock,
+                         new ViewDataDictionary(ViewData){{"Color","white"}})
                 </div>
-                @await Html.PartialAsync("_MoveHistoryPanel", Model)
+
+                <div class="d-flex flex-column gap-3">
+                    @await Html.PartialAsync("_CapturedPiecesPanel", Model)
+                    @await Html.PartialAsync("_MoveHistoryPanel", Model)
+                </div>
             </div>
         </div>
     </div>
