@@ -35,6 +35,7 @@
 
         public async Task<IActionResult> Game(ClockViewModel clock)
         {
+            HttpContext.Session.Clear();
             BoardViewModel board = HttpContext.Session.GetBoard();
             if (board == null)
             {
