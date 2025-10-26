@@ -102,7 +102,7 @@ namespace Chess.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Boards");
+                    b.ToTable("Boards", (string)null);
 
                     b.HasData(
                         new
@@ -144,7 +144,7 @@ namespace Chess.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("Figures");
+                    b.ToTable("Figures", (string)null);
 
                     b.HasData(
                         new
@@ -495,7 +495,7 @@ namespace Chess.Data.Migrations
 
                     b.HasIndex("BoardId");
 
-                    b.ToTable("Squares");
+                    b.ToTable("Squares", (string)null);
 
                     b.HasData(
                         new
