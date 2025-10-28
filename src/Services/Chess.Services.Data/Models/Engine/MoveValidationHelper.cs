@@ -83,7 +83,7 @@ namespace Chess.Services.Data.Models.Engine
         /// <returns>True if the position is empty; otherwise, false.</returns>
         public static bool IsEmptySquare(double x, double y, BoardViewModel board)
         {
-            return !board.Figures.Any(f => f.PositionX == x && f.PositionY == y);
+            return board.Figures.FirstOrDefault(f => f.PositionX == x && f.PositionY == y) == null;
         }
     }
 }

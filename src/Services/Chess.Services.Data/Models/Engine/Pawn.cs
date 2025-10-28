@@ -30,10 +30,12 @@
                 }
             }
 
-            if (piece.PositionX == toX && piece.PositionY == startRow && piece.PositionY + direction * 2 == toY)
+            if (piece.PositionX == toX && piece.PositionY == startRow && piece.PositionY + (direction * 2) == toY)
             {
                 double intermediateY = piece.PositionY + direction;
-                if (MoveValidationHelper.IsEmptySquare(toX, intermediateY, board) && MoveValidationHelper.IsEmptySquare(toX, toY, board))
+                bool isIntermediateEmpty = MoveValidationHelper.IsEmptySquare(toX, intermediateY, board);
+                bool isTargetEmpty = MoveValidationHelper.IsEmptySquare(toX, toY, board);
+                if (isIntermediateEmpty && isTargetEmpty)
                 {
                     return true;
                 }
