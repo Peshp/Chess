@@ -82,8 +82,7 @@
 
             if (isOneStep && (isStraight || isDiagonal))
             {
-                var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
-                return target == null || target.Color != piece.Color;
+                return MoveValidationHelper.IsValidTarget(piece, toX, toY, board);
             }
 
             if (this.IsCastleAttempt(piece, toX, toY))

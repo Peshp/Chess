@@ -24,7 +24,7 @@
 
             if (piece.PositionX == toX && piece.PositionY + direction == toY)
             {
-                if (IsEmptySquare(toX, toY, board))
+                if (MoveValidationHelper.IsEmptySquare(toX, toY, board))
                 {
                     return true;
                 }
@@ -33,7 +33,7 @@
             if (piece.PositionX == toX && piece.PositionY == startRow && piece.PositionY + direction * 2 == toY)
             {
                 double intermediateY = piece.PositionY + direction;
-                if (this.IsEmptySquare(toX, intermediateY, board) && IsEmptySquare(toX, toY, board))
+                if (MoveValidationHelper.IsEmptySquare(toX, intermediateY, board) && MoveValidationHelper.IsEmptySquare(toX, toY, board))
                 {
                     return true;
                 }
@@ -50,26 +50,6 @@
             }
 
             return false;
-        }
-
-        /// <summary>
-        /// Checks if a specific square on the board is empty.
-        /// </summary>
-        /// <param name="x">The X-coordinate of the square.</param>
-        /// <param name="y">The Y-coordinate of the square.</param>
-        /// <param name="board">The current state of the chessboard.</param>
-        /// <returns>True if the square is empty; otherwise, false.</returns>
-        private bool IsEmptySquare(double x, double y, BoardViewModel board)
-        {
-            foreach (var f in board.Figures)
-            {
-                if (f.PositionX == x && f.PositionY == y)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }
