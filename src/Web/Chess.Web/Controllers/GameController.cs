@@ -10,6 +10,7 @@
     using Chess.Web.ViewModels.Chess;
 
     using Microsoft.AspNetCore.Mvc;
+    using Chess.Web.Infrastructure.Extensions;
 
     public class GameController : BaseController
     {
@@ -35,8 +36,15 @@
 
         public async Task<IActionResult> Game(ClockViewModel clock)
         {
+            string userId = string.Empty;
             HttpContext.Session.Clear();
             BoardViewModel board = HttpContext.Session.GetBoard();
+
+            if(User.Identity.IsAuthenticated)
+            {
+                userId = User.GetId();
+            }
+
             if (board == null)
             {
                 board = await gameService.GetBoard(clock);

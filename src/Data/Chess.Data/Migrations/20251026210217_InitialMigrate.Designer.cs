@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chess.Data.Migrations
 {
     [DbContext(typeof(ChessDbContext))]
-    [Migration("20250930140506_Initial")]
-    partial class Initial
+    [Migration("20251026210217_InitialMigrate")]
+    partial class InitialMigrate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

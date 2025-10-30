@@ -56,11 +56,6 @@
         @if (SignInManager.IsSignedIn(User))
         {
             <li>
-                <a class="dropdown-item" asp-area="" asp-controller="Account" asp-action="LogicPartial">
-                    <span class="me-2"><i class="bi bi-person"></i></span> Profile
-                </a>
-            </li>
-            <li>
                 <form class="dropdown-item p-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
                     <button type="submit" class="btn btn-link text-decoration-none text-light w-100 text-start" style="font-size:17px; padding:10px 33px;">
                         <span class="me-2"><i class="bi bi-power"></i></span> Logout

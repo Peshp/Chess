@@ -1,5 +1,6 @@
 ﻿namespace Chess.Services.Services
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
@@ -43,8 +44,7 @@
                         PositionX = entry.PositionX,
                         PositionY = entry.PositionY,
                     };
-                })
-                .ToList(),
+                }).ToList(),
             };
 
             return viewModel;
@@ -87,18 +87,9 @@
 
         public async Task SaveBoard(BoardViewModel model)
         {
-            Board board = new Board()
+            Board board = new Board
             {
-                Id = model.Id,
                 Image = model.BoardImage,
-                Movehistory = model.MoveHistory.Select(m => new Square
-                {
-                    PositionX = m.PositionX,
-                    PositionY = m.PositionY,
-                    Coordinate = m.Coordinate,
-                    BoardId = model.Id,
-                })
-                .ToList(),
             };
 
             await context.Boards.AddAsync(board);

@@ -19,6 +19,8 @@
 
         public bool IsCheck { get; set; }
 
+        public string UserId { get; set; }
+
         public ClockViewModel WhiteClock { get; set; }
 
         public ClockViewModel BlackClock { get; set; }

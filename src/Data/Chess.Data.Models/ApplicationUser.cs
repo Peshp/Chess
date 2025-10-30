@@ -6,9 +6,6 @@
 
     public class ApplicationUser : IdentityUser
     {
-        public ApplicationUser()
-        {
-            this.Id = Guid.NewGuid().ToString();
-        }
+
     }
 }

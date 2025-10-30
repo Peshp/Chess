@@ -1,5 +1,6 @@
 ﻿namespace Chess.Services.Data.Services.Contracts
 {
+    using System;
     using System.Threading.Tasks;
 
     using Chess.Web.ViewModels.Chess;
