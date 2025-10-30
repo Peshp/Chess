@@ -47,7 +47,7 @@
 
             if (board == null)
             {
-                board = await gameService.GetBoard(clock);
+                board = await gameService.GetBoard(clock, userId);
                 HttpContext.Session.SetBoard(board);
             }
 
@@ -109,8 +109,15 @@
 
         public async Task<IActionResult> EndGame()
         {
+            string userId = string.Empty;
+
+            if (User.Identity.IsAuthenticated)
+            {
+                userId = User.GetId();
+            }
+
             BoardViewModel board = this.HttpContext.Session.GetBoard();
-            await gameService.SaveBoard(board);
+            gameService.SaveBoard(board, userId);
 
             return View();
         }
