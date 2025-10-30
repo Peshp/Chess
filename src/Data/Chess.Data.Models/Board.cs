@@ -8,11 +8,16 @@
         public Board()
         {
             this.Figures = new HashSet<Figure>();
+            this.Movehistory = new HashSet<Square>();
         }
 
         public int Id { get; set; }
 
-        public string Image { get; set; } = string.Empty;
+        public string UserId { get; set; }
+
+        public ApplicationUser User { get; set; }
+
+        public string Image { get; set; }
 
         public ICollection<Figure> Figures { get; set; }
 
