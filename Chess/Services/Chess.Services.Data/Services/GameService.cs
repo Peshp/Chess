@@ -87,6 +87,11 @@
 
         public void SaveBoard(BoardViewModel model, string userId)
         {
+            if (userId == string.Empty)
+            {
+                userId = null;
+            }
+
             Board board = new Board
             {
                 Image = model.BoardImage,
