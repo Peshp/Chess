@@ -4,7 +4,12 @@ namespace Chess.Data.Models
 {
     public class UserBoards
     {
-        public int Board { get; set; }
+        public UserBoards()
+        {
+            this.Boards = new HashSet<Board>();
+        }
+
+        public int BoardId { get; set; }
 
         public ICollection<Board> Boards { get; set; }
 
