@@ -23,8 +23,6 @@
 
         public DbSet<Board> Boards { get; set; }
 
-        public DbSet<UserBoards> UserBoards { get; set; }
-
         public DbSet<Square> Squares { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
