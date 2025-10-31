@@ -21,6 +21,11 @@ namespace Chess.Data.Configurations
                 .Property<string>(x => x.Image)
                 .IsRequired(true)
                 .HasMaxLength(BoardEntityConstants.BoardImageMaxLength);
+
+            builder
+                .HasOne(x => x.User)
+                .WithMany(x => x.Boards)
+                .HasForeignKey(x => x.UserId);
         }
     }
 }
