@@ -100,7 +100,12 @@ namespace Chess.Data.Migrations
                         .HasMaxLength(9)
                         .HasColumnType("nvarchar(9)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Boards");
 
@@ -1145,6 +1150,15 @@ namespace Chess.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Chess.Data.Models.Board", b =>
+                {
+                    b.HasOne("Chess.Data.Models.ApplicationUser", "User")
+                        .WithMany("Boards")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Chess.Data.Models.Figure", b =>
                 {
                     b.HasOne("Chess.Data.Models.Board", "Board")
@@ -1216,6 +1230,11 @@ namespace Chess.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Chess.Data.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Boards");
                 });
 
             modelBuilder.Entity("Chess.Data.Models.Board", b =>

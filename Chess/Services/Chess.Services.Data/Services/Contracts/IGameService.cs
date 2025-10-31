@@ -7,9 +7,9 @@
 
     public interface IGameService
     {
-        Task<BoardViewModel> GetBoard(ClockViewModel model);
+        Task<BoardViewModel> GetBoard(ClockViewModel model, string userId);
 
-        Task SaveBoard(BoardViewModel board);
+       void SaveBoard(BoardViewModel board, string userId);
 
         Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
     }

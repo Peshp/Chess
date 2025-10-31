@@ -1,12 +1,15 @@
-﻿namespace Chess.Data.Configurations
+﻿using Chess.Common;
+using Chess.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Chess.Data.Configurations
 {
-    using Chess.Common;
-    using Chess.Data.Models;
-    using Chess.Data.Seeding;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
     public class BoardEntityConfiguration : IEntityTypeConfiguration<Board>
     {
         public void Configure(EntityTypeBuilder<Board> builder)

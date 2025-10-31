@@ -7,7 +7,6 @@
 
     using Chess.Data;
     using Chess.Data.Models;
-    using Chess.Services.Data.Services;
     using Chess.Services.Data.Services.Contracts;
     using Chess.Web.ViewModels.Chess;
     using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@
             this.context = context;
         }
 
-        public async Task<BoardViewModel> GetBoard(ClockViewModel model)
+        public async Task<BoardViewModel> GetBoard(ClockViewModel model, string userId)
         {
             var board = await this.context.Boards.ToArrayAsync();
             var figures = await this.context.Figures.ToArrayAsync();
@@ -29,6 +28,7 @@
             BoardViewModel viewModel = new BoardViewModel
             {
                 BoardImage = board[0].Image,
+                UserId = userId,
                 Clock = this.SetClock(model),
                 WhiteClock = SetClock(model),
                 BlackClock = SetClock(model),
@@ -85,15 +85,16 @@
             board.MoveHistory.Add(model);
         }
 
-        public async Task SaveBoard(BoardViewModel model)
+        public void SaveBoard(BoardViewModel model, string userId)
         {
             Board board = new Board
             {
                 Image = model.BoardImage,
+                UserId = userId,
             };
 
-            await context.Boards.AddAsync(board);
-            await context.SaveChangesAsync();
+            this.context.Boards.Add(board);
+            this.context.SaveChanges();
         }
     }
 }

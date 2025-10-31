@@ -165,7 +165,7 @@ namespace Chess.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Image = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false)
                 },
                 constraints: table =>
                 {
