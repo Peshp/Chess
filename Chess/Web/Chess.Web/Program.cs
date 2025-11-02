@@ -1,20 +1,19 @@
 ﻿namespace Chess.Web
 {
-    using System.Reflection;
+    using System;
 
     using Chess.Data;
     using Chess.Data.Common;
     using Chess.Data.Common.Repositories;
     using Chess.Data.Models;
-    using Chess.Data.Repositories;
     using Chess.Data.Seeding;
-    using Chess.Services.Data;
-    using Chess.Services.Mapping;
-    using Chess.Services.Messaging;
-    using Chess.Web.ViewModels;
-
+    using Chess.Services.Data.Services;
+    using Chess.Services.Data.Services.Contracts;
+    using Chess.Services.Services;
+    using Chess.Web.Infrastructure.Extensions;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -26,6 +25,19 @@
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = 
+                builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+            builder.Services.AddDbContext<ChessDbContext>(options => options.UseSqlServer(connectionString));
+
+            builder.Services
+                .AddDefaultIdentity<ApplicationUser>(options => IdentityOptionsProvider.GetIdentityOptions(options))
+                .AddEntityFrameworkStores<ChessDbContext>();
+
+            builder.Services.AddSession();
+
+            builder.Services.AddApplicationService(typeof(IGameService));
+
             ConfigureServices(builder.Services, builder.Configuration);
             var app = builder.Build();
             Configure(app);
@@ -34,12 +46,6 @@
 
         private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(
-                options => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddDefaultIdentity<ApplicationUser>(IdentityOptionsProvider.GetIdentityOptions)
-                .AddRoles<ApplicationRole>().AddEntityFrameworkStores<ApplicationDbContext>();
-
             services.Configure<CookiePolicyOptions>(
                 options =>
                 {
@@ -47,38 +53,17 @@
                     options.MinimumSameSitePolicy = SameSiteMode.None;
                 });
 
-            services.AddControllersWithViews(
-                options =>
-                {
-                    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-                }).AddRazorRuntimeCompilation();
+            services.AddControllersWithViews();
             services.AddRazorPages();
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddSingleton(configuration);
 
-            // Data repositories
-            services.AddScoped(typeof(IDeletableEntityRepository<>), typeof(EfDeletableEntityRepository<>));
-            services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
             services.AddScoped<IDbQueryRunner, DbQueryRunner>();
-
-            // Application services
-            services.AddTransient<IEmailSender, NullMessageSender>();
-            services.AddTransient<ISettingsService, SettingsService>();
         }
 
         private static void Configure(WebApplication app)
         {
-            // Seed data on application startup
-            using (var serviceScope = app.Services.CreateScope())
-            {
-                var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
-                new ApplicationDbContextSeeder().SeedAsync(dbContext, serviceScope.ServiceProvider).GetAwaiter().GetResult();
-            }
-
-            AutoMapperConfig.RegisterMappings(typeof(ErrorViewModel).GetTypeInfo().Assembly);
-
             if (app.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -95,6 +80,7 @@
             app.UseCookiePolicy();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();

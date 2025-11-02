@@ -1,0 +1,21 @@
+﻿@model ClockViewModel
+
+@{
+    var color = ViewBag.Color ?? "black";
+}
+
+<div class="card shadow-sm mb-3 text-center"
+     id="clock-@color"
+     data-minutes="@Model.Minutes" style="color: white"
+     data-increment="@Model.Increment">
+    <div class="card-header py-1">
+        <span class="small text-uppercase" style="color:white;">@color</span>
+    </div>
+    <div class="card-body py-3">
+        <span id="clock-value-@color"
+              class="fw-bold"
+              style="font-size:1.5rem;line-height:0.5;color:white;">
+            @Model.Minutes.ToString("00"):00
+        </span>
+    </div>
+</div>
