@@ -1,27 +1,26 @@
-﻿namespace Chess.Web.Controllers
+﻿namespace Chess.Web.Controllers;
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Chess.Services.Services.Contracts;
+using Chess.Web.ViewModels.User;
+
+using Microsoft.AspNetCore.Mvc;
+
+public class UserController : BaseController
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    private readonly IUserService userService;
 
-    using Chess.Services.Data.Services.Contracts;
-    using Chess.Web.ViewModels.User;
-
-    using Microsoft.AspNetCore.Mvc;
-
-    public class UserController : BaseController
+    public UserController(IUserService userService)
     {
-        private readonly IUserService userService;
+        this.userService = userService;
+    }
 
-        public UserController(IUserService userService)
-        {
-            this.userService = userService;
-        }
+    public async Task<IActionResult> Profile()
+    {
+        IEnumerable<UserBoardsViewModel> boards = await userService.GetHistory();
 
-        public async Task<IActionResult> Profile()
-        {
-            IEnumerable<UserBoardsViewModel> boards = await userService.GetHistory();
-
-            return View(boards);
-        }
+        return View(boards);
     }
 }

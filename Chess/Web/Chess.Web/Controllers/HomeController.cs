@@ -1,28 +1,28 @@
-﻿namespace Chess.Web.Controllers
+namespace Chess.Web.Controllers;
+
+using System.Diagnostics;
+
+using Microsoft.AspNetCore.Mvc;
+
+using Chess.Web.Models;
+
+public class HomeController : Controller
 {
-    using System.Diagnostics;
+    private readonly ILogger<HomeController> _logger;
 
-    using Chess.Web.ViewModels;
-
-    using Microsoft.AspNetCore.Mvc;
-
-    public class HomeController : BaseController
+    public HomeController(ILogger<HomeController> logger)
     {
-        public IActionResult Index()
-        {
-            return this.View();
-        }
+        _logger = logger;
+    }
 
-        public IActionResult Privacy()
-        {
-            return this.View();
-        }
+    public IActionResult Index()
+    {
+        return View();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return this.View(
-                new ErrorViewModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
-        }
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
