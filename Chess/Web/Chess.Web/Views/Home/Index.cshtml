@@ -11,11 +11,9 @@
             <p class="lead mb-4">
                 Challenge your mind with classic chess. Play against friends, AI, or join online tournaments. Track your stats and improve your skills!
             </p>
-            <!-- Start Game Modal Button -->
             <button type="button" class="btn btn-primary btn-lg me-2 mb-2" data-bs-toggle="modal" data-bs-target="#Modal">
                 Start game
             </button>
-            <a href="@Url.Action("Leaderboard", "Home")" class="btn btn-outline-secondary btn-lg mb-2">Leaderboard</a>
         </div>
     </div>
 
@@ -46,7 +44,7 @@
                     <i class="bi bi-graph-up display-4 mb-3"></i>
                     <h5 class="card-title mb-2">Statistics</h5>
                     <p class="card-text">View your game history, track your progress, and analyze your moves.</p>
-                    <a href="@Url.Action("Stats", "Profile")" class="btn btn-outline-primary">View Stats</a>
+                    <a href="@Url.Action("Profile", "User")" class="btn btn-outline-primary">View Stats</a>
                 </div>
             </div>
         </div>
