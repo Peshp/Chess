@@ -53,4 +53,37 @@ public class UserService : IUserService
 
         return boards;
     }
+
+    public async Task<UserBoardsViewModel> BoardDetails(int Id)
+    {
+        var board = await context.UserBoards
+            .FirstOrDefaultAsync(b => b.Id == Id);
+
+        UserBoardsViewModel model = new UserBoardsViewModel
+        {
+            Id = board.Id,
+            UserId = board.UserId,
+            Image = board.Image,
+            BoardId = board.Id,
+            MoveHistory = board.Squares.Select(m => new SquareViewModel
+            {
+                PositionX = m.PositionX,
+                PositionY = m.PositionY,
+                Coordinate = m.Coordinates,
+            })
+           .ToArray(),
+            Figures = board.Boards.Select(f => new FigureViewModel
+            {
+                Id = f.Id,
+                Name = f.Type.ToString(),
+                Color = f.Color.ToString(),
+                Image = f.Image,
+                PositionX = f.PositionX,
+                PositionY = f.PositionY,
+            })
+            .ToArray()
+        };
+
+        return model;
+    }
 }
