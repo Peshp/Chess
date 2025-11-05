@@ -1,0 +1,23 @@
+﻿@model BoardViewModel;
+
+<link rel="stylesheet" href="~/css/game.css" />
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="d-flex flex-row align-items-start gap-4">
+                <div>
+                    @await Html.PartialAsync("_ClockPartial", Model.BlackClock,
+                    new ViewDataDictionary(ViewData) { { "Color", "black" } })
+                    @await Html.PartialAsync("_GamePartial", Model)
+                    @await Html.PartialAsync("_ClockPartial", Model.WhiteClock,
+                    new ViewDataDictionary(ViewData) { { "Color", "white" } })
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    @await Html.PartialAsync("_CapturedPiecesPanel", Model)
+                    @await Html.PartialAsync("_MoveHistoryPanel", Model)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
