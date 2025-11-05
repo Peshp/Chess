@@ -125,7 +125,8 @@
                                     </div>
 
                                     <div class="ms-auto">
-                                        <a asp-action="Details" asp-route-id="@board.BoardId" class="btn btn-sm" style="background-color:transparent; border:1px solid #3a3a3a; color:#eaeaea;">Details</a>
+                                        <a asp-controller="User" asp-action="Details" asp-route-id="@board.BoardId" class="btn btn-sm" style="background-color:transparent; border:1px solid #3a3a3a; color:#eaeaea;">
+                                            Details</a>
                                         <a asp-action="Play" asp-route-id="@board.BoardId" class="btn btn-sm ms-2" style="background-color:#0d6efd; border-color:#0d6efd; color:#fff;">Play</a>
                                     </div>
                                 </div>
