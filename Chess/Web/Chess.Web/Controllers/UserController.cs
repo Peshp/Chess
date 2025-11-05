@@ -23,4 +23,11 @@ public class UserController : BaseController
 
         return View(boards);
     }
+
+    public async Task<IActionResult> Details(int Id)
+    {
+        UserBoardsViewModel board = await userService.BoardDetails(Id);
+
+        return View(board);
+    }
 }
