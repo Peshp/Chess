@@ -3,17 +3,13 @@
 using System;
 using System.Collections.Generic;
 
-public class BoardViewModel
+using global::Chess.Web.ViewModels.Contracts;
+
+public class BoardViewModel : IBoardViewModel
 {
     public int Id { get; set; }
 
-    public List<FigureViewModel> Figures { get; set; } = new();
-
-    public List<FigureViewModel> CapturedFigures { get; set; } = new();
-
-    public List<SquareViewModel> MoveHistory { get; set; } = new();
-
-    public string BoardImage { get; set; }
+    public string Image { get; set; }
 
     public string CurrentTurn { get; set; } = "White";
 
@@ -26,4 +22,10 @@ public class BoardViewModel
     public ClockViewModel BlackClock { get; set; }
 
     public ClockViewModel Clock { get; set; }
+
+    public IList<SquareViewModel> MoveHistory { get; set; } = new List<SquareViewModel>();
+
+    public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();
+
+    public IList<FigureViewModel> CapturedFigures { get; set; } = new List<FigureViewModel>();
 }
