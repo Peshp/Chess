@@ -23,14 +23,12 @@ public class GameService : IGameService
 
     public async Task<BoardViewModel> GetBoard(ClockViewModel model, string userId)
     {
-        var boards = this.context.Boards;
-        var ss = "ss";
         var board = this.context.Boards.ToArray();
         var figures = await this.context.Figures.ToArrayAsync();
 
         BoardViewModel viewModel = new BoardViewModel
         {
-            BoardImage = board[0].Image,
+            Image = board[0].Image,
             UserId = userId,
             Clock = this.SetClock(model),
             WhiteClock = SetClock(model),
@@ -94,7 +92,7 @@ public class GameService : IGameService
 
         var board = new UserBoard
         {
-            Image = model.BoardImage,
+            Image = model.Image,
             UserId = userId,
         };
 
