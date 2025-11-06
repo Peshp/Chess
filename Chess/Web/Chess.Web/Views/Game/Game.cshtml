@@ -14,27 +14,7 @@
                     @await Html.PartialAsync("_ClockPartial", Model.BlackClock,
                          new ViewDataDictionary(ViewData){{"Color","black"}})
 
-                    <div class="chess-board-container mb-3" id="chess-board">
-                        <img src="~/images/@Model.BoardImage"
-                             alt="Chess board" class="chess-board-background" />
-                        @for (int y = 0; y < 8; y++)
-                        {
-                            for (int x = 0; x < 8; x++)
-                            {
-                                <div class="board-square"
-                                     data-x="@x" data-y="@y"
-                                     style="top:@(y*12.5)%;left:@(x*12.5)%;"></div>
-                            }
-                        }
-                        @foreach (var f in Model.Figures)
-                        {
-                            <img src="~/images/pieces/@f.Image"
-                                 alt="@f.Name" id="piece-@f.Id"
-                                 class="figure-img" draggable="true"
-                                 data-name="@f.Name" data-color="@f.Color"
-                                 style="top:@f.PositionY%;left:@f.PositionX%;" />
-                        }
-                    </div>
+                    @await Html.PartialAsync("_GamePartial", Model)
 
                     @await Html.PartialAsync("_ClockPartial", Model.WhiteClock,
                          new ViewDataDictionary(ViewData){{"Color","white"}})
