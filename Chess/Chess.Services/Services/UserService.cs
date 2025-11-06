@@ -56,23 +56,22 @@ public class UserService : IUserService
 
     public async Task<UserBoardsViewModel> BoardDetails(int Id)
     {
-        var board = await context.UserBoards
-            .FirstOrDefaultAsync(b => b.Id == Id);
-
-        UserBoardsViewModel model = new UserBoardsViewModel
+        var model = await context.UserBoards
+        .Where(b => b.Id == Id)
+        .Select(b => new UserBoardsViewModel
         {
-            Id = board.Id,
-            UserId = board.UserId,
-            Image = board.Image,
-            BoardId = board.Id,
-            MoveHistory = board.Squares.Select(m => new SquareViewModel
+            Id = b.Id,
+            UserId = b.UserId,
+            Image = b.Image,
+            BoardId = b.Id,
+            MoveHistory = b.Squares    
+            .Select(m => new SquareViewModel
             {
                 PositionX = m.PositionX,
                 PositionY = m.PositionY,
                 Coordinate = m.Coordinates,
-            })
-           .ToArray(),
-            Figures = board.Boards.Select(f => new FigureViewModel
+            }).ToArray(),
+            Figures = b.Boards.Select(f => new FigureViewModel
             {
                 Id = f.Id,
                 Name = f.Type.ToString(),
@@ -80,9 +79,9 @@ public class UserService : IUserService
                 Image = f.Image,
                 PositionX = f.PositionX,
                 PositionY = f.PositionY,
-            })
-            .ToArray()
-        };
+            }).ToArray(),
+        })
+        .SingleOrDefaultAsync();
 
         return model;
     }
