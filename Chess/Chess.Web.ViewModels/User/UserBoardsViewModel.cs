@@ -16,6 +16,8 @@ public class UserBoardsViewModel : IBoardViewModel
 
     public string Image { get; set; }
 
+    public string Date { get; set; }
+
     public IList<SquareViewModel> MoveHistory { get; set; } = new List<SquareViewModel>();
 
     public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();

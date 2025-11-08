@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Chess.Services.Services.Contracts;
-using Chess.Services.Services.Engine;
+using Chess.Services.Validations.Engine;
 using Chess.Web.ViewModels.Chess;
 
 public class CastleService : ICastleService

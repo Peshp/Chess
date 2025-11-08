@@ -1,4 +1,4 @@
-﻿namespace Chess.Services.Services.Engine;
+﻿namespace Chess.Services.Validations.Engine;
 
 using Chess.Web.ViewModels.Chess;
 

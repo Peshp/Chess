@@ -7,7 +7,7 @@
 
     public interface IUserService
     {
-        Task<IEnumerable<UserBoardsViewModel>> GetHistory();
+        Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId);
 
         Task<UserBoardsViewModel> BoardDetails(int Id);
     }

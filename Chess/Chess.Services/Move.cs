@@ -1,4 +1,4 @@
-﻿namespace Chess.Services.Models;
+﻿namespace Chess.Services;
 
 /// <summary>
 /// Represents a move made by a chess piece.

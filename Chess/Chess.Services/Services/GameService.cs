@@ -69,7 +69,7 @@ public class GameService : IGameService
 
     public async Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY)
     {
-        FigureViewModel currentPiece = board.Figures
+        FigureViewModel? currentPiece = board.Figures
             .FirstOrDefault(f => f.Id == pieceId);
 
         var model = this.context.Squares

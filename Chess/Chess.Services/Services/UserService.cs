@@ -20,15 +20,17 @@ public class UserService : IUserService
         this.context = context;
     }
 
-    public async Task<IEnumerable<UserBoardsViewModel>> GetHistory()
+    public async Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId)
     {
         var boards = await this.context
             .UserBoards
+            .Where(ub => ub.UserId == userId)
             .Select(b => new UserBoardsViewModel
             {
                 Id = b.Id,
                 UserId = b.UserId,
                 Image = b.Image,
+                Date = DateTime.Now.ToShortDateString(),
                 BoardId = b.Id,
                 MoveHistory = b.Squares.Select(m => new SquareViewModel
                 {
@@ -70,7 +72,8 @@ public class UserService : IUserService
                 PositionX = m.PositionX,
                 PositionY = m.PositionY,
                 Coordinate = m.Coordinates,
-            }).ToArray(),
+            })
+            .ToArray(),
             Figures = b.Boards.Select(f => new FigureViewModel
             {
                 Id = f.Id,
@@ -79,7 +82,8 @@ public class UserService : IUserService
                 Image = f.Image,
                 PositionX = f.PositionX,
                 PositionY = f.PositionY,
-            }).ToArray(),
+            })
+            .ToArray(),
         })
         .SingleOrDefaultAsync();
 

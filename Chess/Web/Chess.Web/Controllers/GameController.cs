@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Infrastructure.Extension;
 using Chess.Services.Services.Contracts;
 using Chess.Services.Models;
+using Chess.Services;
 
 public class GameController : BaseController
 {
@@ -67,6 +68,7 @@ public class GameController : BaseController
 
         bool isCheck = false;
         bool gameOver = false;
+
         if (success)
         {
             await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
