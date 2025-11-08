@@ -12,6 +12,8 @@ public class UserBoard
 
     public string Image { get; set; }
 
+    public DateTime Date { get; set; }
+
     public ICollection<BoardFigures> Boards { get; set; }
 
     public ICollection<BoardSquares> Squares { get; set; }
