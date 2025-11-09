@@ -14,9 +14,9 @@ public class UserBoard
 
     public DateTime Date { get; set; }
 
-    public ICollection<BoardFigures> Boards { get; set; }
+    public IEnumerable<BoardFigures> Boards { get; set; }
 
-    public ICollection<BoardSquares> Squares { get; set; }
+    public IEnumerable<BoardSquares> Squares { get; set; }
 
     public string? UserId { get; set; }
 
