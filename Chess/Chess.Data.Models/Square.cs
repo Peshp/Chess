@@ -7,7 +7,7 @@ public class Square
 
     public double PositionY { get; set; }
 
-    public string Coordinate { get; set; }
+    public string Coordinate { get; set; } = string.Empty;
 
     public int BoardId { get; set; }
 
