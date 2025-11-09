@@ -1,159 +1,89 @@
-﻿(function () {
-    const whiteClockEl = document.getElementById('clock-white');
-    const blackClockEl = document.getElementById('clock-black');
-    const whiteValueEl = document.getElementById('clock-value-white');
-    const blackValueEl = document.getElementById('clock-value-black');
+﻿const whiteClockDiv = document.getElementById('clock-white');
+const blackClockDiv = document.getElementById('clock-black');
+const whiteClockSpan = document.getElementById('clock-value-white');
+const blackClockSpan = document.getElementById('clock-value-black');
 
-    if (!whiteClockEl || !blackClockEl || !whiteValueEl || !blackValueEl) {
-        console.error('Clock elements not found. Expected ids: clock-white, clock-black, clock-value-white, clock-value-black');
-        return;
+if (!whiteClockDiv) console.error('Missing #clock-white in HTML');
+if (!blackClockDiv) console.error('Missing #clock-black in HTML');
+if (!whiteClockSpan) console.error('Missing #clock-value-white in HTML');
+if (!blackClockSpan) console.error('Missing #clock-value-black in HTML');
+if (!whiteClockDiv || !blackClockDiv || !whiteClockSpan || !blackClockSpan) return;
+
+const clocks = {
+    white: {
+        minutes: parseInt(whiteClockDiv.dataset.minutes || '0', 10),
+        increment: parseInt(whiteClockDiv.dataset.increment || '0', 10),
+        seconds: 0,
+        running: false,
+        interval: null,
+        display: whiteClockSpan
+    },
+    black: {
+        minutes: parseInt(blackClockDiv.dataset.minutes || '0', 10),
+        increment: parseInt(blackClockDiv.dataset.increment || '0', 10),
+        seconds: 0,
+        running: false,
+        interval: null,
+        display: blackClockSpan
     }
+};
 
-    function parseMinutes(el) {
-        const m = Number(el.getAttribute('data-minutes'));
-        return Number.isFinite(m) ? Math.max(0, Math.floor(m)) : 0;
-    }
-    function parseIncrement(el) {
-        const i = Number(el.getAttribute('data-increment'));
-        return Number.isFinite(i) ? Math.max(0, Math.floor(i)) : 0;
-    }
+let currentTurn = 'white';
 
-    let times = {
-        white: parseMinutes(whiteClockEl) * 60,
-        black: parseMinutes(blackClockEl) * 60
-    };
+function updateClockDisplay(color) {
+    const c = clocks[color];
+    const m = c.minutes.toString().padStart(2, '0');
+    const s = c.seconds.toString().padStart(2, '0');
+    c.display.textContent = `${m}:${s}`;
+}
 
-    let increments = {
-        white: parseIncrement(whiteClockEl),
-        black: parseIncrement(blackClockEl)
-    };
-
-    let active = null;
-    let timerId = null;
-    let ended = false;
-
-    function formatTime(totalSeconds) {
-        totalSeconds = Math.max(0, Math.floor(totalSeconds));
-        const m = Math.floor(totalSeconds / 60);
-        const s = totalSeconds % 60;
-        return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-    }
-
-    function updateDisplays() {
-        whiteValueEl.textContent = formatTime(times.white);
-        blackValueEl.textContent = formatTime(times.black);
-        whiteClockEl.classList.toggle('active', active === 'white' && !ended);
-        blackClockEl.classList.toggle('active', active === 'black' && !ended);
-    }
-
-    function stopTimer() {
-        if (timerId !== null) {
-            clearInterval(timerId);
-            timerId = null;
-        }
-    }
-
-    function onFlag(player) {
-        ended = true;
-        stopTimer();
-        updateDisplays();
-        const ev = new CustomEvent('clock:flag', { detail: { player } });
-        document.dispatchEvent(ev);
-        console.warn(player + ' flagged (time\'s up).');
-    }
-
-    function startClockFor(player) {
-        if (ended) return;
-        if (player !== 'white' && player !== 'black') return;
-        stopTimer();
-        active = player;
-        updateDisplays();
-
-        timerId = setInterval(function () {
-            times[player] -= 1;
-            if (times[player] <= 0) {
-                times[player] = 0;
-                updateDisplays();
-                onFlag(player);
+function startClock(color) {
+    const c = clocks[color];
+    if (c.running) return;
+    stopClock('white');
+    stopClock('black');
+    if (c.minutes === 0 && c.seconds === 0) return;
+    c.running = true;
+    c.interval = setInterval(() => {
+        if (c.seconds === 0) {
+            if (c.minutes === 0) {
+                stopClock(color);
                 return;
             }
-            updateDisplays();
-            document.dispatchEvent(new CustomEvent('clock:tick', { detail: { player: player, remaining: times[player] } }));
-        }, 1000);
-
-        updateDisplays();
-    }
-
-    function startClock(side) {
-        if (ended) return;
-        const toStart = side === 'white' || side === 'black' ? side : (active || 'white');
-        startClockFor(toStart);
-    }
-
-    function pauseClock() {
-        stopTimer();
-        updateDisplays();
-    }
-
-    function resetClocks() {
-        stopTimer();
-        ended = false;
-        active = null;
-        times.white = parseMinutes(whiteClockEl) * 60;
-        times.black = parseMinutes(blackClockEl) * 60;
-        increments.white = parseIncrement(whiteClockEl);
-        increments.black = parseIncrement(blackClockEl);
-        updateDisplays();
-        document.dispatchEvent(new CustomEvent('clock:reset', { detail: { times: Object.assign({}, times), increments: Object.assign({}, increments) } }));
-    }
-
-    function moveMade(movedColor) {
-        if (ended) return;
-        const mover = (movedColor === 'white' || movedColor === 'black') ? movedColor : active || 'white';
-        const opponent = mover === 'white' ? 'black' : 'white';
-        times[mover] += increments[mover];
-        stopTimer();
-        if (times[opponent] <= 0) {
-            onFlag(opponent);
-            return;
+            c.minutes--;
+            c.seconds = 59;
+        } else {
+            c.seconds--;
         }
-        startClockFor(opponent);
-        document.dispatchEvent(new CustomEvent('clock:moveMade', { detail: { mover: mover, times: Object.assign({}, times) } }));
+        updateClockDisplay(color);
+    }, 1000);
+}
+
+function stopClock(color) {
+    const c = clocks[color];
+    if (!c.running) return;
+    c.running = false;
+    clearInterval(c.interval);
+    c.interval = null;
+}
+
+function addIncrement(color) {
+    const c = clocks[color];
+    c.seconds += c.increment;
+    while (c.seconds >= 60) {
+        c.seconds -= 60;
+        c.minutes++;
     }
+    updateClockDisplay(color);
+}
 
-    function setInitialMinutesFor(side, minutes) {
-        if (side !== 'white' && side !== 'black') return;
-        const m = Number(minutes);
-        if (!Number.isFinite(m) || m < 0) return;
-        const el = side === 'white' ? whiteClockEl : blackClockEl;
-        el.setAttribute('data-minutes', String(Math.floor(m)));
-    }
-    function setIncrementFor(side, seconds) {
-        if (side !== 'white' && side !== 'black') return;
-        const s = Number(seconds);
-        if (!Number.isFinite(s) || s < 0) return;
-        const el = side === 'white' ? whiteClockEl : blackClockEl;
-        el.setAttribute('data-increment', String(Math.floor(s)));
-    }
+function onPlayerMove() {
+    stopClock(currentTurn);
+    addIncrement(currentTurn);
+    currentTurn = currentTurn === 'white' ? 'black' : 'white';
+    startClock(currentTurn);
+}
 
-    window.chessClock = {
-        startClock: startClock,
-        pauseClock: pauseClock,
-        resetClocks: resetClocks,
-        moveMade: moveMade,
-        setInitialMinutesFor: setInitialMinutesFor,
-        setIncrementFor: setIncrementFor,
-        _state: function () { return { active: active, times: Object.assign({}, times), increments: Object.assign({}, increments), ended: ended }; }
-    };
-
-    window.moveMade = moveMade;
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key && e.key.toLowerCase() === 'm') {
-            e.preventDefault();
-            moveMade();
-        }
-    });
-
-    updateDisplays();
-})();
+updateClockDisplay('white');
+updateClockDisplay('black');
+startClock('white');
