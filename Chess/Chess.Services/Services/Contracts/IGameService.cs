@@ -9,7 +9,7 @@
     {
         Task<BoardViewModel> GetBoard(ClockViewModel model, string userId);
 
-       void SaveBoard(BoardViewModel board, string userId);
+        Task SaveBoard(BoardViewModel board, string userId);
 
         Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
     }

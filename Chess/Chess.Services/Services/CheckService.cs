@@ -29,6 +29,7 @@ public class CheckService : ICheckService
             if (await moveService.IsValidMove(board, piece, king.PositionX, king.PositionY))
                 return true;
         }
+
         return false;
     }
 

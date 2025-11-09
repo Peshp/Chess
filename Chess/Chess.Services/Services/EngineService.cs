@@ -35,7 +35,6 @@ public class EngineService : IEngineService
     public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
     {
         var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
-        if (piece == null) return false;
         if (piece.Color != board.CurrentTurn) return false;
         if (!this.moveValidators.TryGetValue(piece.Name, out var validator)) return false;
 

@@ -4,9 +4,6 @@ using Chess.Web.ViewModels.Chess;
 
 using System.Linq;
 
-/// <summary>
-/// Represents a Rook chess piece and validates its moves.
-/// </summary>
 public class Rook : IMoveValidator
 {
     public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)

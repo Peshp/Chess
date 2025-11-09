@@ -6,9 +6,6 @@ using System.Linq;
 using Chess.Services.Services.Contracts;
 using Chess.Web.ViewModels.Chess;
 
-/// <summary>
-/// Represents the King piece and its movement validation logic.
-/// </summary>
 public class King : IMoveValidator
 {
     public bool IsCastleAttempt(FigureViewModel king, double toX, double toY)

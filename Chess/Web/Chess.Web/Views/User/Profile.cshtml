@@ -40,7 +40,7 @@
                                             Func<double, string> rawValueToCss = v =>
                                             {
                                                 if (double.IsNaN(v) || double.IsInfinity(v)) return "0" + unit;
-                                                return v.ToString("0.####", System.Globalization.CultureInfo.InvariantCulture) + unit;
+                                                return v.ToString("0.####") + unit;
                                             };
                                         }
 
@@ -50,9 +50,7 @@
                                             {
                                                 var left = rawValueToCss(f.PositionX);
                                                 var top = rawValueToCss(f.PositionY);
-                                                var pieceSrc = string.IsNullOrWhiteSpace(f.Image)
-                                                ? Url.Content("~/images/figure-default.png")
-                                                : Url.Content($"~/images/pieces/{f.Image}");
+                                                var pieceSrc = Url.Content($"~/images/pieces/{f.Image}");
                                                 <img src="@pieceSrc"
                                                      alt="@(f.Name ?? "piece")"
                                                      class="board-piece"
@@ -67,7 +65,6 @@
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div>
                                         <h5 class="card-title mb-0 text-white">Game #@board.BoardId</h5>
-                                        @* New: date string from viewmodel using only Bootstrap classes *@
                                         <p class="mb-0 small text-muted">Saved: @board.Date</p>
                                     </div>
                                     <div class="text-end">
@@ -101,28 +98,26 @@
                                 </div>
 
                                 <div class="mt-3 d-flex align-items-center">
-                                    <div class="figure-list d-flex">
+                                    <div class="figure-list d-flex align-items-center">
                                         @if (board.Figures != null && board.Figures.Any())
                                         {
                                             foreach (var f in board.Figures.Take(4))
                                             {
-                                                <div class="figure-thumb me-2">
-                                                    <img src="@(string.IsNullOrWhiteSpace(f.Image) ? Url.Content("~/images/figure-default.png") : Url.Content($"~/images/pieces/{f.Image}"))" alt="@f.Name" class="img-fluid" style="width:48px; height:48px; object-fit:cover;" />
+                                                <div class="figure-thumb me-2 d-inline-flex align-items-center justify-content-center" style="width:32px; height:32px; overflow:hidden; border-radius:4px; background:#222;">
+                                                    <img src="@(Url.Content($"~/images/pieces/{f.Image}"))" class="img-fluid" style="width:32px; height:32px; object-fit:cover;" />
                                                 </div>
                                             }
                                             if (board.Figures.Count() > 4)
                                             {
-                                                <div class="figure-thumb d-inline-flex align-items-center justify-content-center text-muted">+@((board.Figures.Count()) - 4)</div>
+                                                <div class="figure-thumb d-inline-flex align-items-center justify-content-center text-muted" style="width:32px; height:32px; border-radius:4px; background:#2a2a2a; font-size:0.8rem;">
+                                                    +@((board.Figures.Count()) - 4)
+                                                </div>
                                             }
                                         }
                                         else
                                         {
                                             <div class="text-muted">No figures</div>
                                         }
-                                    </div>
-
-                                    <div class="ms-auto">
-                                        <a asp-controller="User" asp-action="Details" asp-route-id="@board.BoardId" class="btn btn-sm btn-outline-light">Details</a>
                                     </div>
                                 </div>
                             </div>

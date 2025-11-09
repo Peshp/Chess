@@ -5,9 +5,6 @@ using System.Linq;
 
 using Chess.Web.ViewModels.Chess;
 
-/// <summary>
-/// Represents a Bishop chess piece and provides functionality to validate its moves.
-/// </summary>
 public class Bishop : IMoveValidator
 {
     public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)

@@ -23,7 +23,7 @@ public class GameService : IGameService
 
     public async Task<BoardViewModel> GetBoard(ClockViewModel model, string userId)
     {
-        var board = this.context.Boards.ToArray();
+        var board = await this.context.Boards.ToArrayAsync();
         var figures = await this.context.Figures.ToArrayAsync();
 
         BoardViewModel viewModel = new BoardViewModel
@@ -45,7 +45,8 @@ public class GameService : IGameService
                     PositionX = entry.PositionX,
                     PositionY = entry.PositionY,
                 };
-            }).ToList(),
+            })
+            .ToList(),
         };
 
         return viewModel;
@@ -72,7 +73,7 @@ public class GameService : IGameService
         FigureViewModel? currentPiece = board.Figures
             .FirstOrDefault(f => f.Id == pieceId);
 
-        var model = this.context.Squares
+        var model = await this.context.Squares
                 .Where(s => s.PositionX == toX && s.PositionY == toY)
                 .Select(s => new SquareViewModel
                 {
@@ -81,15 +82,13 @@ public class GameService : IGameService
                     Coordinate = s.Coordinate,
                     FigureImage = currentPiece.Image,
                 })
-                .FirstOrDefault();
+                .FirstOrDefaultAsync();
 
         board.MoveHistory.Add(model);
     }
 
-    public void SaveBoard(BoardViewModel model, string userId)
+    public async Task SaveBoard(BoardViewModel model, string userId)
     {
-        if (userId == string.Empty) userId = null;
-
         var board = new UserBoard
         {
             Image = model.Image,

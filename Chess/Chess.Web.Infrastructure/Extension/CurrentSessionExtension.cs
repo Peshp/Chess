@@ -6,9 +6,6 @@ using Chess.Web.ViewModels.Chess;
 
 using Microsoft.AspNetCore.Http;
 
-/// <summary>
-/// Provides extension methods for managing chess board data in an ISession.
-/// </summary>
 public static class CurrentSessionExtension
 {
     public static void SetBoard(this ISession session, BoardViewModel board)

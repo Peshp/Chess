@@ -5,9 +5,6 @@ using System.Linq;
 
 using Chess.Web.ViewModels.Chess;
 
-/// <summary>
-/// Represents a Knight chess piece and validates its moves.
-/// </summary>
 public class Knight : IMoveValidator
 {
     public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)

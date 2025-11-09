@@ -118,9 +118,14 @@ public class GameController : BaseController
             userId = User.GetId();
         }
 
+        if(userId == string.Empty)
+        {
+            return View();
+        }
+
         BoardViewModel board = this.HttpContext.Session.GetBoard();
         gameService.SaveBoard(board, userId);
 
-        return View();
+        return RedirectToAction("Index", "Home");
     }
 }

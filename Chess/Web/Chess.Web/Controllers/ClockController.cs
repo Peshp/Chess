@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Chess.Web.ViewModels.Chess;
 using Microsoft.AspNetCore.Mvc;
 
-public class ClockController
+public class ClockController : BaseController
 {
     public IActionResult Clock(ClockViewModel model)
     {

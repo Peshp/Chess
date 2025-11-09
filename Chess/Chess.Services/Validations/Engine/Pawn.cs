@@ -3,6 +3,7 @@
 using System.Linq;
 
 using Chess.Web.ViewModels.Chess;
+
 public class Pawn : IMoveValidator
 {
     public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
