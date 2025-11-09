@@ -12,7 +12,7 @@ public class Board
 
     public string Image { get; set; }
 
-    public ICollection<Figure> Figures { get; set; }
+    public IEnumerable<Figure> Figures { get; set; }
 
-    public ICollection<Square> Movehistory { get; set; }
+    public IEnumerable<Square> Movehistory { get; set; }
 }
