@@ -40,7 +40,7 @@ public class GameController : BaseController
         HttpContext.Session.Clear();
         BoardViewModel board = HttpContext.Session.GetBoard();
 
-        if(User.Identity.IsAuthenticated)
+        if (User?.Identity?.IsAuthenticated == true)
         {
             userId = User.GetId();
         }
@@ -120,7 +120,7 @@ public class GameController : BaseController
 
         if(userId == string.Empty)
         {
-            return View();
+            return RedirectToAction("Index", "Home");
         }
 
         BoardViewModel board = this.HttpContext.Session.GetBoard();
