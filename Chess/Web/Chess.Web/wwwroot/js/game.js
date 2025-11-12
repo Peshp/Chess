@@ -1,5 +1,4 @@
 ﻿document.addEventListener('DOMContentLoaded', () => {
-    // Clocks
     const whiteClockDiv = document.getElementById('clock-white');
     const blackClockDiv = document.getElementById('clock-black');
     const whiteClockSpan = document.getElementById('clock-value-white');
@@ -10,7 +9,6 @@
     if (!blackClockSpan) console.error('Missing #clock-value-black in HTML');
     if (!whiteClockDiv || !blackClockDiv || !whiteClockSpan || !blackClockSpan) return;
 
-    // Store time in seconds to avoid minute/second roll bugs
     const clocks = {
         white: {
             secondsRemaining: parseInt(whiteClockDiv.dataset.minutes || '0', 10) * 60,
@@ -70,7 +68,6 @@
                 c.secondsRemaining = 0;
                 updateClockDisplay(color);
                 stopClock(color);
-                // time out handling can be added here (e.g., notify server)
                 return;
             }
             updateClockDisplay(color);
@@ -85,7 +82,6 @@
     }
 
     function onPlayerMove() {
-        // Apply increment to the player who just moved, stop their clock, then switch and start opponent
         const mover = currentTurn;
         stopClock(mover);
         addIncrement(mover);
@@ -93,12 +89,10 @@
         startClock(currentTurn);
     }
 
-    // Initialize clock displays and start side to move
     updateClockDisplay('white');
     updateClockDisplay('black');
     startClock(currentTurn);
 
-    // Board / moves
     const board = document.getElementById('chess-board');
     const capturedDiv = document.getElementById('captured-pieces');
     const moveListDiv = document.getElementById('move-history-list');
@@ -157,7 +151,6 @@
 
     function renderBoard(figures, captured) {
         if (!board) return;
-        // Remove existing piece images
         board.querySelectorAll('.figure-img').forEach(i => i.remove());
         if (Array.isArray(figures)) {
             figures.forEach(f => {
@@ -179,7 +172,6 @@
                 ? captured.map(pc => `<img src="/images/pieces/${pc.image}" class="captured-piece" alt="${pc.name || ''}" style="width:20px;height:20px;margin:2px">`).join('')
                 : '';
         }
-        // Re-bind events for newly created pieces
         bindDragEvents();
         bindSquareClickEvents();
     }
@@ -200,7 +192,6 @@
         moveListDiv.innerHTML = html;
     }
 
-    // Drag & drop on board
     if (board) {
         board.addEventListener('dragover', e => e.preventDefault());
         board.addEventListener('drop', async e => {
