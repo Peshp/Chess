@@ -1,4 +1,5 @@
-# ChessApp
+# Chess
+
 
 A web chess application for playing and analyzing games. Built with ASP.NET Core 8, Entity Framework, SQL, Bootstrap and vanilla JS/CSS. The project is a work in progress — core gameplay and UI are implemented, with analysis and real-time play planned.
 
