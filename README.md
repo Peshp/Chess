@@ -10,7 +10,7 @@ A web chess application for playing and analyzing games. Built with ASP.NET Core
 - Session-backed board state and server-side game logic in C#.
 - Lightweight UI using Bootstrap and custom CSS/JS.
 
-## Main features (implemented)
+## Main features
 - Interactive chessboard rendering pieces and squares.
 - Move submission and server-side validation.
 - Move history panel and captured pieces panel (partial views).
@@ -18,11 +18,11 @@ A web chess application for playing and analyzing games. Built with ASP.NET Core
 - Board and game state stored and updated via session + EF-backed models.
 
 ## Tech stack
-- ASP.NET Core 8 (C#)
+- ASP.NET Core 8
 - Entity Framework Core
-- SQL (database for games/users/history)
-- Bootstrap (responsive UI)
-- JavaScript/CSS for client-side interactions and clocks
+- SQL
+- Bootstrap
+- JavaScript/CSS
 - Server-side session for board state updates
 
 ## What's missing / Roadmap (high priority)
