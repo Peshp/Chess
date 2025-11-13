@@ -1,0 +1,130 @@
+﻿@model IEnumerable<UserBoardsViewModel>
+
+@{
+}
+
+<link rel="stylesheet" href="~/css/profile.css" />
+
+<div class="profile-page">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="fw-bold text-white m-0">Profile</h1>
+                <p class="m-0 mt-1 text-muted">Your saved games</p>
+            </div>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-dark text-light border-secondary">Home</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="card bg-dark border-secondary text-light">
+                <div class="card-body">
+                    <h5 class="card-title text-white mb-0">No saved boards</h5>
+                    <p class="card-text text-muted">You don't have any saved games yet. Play a match to save your first board.</p>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var board in Model)
+                {
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 board-card">
+                            <div class="board-preview-wrap">
+                                <a asp-action="Details" asp-route-id="@board.BoardId" title="Open Game #@board.BoardId" class="d-block text-decoration-none w-100">
+                                    <div class="board-preview"
+                                         style="background-image: url('@Url.Content($"~/images/{board.Image}")');">
+                                        @{
+                                            var unit = "%";
+                                            Func<double, string> rawValueToCss = v =>
+                                            {
+                                                if (double.IsNaN(v) || double.IsInfinity(v)) return "0" + unit;
+                                                return v.ToString("0.####") + unit;
+                                            };
+                                        }
+
+                                        @if (board.Figures != null)
+                                        {
+                                            foreach (var f in board.Figures)
+                                            {
+                                                var left = rawValueToCss(f.PositionX);
+                                                var top = rawValueToCss(f.PositionY);
+                                                var pieceSrc = Url.Content($"~/images/pieces/{f.Image}");
+                                                <img src="@pieceSrc"
+                                                     alt="@(f.Name ?? "piece")"
+                                                     class="board-piece"
+                                                     style="left:@left; top:@top;" />
+                                            }
+                                        }
+                                    </div>
+                                </a>
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h5 class="card-title mb-0 text-white">Game #@board.BoardId</h5>
+                                        <p class="mb-0 small text-muted">Saved: @board.Date</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-secondary text-light border">Figures: @(board.Figures?.Count() ?? 0)</span>
+                                        <br />
+                                        <span class="badge bg-secondary text-light border mt-2">Moves: @(board.MoveHistory?.Count() ?? 0)</span>
+                                    </div>
+                                </div>
+
+                                <div style="flex:1;">
+                                    <p class="mb-2 text-muted small">Recent moves:</p>
+                                    <div>
+                                        @if (board.MoveHistory != null && board.MoveHistory.Any())
+                                        {
+                                            var moves = board.MoveHistory.ToArray();
+                                            var shown = moves.Take(12).ToArray();
+                                            foreach (var m in shown)
+                                            {
+                                                <span class="badge rounded-pill d-inline-block me-2 mb-2 py-1 px-2 bg-dark text-white border">@m.Coordinate</span>
+                                            }
+                                            if (moves.Length > shown.Length)
+                                            {
+                                                <span class="badge rounded-pill d-inline-block me-2 mb-2 py-1 px-2 bg-secondary text-light border">+@((moves.Length) - shown.Length) more</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">No moves recorded</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="mt-3 d-flex align-items-center">
+                                    <div class="figure-list d-flex align-items-center">
+                                        @if (board.Figures != null && board.Figures.Any())
+                                        {
+                                            foreach (var f in board.Figures.Take(4))
+                                            {
+                                                <div class="figure-thumb me-2 d-inline-flex align-items-center justify-content-center" style="width:32px; height:32px; overflow:hidden; border-radius:4px; background:#222;">
+                                                    <img src="@(Url.Content($"~/images/pieces/{f.Image}"))" class="img-fluid" style="width:32px; height:32px; object-fit:cover;" />
+                                                </div>
+                                            }
+                                            if (board.Figures.Count() > 4)
+                                            {
+                                                <div class="figure-thumb d-inline-flex align-items-center justify-content-center text-muted" style="width:32px; height:32px; border-radius:4px; background:#2a2a2a; font-size:0.8rem;">
+                                                    +@((board.Figures.Count()) - 4)
+                                                </div>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <div class="text-muted">No figures</div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
