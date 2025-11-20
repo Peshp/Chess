@@ -25,25 +25,6 @@ A web chess application for playing and analyzing games. Built with ASP.NET Core
 - JavaScript/CSS
 - Server-side session for board state updates
 
-## What's missing / Roadmap (high priority)
-- Per-game details & analysis page (view and analyze finished games)
-- Real-time play via SignalR (live two-player matches)
-- Roles & authorization policies (players, admins)
-- UI/UX polish and responsive design adjustments
-- Persistent game playback / export (PGN or similar)
-- Tests and CI workflow
-
-## Contribution
-- Open an issue for bugs, feature requests, or design proposals.
-- Prefer small focused PRs that include tests or a clear manual test plan.
-- Keep C# code style consistent with existing patterns; aim for small, reviewable changes.
-- If working on real-time play, coordinate before large SignalR refactors.
-
-## Notes for maintainers
-- Board and clocks are currently updated with a mix of server responses and client-side JS; plan how authoritative timing/state will be handled when adding SignalR.
-- Move validation and game rules live in engineService — be careful when refactoring to keep logic deterministic and testable.
-- Consider separating UI partials and viewmodels for easier unit testing and reuse.
-
 ## License
 This project is available under the MLT License. See LICENSE for details.
 
