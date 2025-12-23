@@ -4,6 +4,7 @@
     using System.Threading.Tasks;
 
     using Chess.Web.ViewModels.Chess;
+    using Chess.Web.ViewModels.User;
 
     public interface IGameService
     {
