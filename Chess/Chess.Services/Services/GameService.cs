@@ -9,6 +9,7 @@ using Chess.Data;
 using Chess.Data.Models;
 using Chess.Services.Services.Contracts;
 using Chess.Web.ViewModels.Chess;
+using Chess.Web.ViewModels.User;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -112,6 +113,7 @@ public class GameService : IGameService
                 Coordinates = m.Coordinate,
                 PositionX = m.PositionX,
                 PositionY = m.PositionY,
+                FigureImage = m.FigureImage,
                 BoardId = board.Id,
                 Board = board,
             })
