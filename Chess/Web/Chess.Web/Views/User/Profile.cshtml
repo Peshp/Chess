@@ -120,6 +120,11 @@
                                         }
                                     </div>
                                 </div>
+
+                                <form asp-controller="User" asp-action="Details" method="get">
+                                    <input type="hidden" name="boardId" value="@board.BoardId" />
+                                    <button type="submit" class="btn btn-primary w-100 mt-3">Details</button>
+                                </form>
                             </div>
                         </div>
                     </div>
