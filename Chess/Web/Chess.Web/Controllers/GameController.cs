@@ -8,9 +8,10 @@ using Chess.Web.ViewModels.Chess;
 
 using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Infrastructure.Extension;
+using static Chess.Web.Infrastructure.Extension.CurrentSessionExtension;
 using Chess.Services.Services.Contracts;
-using Chess.Services.Models;
 using Chess.Services;
+using Chess.Web.ViewModels.User;
 
 public class GameController : BaseController
 {
@@ -38,7 +39,7 @@ public class GameController : BaseController
     {
         string userId = string.Empty;
         HttpContext.Session.Clear();
-        BoardViewModel board = HttpContext.Session.GetBoard();
+        BoardViewModel board = HttpContext.Session.GetBoard<BoardViewModel>();
 
         if (User?.Identity?.IsAuthenticated == true)
         {
@@ -57,7 +58,7 @@ public class GameController : BaseController
     [HttpPost]
     public async Task<IActionResult> MakeMove([FromBody] Move request)
     {
-        var board = this.HttpContext.Session.GetBoard();
+        var board = this.HttpContext.Session.GetBoard<BoardViewModel>();
         if (board == null)
             return Json(new { success = false });
 
@@ -123,7 +124,7 @@ public class GameController : BaseController
             return RedirectToAction("Index", "Home");
         }
 
-        BoardViewModel board = this.HttpContext.Session.GetBoard();
+        BoardViewModel board = this.HttpContext.Session.GetBoard<BoardViewModel>();
         gameService.SaveBoard(board, userId);
 
         return RedirectToAction("Index", "Home");
