@@ -100,7 +100,7 @@ public class UserService : IUserService
 
     public async Task<UserBoardsViewModel> Next(UserBoardsViewModel board, string figureImg, double toX, double toY)
     {
-        var currentPiece = board.Figures.FirstOrDefault(f => f.Image == figureImg);
+        var currentPiece = board.Figures.First(f => f.Image == figureImg);
 
         currentPiece.PositionX = toX;
         currentPiece.PositionY = toY;
