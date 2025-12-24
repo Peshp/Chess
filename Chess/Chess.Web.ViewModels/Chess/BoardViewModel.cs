@@ -17,6 +17,8 @@ public class BoardViewModel : IBoardViewModel
 
     public string UserId { get; set; }
 
+    public string Date { get; set; }
+
     public ClockViewModel WhiteClock { get; set; }
 
     public ClockViewModel BlackClock { get; set; }
