@@ -65,47 +65,24 @@ public class GameController : BaseController
         double toX = request.ToX * 12.5;
         double toY = request.ToY * 12.5;
 
-        bool success = await engineService.TryMove(board, request.PieceId, toX, toY);
+        board.Success = await engineService.TryMove(board, request.PieceId, toX, toY);
 
-        bool isCheck = false;
-        bool gameOver = false;
-
-        if (success)
+        if (board.Success)
         {
             await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
 
             HttpContext.Session.SetBoard(board);
-
-            isCheck = await checkService.IsCheck(board, board.CurrentTurn);
-            gameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
         }
 
         return Json(new
         {
-            success,
-            isCheck,
-            gameOver,
+            success = board.Success,
+            isCheck = board.IsCheck,
+            gameOver = board.IsGameOver,
             currentTurn = board.CurrentTurn,
-            figures = board.Figures.Select(f => new
-            {
-                id = f.Id,
-                x = f.PositionX,
-                y = f.PositionY,
-                name = f.Name,
-                color = f.Color,
-                image = f.Image,
-                isMoved = f.IsMoved,
-            }),
-            captured = board.CapturedFigures.Select(f => new
-            {
-                color = f.Color,
-                image = f.Image,
-            }),
-            moveHistory = board.MoveHistory.Select(m => new
-            {
-                coordinate = m.Coordinate,
-                figureImage = m.FigureImage,
-            }),
+            figures = board.FiguresJson,
+            captured = board.CapturedJson,
+            moveHistory = board.HistoryJson
         });
     }
 
