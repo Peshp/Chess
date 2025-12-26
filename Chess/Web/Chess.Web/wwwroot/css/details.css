@@ -1,0 +1,32 @@
+﻿#historyContainer::-webkit-scrollbar {
+    width: 5px;
+}
+
+#historyContainer::-webkit-scrollbar-track {
+    background: #000;
+}
+
+#historyContainer::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 5px;
+}
+
+#historyContainer::-webkit-scrollbar-thumb:hover {
+    background: #0d6efd;
+}
+
+.move-row.active-move {
+    background-color: rgba(13, 110, 253, 0.2) !important;
+    border-left-color: #0d6efd !important;
+    box-shadow: inset 5px 0 10px -5px #0d6efd;
+}
+
+.btn-outline-info {
+    border-color: #0dcaf0;
+    color: #0dcaf0;
+}
+
+.btn-outline-info:hover {
+    background-color: #0dcaf0;
+    color: #000;
+}
