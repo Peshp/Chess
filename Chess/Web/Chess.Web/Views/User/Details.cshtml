@@ -1,5 +1,7 @@
 ﻿@model UserBoardsViewModel
 
+<link rel="stylesheet" href="~/css/details.css" />
+
 <form asp-controller="User" asp-action="Details" method="post" id="moveForm">
     @Html.AntiForgeryToken()
     <input type="hidden" name="boardId" value="@Model.BoardId" />
@@ -9,66 +11,93 @@
 
     <div class="container my-5">
         <div class="row g-4">
-            <div class="col-md-8 d-flex justify-content-center">
-                <div id="chess-board-container" class="shadow-lg rounded p-3 bg-dark border border-secondary" style="border-width: 2px !important;">
+            <div class="col-lg-8 d-flex justify-content-center">
+                <div id="chess-board-container" class="shadow-lg rounded p-3 bg-dark border border-secondary"
+                     style="border-width: 2px !important; position: relative; width: fit-content;">
                     @await Html.PartialAsync("_GamePartial", Model)
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="card shadow-lg bg-dark border-secondary h-100">
-                    <div class="card-header bg-black text-primary border-secondary d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0 fw-bold text-uppercase tracking-wider" style="font-size: 0.9rem;">Move History</h5>
-                        <span class="badge bg-primary">@Model.MoveHistory.Count() Total</span>
-                    </div>
-                    
-                    <div class="card-body p-0" style="max-height: 600px; overflow-y: auto; background-color: #121212;">
-                        <div class="list-group list-group-flush">
-                            @for (int i = 0; i < Model.MoveHistory.Count(); i++)
-                            {
-                                var move = Model.MoveHistory.ElementAt(i);
-                                bool isBlackMove = i % 2 != 0;
-                                string bgStyle = isBlackMove ? "background-color: #1e2124;" : "background-color: transparent;";
+            <div class="col-lg-4">
+                <div class="card shadow-lg bg-dark border-secondary h-100" style="min-height: 650px;">
 
-                                <button type="button" 
-                                        class="list-group-item list-group-item-action move-history-btn border-secondary text-light d-flex justify-content-between align-items-center py-2"
-                                        style="@bgStyle border-bottom: 1px solid rgba(255,255,255,0.05);"
-                                        data-tox="@move.PositionX"
-                                        data-toy="@move.PositionY"
-                                        data-pieceid="@move.FigureImage">
+                    <div class="card-header bg-black border-secondary p-3">
+                        <div class="d-grid gap-2">
+                            <button type="button" id="btnNextMove" class="btn btn-primary btn-lg fw-bold text-uppercase shadow-sm">
+                                <i class="bi bi-play-fill me-2"></i> Play Next Move
+                            </button>
+
+                            <a asp-controller="User" asp-action="Profile" class="btn btn-outline-info fw-bold">
+                                <i class="bi bi-person-circle me-2"></i> Back to Profile
+                            </a>
+                        </div>
+
+                        <div class="mt-3 d-flex justify-content-between align-items-center px-1">
+                            <span class="text-muted small">Replay Progress</span>
+                            <span class="badge bg-dark border border-primary text-primary" id="progressBadge" style="font-size: 0.9rem; padding: 0.5em 0.8em;">
+                                Step 0 / @Model.MoveHistory.Count()
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-header bg-black text-primary border-secondary py-2">
+                        <h6 class="mb-0 fw-bold text-uppercase" style="letter-spacing: 1px; font-size: 0.75rem;">Move History Log</h6>
+                    </div>
+
+                    <div class="card-body p-0" id="historyContainer" style="max-height: 400px; overflow-y: auto; background-color: #0f0f0f;">
+                        <div class="list-group list-group-flush" id="moveList">
+                            @{
+                                var historyList = Model.MoveHistory.ToList();
+                            }
+                            @for (int i = 0; i < historyList.Count; i++)
+                            {
+                                var move = historyList[i];
+                                bool isBlackMove = i % 2 != 0;
+
+                                <div class="list-group-item border-secondary text-light d-flex justify-content-between align-items-center py-2 move-row"
+                                     style="background-color: @(isBlackMove ? "#161616" : "transparent"); border-left: 4px solid transparent; cursor: default;"
+                                     data-tox="@move.PositionX"
+                                     data-toy="@move.PositionY"
+                                     data-pieceid="@move.FigureId"
+                                     data-index="@i">
 
                                     <div class="d-flex align-items-center">
-                                        <span class="text-muted me-3 small fw-bold" style="width: 20px;">@(i + 1).</span>
+                                        <span class="text-muted small fw-bold me-3" style="width: 25px;">@(i + 1).</span>
 
-                                        <div class="p-1 rounded me-2"
-                                             style="background-color: #1b1e1f; border: 1px solid #343a40; display: flex; align-items: center; justify-content: center;">
-                                            <img src="~/images/pieces/@move.FigureImage"
-                                                 alt="piece"
-                                                 style="width: 24px; height: 24px; object-fit: contain;" />
+                                        <div class="p-1 rounded bg-dark border border-secondary me-3 d-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                                            <img src="/images/pieces/@move.FigureImage" alt="piece" style="width: 26px; height: 26px; object-fit: contain;" />
                                         </div>
 
-                                        <span class="@(isBlackMove ? "text-info" : "text-white")">
-                                            Move to <strong class="ms-1">@move.Coordinate</strong>
-                                        </span>
+                                        <div>
+                                            <span class="small text-muted d-block" style="line-height: 1; font-size: 0.6rem; margin-bottom: 2px; text-transform: uppercase;">
+                                                @(isBlackMove ? "Black" : "White")
+                                            </span>
+                                            <span class="fw-bold @(isBlackMove ? "text-info" : "text-white")">@move.Coordinate</span>
+                                        </div>
                                     </div>
-                                    
-                                    <i class="bi bi-arrow-counterclockwise text-muted small"></i>
-                                </button>
+
+                                    <i class="bi bi-check2-circle text-muted opacity-25"></i>
+                                </div>
                             }
                         </div>
 
                         @if (!Model.MoveHistory.Any())
                         {
-                            <div class="p-5 text-center text-muted italic">
+                            <div class="p-5 text-center text-muted">
                                 <i class="bi bi-journal-x d-block mb-2" style="font-size: 2rem;"></i>
-                                No moves recorded yet.
+                                <p class="small italic">Empty History</p>
                             </div>
                         }
                     </div>
-                    
-                    <div class="card-footer bg-black border-secondary py-3">
-                        <div class="d-grid">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="location.reload()">Reset View</button>
+
+                    <div class="card-footer bg-black border-secondary d-flex justify-content-between align-items-center py-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetReplay()">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Reset Replay
+                        </button>
+
+                        <div class="text-end">
+                            <div class="text-muted" style="font-size: 0.6rem; text-transform: uppercase;">Board Index</div>
+                            <div class="text-secondary fw-bold small">ID: #@Model.BoardId</div>
                         </div>
                     </div>
                 </div>
@@ -77,57 +106,6 @@
     </div>
 </form>
 
-<style>
-    .card-body::-webkit-scrollbar {
-        width: 6px;
-    }
-    .card-body::-webkit-scrollbar-track {
-        background: #000;
-    }
-    .card-body::-webkit-scrollbar-thumb {
-        background: #333;
-        border-radius: 10px;
-    }
-    .card-body::-webkit-scrollbar-thumb:hover {
-        background: #00d2ff;
-    }
-
-    .move-history-btn:hover {
-        background-color: #25282c !important;
-        color: #00d2ff !important;
-    }
-
-    .tracking-wider {
-        letter-spacing: 0.05rem;
-    }
-</style>
-
-@section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const historyButtons = document.querySelectorAll('.move-history-btn');
-            const form = document.getElementById('moveForm');
-
-            const inputToX = document.getElementById('toX');
-            const inputToY = document.getElementById('toY');
-            const inputFigureId = document.getElementById('figureId');
-
-            historyButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const x = this.getAttribute('data-tox');
-                    const y = this.getAttribute('data-toy');
-                    const piece = this.getAttribute('data-pieceid');
-
-                    inputToX.value = x;
-                    inputToY.value = y;
-                    inputFigureId.value = piece;
-
-                    form.submit();
-                });
-            });
-        });
-    </script>
-}
-
+<script src="~/js/details.js"></script>
 
 
