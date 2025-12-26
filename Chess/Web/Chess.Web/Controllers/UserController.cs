@@ -53,7 +53,7 @@ public class UserController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Details(string figureId, double toX, double toY)
+    public async Task<IActionResult> Details(int figureId, double toX, double toY)
     {
         var board = HttpContext.Session.GetBoard<UserBoardsViewModel>();
         var boardUpdated = await userService.Next(board, figureId, toX, toY);
