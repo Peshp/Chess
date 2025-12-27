@@ -16,14 +16,6 @@
                 row.classList.remove('active-move');
             }
         });
-
-        progressBadge.innerText = `Step ${currentIndex} / ${moveRows.length}`;
-
-        if (currentIndex >= moveRows.length) {
-            nextBtn.disabled = true;
-            nextBtn.className = "btn btn-outline-secondary btn-lg fw-bold text-uppercase w-100";
-            nextBtn.innerHTML = '<i class="bi bi-check-all me-2"></i> Game Replayed';
-        }
     }
 
     nextBtn.addEventListener('click', function () {
@@ -42,8 +34,3 @@
 
     refreshReplayUI();
 });
-
-function resetReplay() {
-    sessionStorage.removeItem('chess_replay_step_@Model.BoardId');
-    window.location.reload();
-}
