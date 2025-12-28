@@ -166,6 +166,9 @@ namespace Chess.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("FigureId")
+                        .HasColumnType("int");
+
                     b.Property<string>("FigureImage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

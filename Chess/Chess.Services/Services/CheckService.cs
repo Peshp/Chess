@@ -1,11 +1,12 @@
 ﻿namespace Chess.Services.Services;
 
-using Chess.Services.Services.Contracts;
-using Chess.Web.ViewModels.Chess;
-
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Chess.Services.Services.Contracts;
+using Chess.Services.Validations.Engine;
+using Chess.Web.ViewModels.Chess;
 
 public class CheckService : ICheckService
 {

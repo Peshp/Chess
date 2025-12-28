@@ -9,30 +9,26 @@ using Chess.Web.ViewModels.Chess;
 using Microsoft.AspNetCore.Mvc;
 using Chess.Web.Infrastructure.Extension;
 using static Chess.Web.Infrastructure.Extension.CurrentSessionExtension;
+using static Chess.Services.Helpers.ParseUciMoveHelper;
 using Chess.Services.Services.Contracts;
 using Chess.Services;
 using Chess.Web.ViewModels.User;
+using Chess.Services.Helpers;
 
 public class GameController : BaseController
 {
     private readonly IEngineService engineService;
-    private readonly IMoveService moveService;
-    private readonly ICheckService checkService;
-    private readonly ICastleService castleService;
     private readonly IGameService gameService;
+    private readonly IStockfishService stockfishService;
 
     public GameController(
         IEngineService engineService,
-        IMoveService moveService,
-        ICheckService checkService,
-        ICastleService castleService,
-        IGameService gameService)
+        IGameService gameService,
+        IStockfishService stockfishService)
     {
         this.engineService = engineService;
-        this.moveService = moveService;
-        this.checkService = checkService;
-        this.castleService = castleService;
         this.gameService = gameService;
+        this.stockfishService = stockfishService;
     }
 
     public async Task<IActionResult> Game(ClockViewModel clock)
@@ -58,9 +54,7 @@ public class GameController : BaseController
     [HttpPost]
     public async Task<IActionResult> MakeMove([FromBody] Move request)
     {
-        var board = this.HttpContext.Session.GetBoard<BoardViewModel>();
-        if (board == null)
-            return Json(new { success = false });
+        var board = HttpContext.Session.GetBoard<BoardViewModel>();
 
         double toX = request.ToX * 12.5;
         double toY = request.ToY * 12.5;
@@ -71,6 +65,25 @@ public class GameController : BaseController
         {
             await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
 
+            if (!board.IsGameOver)
+            {
+                string aiActiveColor = board.CurrentTurn == "White" ? "w" : "b";
+                string fen = FenHelper.Generate(board, aiActiveColor);
+
+                string aiMoveUci = await stockfishService.GetBestMoveAsync(fen, 10);
+
+                if (!string.IsNullOrEmpty(aiMoveUci))
+                {
+                    var aiMove = ParseUciMove(aiMoveUci, board);
+
+                    if (aiMove.PieceId != null)
+                    {
+                        await engineService.TryMove(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
+                        await gameService.AddtoMoveHistory(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
+                    }
+                }
+            }
+
             HttpContext.Session.SetBoard(board);
         }
 
@@ -80,7 +93,7 @@ public class GameController : BaseController
             isCheck = board.IsCheck,
             gameOver = board.IsGameOver,
             currentTurn = board.CurrentTurn,
-            figures = board.FiguresJson,
+            figures = board.FiguresJson, 
             captured = board.CapturedJson,
             moveHistory = board.HistoryJson
         });

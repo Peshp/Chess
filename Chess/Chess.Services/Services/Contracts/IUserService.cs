@@ -12,6 +12,6 @@
 
         Task<UserBoardsViewModel> GetBoardDetails(int boardId, string userId);
 
-        Task<UserBoardsViewModel> Next(UserBoardsViewModel board, string figureImg, double toX, double toY);
+        Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY);
     }
 }

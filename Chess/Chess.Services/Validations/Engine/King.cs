@@ -6,12 +6,32 @@ using System.Linq;
 using Chess.Services.Services.Contracts;
 using Chess.Web.ViewModels.Chess;
 
-public class King : IMoveValidator
+public class King : BaseMoveValidator
 {
-    public bool IsCastleAttempt(FigureViewModel king, double toX, double toY)
+    public override bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
     {
-        return Math.Abs(king.PositionY - toY) == 0 && Math.Abs(king.PositionX - toX) == 25;
+        double dx = Math.Abs(piece.PositionX - toX);
+        double dy = Math.Abs(piece.PositionY - toY);
+        bool isOneStep = (dx <= 12.5) && (dy <= 12.5) && (dx + dy != 0);
+        bool isStraight = (dx == 12.5 && dy == 0) || (dx == 0 && dy == 12.5);
+        bool isDiagonal = dx == 12.5 && dy == 12.5;
+
+        if (isOneStep && (isStraight || isDiagonal))
+        {
+            var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
+            return target == null || target.Color != piece.Color;
+        }
+
+        if (this.IsCastleAttempt(piece, toX, toY))
+        {
+            return this.CanCastle(piece, board, toX, toY);
+        }
+
+        return false;
     }
+
+    public bool IsCastleAttempt(FigureViewModel king, double toX, double toY) =>
+        Math.Abs(king.PositionY - toY) == 0 && Math.Abs(king.PositionX - toX) == 25;
 
     public bool CanCastle(FigureViewModel king, BoardViewModel board, double toX, double toY)
     {
@@ -45,27 +65,5 @@ public class King : IMoveValidator
         }
 
         return true;
-    }
-
-    public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
-    {
-        double dx = Math.Abs(piece.PositionX - toX);
-        double dy = Math.Abs(piece.PositionY - toY);
-        bool isOneStep = (dx <= 12.5) && (dy <= 12.5) && (dx + dy != 0);
-        bool isStraight = (dx == 12.5 && dy == 0) || (dx == 0 && dy == 12.5);
-        bool isDiagonal = dx == 12.5 && dy == 12.5;
-
-        if (isOneStep && (isStraight || isDiagonal))
-        {
-            var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
-            return target == null || target.Color != piece.Color;
-        }
-
-        if (this.IsCastleAttempt(piece, toX, toY))
-        {
-            return this.CanCastle(piece, board, toX, toY);
-        }
-
-        return false;
     }
 }

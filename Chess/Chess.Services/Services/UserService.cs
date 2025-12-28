@@ -34,6 +34,7 @@ public class UserService : IUserService
                 Date = DateTime.Now.ToShortDateString(),
                 MoveHistory = b.Squares.Select(m => new SquareViewModel
                 {
+                    FigureId = m.FigureId,
                     PositionX = m.PositionX,
                     PositionY = m.PositionY,
                     Coordinate = m.Coordinates,
@@ -66,6 +67,7 @@ public class UserService : IUserService
             .Where(sb => sb.BoardId == boardId)
             .Select(sb => new SquareViewModel
             {
+                FigureId = sb.FigureId,
                 PositionX = sb.PositionX,
                 PositionY = sb.PositionY,
                 Coordinate = sb.Coordinates,
@@ -98,9 +100,16 @@ public class UserService : IUserService
         return viewModel;
     }
 
-    public async Task<UserBoardsViewModel> Next(UserBoardsViewModel board, string figureImg, double toX, double toY)
+    public async Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY)
     {
-        var currentPiece = board.Figures.First(f => f.Image == figureImg);
+        var currentPiece = board.Figures.First(f => f.Id == figureId);
+
+        var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
+
+        if(target != null)
+        {
+            board.Figures.Remove(target);
+        }
 
         currentPiece.PositionX = toX;
         currentPiece.PositionY = toY;

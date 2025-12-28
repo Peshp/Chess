@@ -10,19 +10,8 @@ using Chess.Web.ViewModels.Chess;
 
 public class CastleService : ICastleService
 {
-    private readonly Dictionary<string, IMoveValidator> moveValidators;
-
     public CastleService()
     {
-        this.moveValidators = new Dictionary<string, IMoveValidator>
-        {
-            { "Pawn", new Pawn() },
-            { "Bishop", new Bishop() },
-            { "Rook", new Rook() },
-            { "Queen", new Queen() },
-            { "King", new King() },
-            { "Knight", new Knight() },
-        };
     }
 
     public async Task<bool> IsCastleLegal(BoardViewModel board, FigureViewModel king, double toX, double toY, ICheckService checkService)
