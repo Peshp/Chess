@@ -77,6 +77,7 @@ public class GameService : IGameService
                 .Where(s => s.PositionX == toX && s.PositionY == toY)
                 .Select(s => new SquareViewModel
                 {
+                    FigureId = pieceId,
                     PositionX = s.PositionX,
                     PositionY = s.PositionY,
                     Coordinate = s.Coordinate,
@@ -112,6 +113,8 @@ public class GameService : IGameService
                 Coordinates = m.Coordinate,
                 PositionX = m.PositionX,
                 PositionY = m.PositionY,
+                FigureId = m.FigureId,
+                FigureImage = m.FigureImage,
                 BoardId = board.Id,
                 Board = board,
             })
