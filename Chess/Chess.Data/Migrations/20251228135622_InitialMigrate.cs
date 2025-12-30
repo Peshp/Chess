@@ -178,11 +178,18 @@ namespace Chess.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Image = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ApplicationUserId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserBoards", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserBoards_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_UserBoards_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -272,9 +279,11 @@ namespace Chess.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FigureId = table.Column<int>(type: "int", nullable: false),
                     Coordinates = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PositionX = table.Column<double>(type: "float", nullable: false),
                     PositionY = table.Column<double>(type: "float", nullable: false),
+                    FigureImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BoardId = table.Column<int>(type: "int", nullable: false),
                     UserBoardId = table.Column<int>(type: "int", nullable: true)
                 },
@@ -477,6 +486,11 @@ namespace Chess.Data.Migrations
                 name: "IX_Squares_BoardId",
                 table: "Squares",
                 column: "BoardId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserBoards_ApplicationUserId",
+                table: "UserBoards",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserBoards_UserId",

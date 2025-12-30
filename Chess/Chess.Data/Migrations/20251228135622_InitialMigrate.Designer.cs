@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Chess.Data.Migrations
 {
     [DbContext(typeof(ChessDbContext))]
-    [Migration("20251104153723_InitialMigrate")]
+    [Migration("20251228135622_InitialMigrate")]
     partial class InitialMigrate
     {
         /// <inheritdoc />
@@ -166,6 +166,13 @@ namespace Chess.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Coordinates")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FigureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FigureImage")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -1095,6 +1102,12 @@ namespace Chess.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Image")
                         .IsRequired()
                         .HasMaxLength(9)
@@ -1104,6 +1117,8 @@ namespace Chess.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("UserId");
 
@@ -1301,6 +1316,10 @@ namespace Chess.Data.Migrations
 
             modelBuilder.Entity("Chess.Data.Models.UserBoard", b =>
                 {
+                    b.HasOne("Chess.Data.Models.ApplicationUser", null)
+                        .WithMany("Boards")
+                        .HasForeignKey("ApplicationUserId");
+
                     b.HasOne("Chess.Data.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
@@ -1357,6 +1376,11 @@ namespace Chess.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Chess.Data.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("Boards");
                 });
 
             modelBuilder.Entity("Chess.Data.Models.Board", b =>
