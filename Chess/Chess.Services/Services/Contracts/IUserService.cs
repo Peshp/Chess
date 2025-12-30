@@ -8,5 +8,11 @@
     public interface IUserService
     {
         Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId);
+
+        Task<UserBoardsViewModel> GetBoardDetails(int boardId, string userId);
+
+        Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY);
+
+
     }
 }
