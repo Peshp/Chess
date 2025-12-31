@@ -8,6 +8,6 @@
     {
         Task<bool> IsCheck(BoardViewModel board, string color);
 
-        Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY, IMoveService moveService);
+        Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY);
     }
 }
