@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Chess.Services.Helpers;
 using Chess.Services.Requests;
+using Chess.Services.Services;
 using Chess.Services.Services.Contracts;
 using Chess.Web.Infrastructure.Extension;
 using Chess.Web.ViewModels.Chess;
