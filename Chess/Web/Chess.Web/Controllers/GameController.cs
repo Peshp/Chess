@@ -65,9 +65,21 @@ public class GameController : BaseController
         if (board == null) return BadRequest();
 
         // Check if game is over due to time running out
-        if (request.isGameOver && !board.IsGameOver)
+        if (request.isGameOver)
         {
             board.IsGameOver = true;
+            HttpContext.Session.SetBoard(board);
+            
+            return Json(new
+            {
+                success = false,
+                isCheck = board.IsCheck,
+                gameOver = board.IsGameOver,
+                currentTurn = board.CurrentTurn,
+                figures = board.FiguresJson,  
+                captured = board.CapturedJson,
+                moveHistory = board.HistoryJson
+            });
         }
 
         board.Success = await engineService.TryMove(board, request.PieceId, request.ToX, request.ToY);
