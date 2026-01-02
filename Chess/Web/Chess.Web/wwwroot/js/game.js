@@ -86,10 +86,13 @@
 
     async function tryMove(pieceId, toX, toY) {
         try {
+            // Check if either clock has reached 00:00
+            const isGameOver = clockManager.white.seconds <= 0 || clockManager.black.seconds <= 0;
+            
             const response = await fetch('/Game/MakeMove', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pieceId: parseInt(pieceId), toX, toY })
+                body: JSON.stringify({ pieceId: parseInt(pieceId), toX, toY, isGameOver })
             });
 
             if (!response.ok) return;

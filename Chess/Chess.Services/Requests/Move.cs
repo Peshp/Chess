@@ -16,6 +16,8 @@ public class Move
 
     public int PieceId { get; set; }
 
+    public bool isGameOver { get; set; }
+
     public double ToX => toX;
 
     public double ToY => toY;
