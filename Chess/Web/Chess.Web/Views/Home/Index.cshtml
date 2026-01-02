@@ -7,82 +7,99 @@
 <div class="container py-5">
     <div class="row align-items-center mb-5">
         <div class="col-md-6 text-center text-md-start">
-            <h1 class="display-4 fw-bold mb-3">Welcome to Chess Arena</h1>
-            <p class="lead mb-4">
+            <h1 class="display-4 fw-bold mb-3 text-white">Welcome to Chess Arena</h1>
+            <p class="lead mb-4 text-secondary">
                 Challenge your mind with classic chess. Play against friends, AI, or join online tournaments. Track your stats and improve your skills!
             </p>
-            <button type="button" class="btn btn-primary btn-lg me-2 mb-2" data-bs-toggle="modal" data-bs-target="#Modal">
-                Start game
+            <button type="button" class="btn btn-primary btn-lg px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#Modal">
+                <i class="bi bi-play-fill me-2"></i>Start Game
             </button>
         </div>
     </div>
 
-    @* <div class="row g-4 mb-5">
+    <div class="row g-4 mb-5">
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm bg-dark text-white">
-                <div class="card-body text-center">
-                    <i class="bi bi-controller display-4 mb-3"></i>
-                    <h5 class="card-title mb-2">Play Online</h5>
-                    <p class="card-text">Find opponents worldwide and test your skills in real-time chess matches.</p>
-                    <a href="@Url.Action("PlayOnline", "Game")" class="btn btn-outline-primary">Start Match</a>
+            <div class="card h-100 shadow-lg bg-dark text-white border-secondary">
+                <div class="card-body d-flex flex-column text-center">
+                    <i class="bi bi-globe display-4 mb-3 text-primary"></i>
+                    <h5 class="card-title fw-bold">Play Online</h5>
+                    <p class="card-text text-secondary flex-grow-1">Find opponents worldwide and test your skills in real-time chess matches.</p>
+                    <div class="mt-auto pt-3">
+                        <form asp-controller="Game" asp-action="PlayOnline" method="get">
+                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold py-2">
+                                <i class="bi bi-person-plus me-2"></i>Start Match
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm bg-dark text-white">
-                <div class="card-body text-center">
-                    <i class="bi bi-cpu display-4 mb-3"></i>
-                    <h5 class="card-title mb-2">Play vs AI</h5>
-                    <p class="card-text">Practice and improve by playing against our AI at different difficulty levels.</p>
-                    <a href="@Url.Action("PlayAI", "Game")" class="btn btn-outline-primary">Play AI</a>
+            <div class="card h-100 shadow-lg bg-dark text-white border-secondary">
+                <div class="card-body d-flex flex-column text-center">
+                    <i class="bi bi-cpu display-4 mb-3 text-info"></i>
+                    <h5 class="card-title fw-bold">Challenge AI</h5>
+                    <p class="card-text text-secondary flex-grow-1">Practice your tactics against Stockfish. Choose your level and improve your game.</p>
+                    <div class="mt-auto pt-3">
+                        <form asp-controller="Game" asp-action="Game" method="get">
+                            <input type="hidden" name="gameType" value="AI" />
+                            <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm">
+                                <i class="bi bi-robot me-2"></i>Play with AI
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+
         <div class="col-md-4">
-            <div class="card h-100 shadow-sm bg-dark text-white">
-                <div class="card-body text-center">
-                    <i class="bi bi-graph-up display-4 mb-3"></i>
-                    <h5 class="card-title mb-2">Statistics</h5>
-                    <p class="card-text">View your game history, track your progress, and analyze your moves.</p>
-                    <a href="@Url.Action("Profile", "User")" class="btn btn-outline-primary">View Stats</a>
+            <div class="card h-100 shadow-lg bg-dark text-white border-secondary">
+                <div class="card-body d-flex flex-column text-center">
+                    <i class="bi bi-graph-up-arrow display-4 mb-3 text-success"></i>
+                    <h5 class="card-title fw-bold">Statistics</h5>
+                    <p class="card-text text-secondary flex-grow-1">View your game history, track your ELO progress, and analyze your best moves.</p>
+                    <div class="mt-auto pt-3">
+                        <form asp-controller="User" asp-action="Profile" method="get">
+                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold py-2">
+                                <i class="bi bi-bar-chart-line me-2"></i>View Stats
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="row justify-content-center mb-5">
-        <div class="card bg-dark text-white text-center shadow-sm">
-            <div class="card-body">
-                <strong>Tip:</strong> New to chess? <a href="@Url.Action("Tutorial", "Home")" class="text-primary fw-bold">Learn the rules and strategies</a> to get started!
-            </div>
-        </div>
-    </div> *@
 </div>
 
-<!-- Start Game Modal -->
-<div class="modal fade" id="Modal" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content bg-dark text-white">
+<div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white border-secondary">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold" id="ModalLabel">Start a New Game</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body pt-0">
-                <form asp-controller="Game" asp-action="Game" method="post" class="mb-3">
-                    <label class="form-label mb-2 text-white">Time Control</label>
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <input type="number" name="Minutes" class="form-control bg-dark text-white border-secondary" style="width:80px;" placeholder="mm" aria-label="Minutes" required />
-                        <span class="text-white">+</span>
-                        <input type="number" name="Increment" class="form-control bg-dark text-white border-secondary" style="width:80px;" min="0" max="60" placeholder="inc" aria-label="Increment" required />
-                        <span class="text-white">sec/move</span>
+            <div class="modal-body">
+                <form asp-controller="Game" asp-action="Game" method="get" class="mb-3">
+                    <input type="hidden" name="gameType" value="Normal" />
+
+                    <label class="form-label mb-2 text-white fw-bold">Time Control</label>
+                    <div class="d-flex align-items-center gap-2 mb-4">
+                        <div class="flex-fill">
+                            <small class="text-secondary d-block mb-1">Minutes</small>
+                            <input type="number" name="Minutes" class="form-control bg-dark text-white border-secondary" placeholder="10" required />
+                        </div>
+                        <span class="mt-4 text-white">+</span>
+                        <div class="flex-fill">
+                            <small class="text-secondary d-block mb-1">Increment (sec)</small>
+                            <input type="number" name="Increment" class="form-control bg-dark text-white border-secondary" min="0" max="60" placeholder="0" required />
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-lg w-100">
-                        Start Game
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">
+                        Start Match
                     </button>
                 </form>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
