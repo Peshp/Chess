@@ -4,12 +4,17 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Chess.Services.Helpers;
+using Chess.Services.Requests;
+using Chess.Services.Services.Contracts;
+using Chess.Web.Infrastructure.Extension;
 using Chess.Web.ViewModels.Chess;
 
+using Humanizer;
+
 using Microsoft.AspNetCore.Mvc;
-using Chess.Web.Infrastructure.Extension;
-using Chess.Services.Services.Contracts;
-using Chess.Services;
+
+using static Chess.Services.Helpers.ParseUciMove;
 
 public class GameController : BaseController
 {
@@ -18,35 +23,35 @@ public class GameController : BaseController
     private readonly ICheckService checkService;
     private readonly ICastleService castleService;
     private readonly IGameService gameService;
+    private readonly IStockfishService stockfishService;
 
     public GameController(
         IEngineService engineService,
         IMoveService moveService,
         ICheckService checkService,
         ICastleService castleService,
-        IGameService gameService)
+        IGameService gameService,
+        IStockfishService stockfishService)
     {
         this.engineService = engineService;
         this.moveService = moveService;
         this.checkService = checkService;
         this.castleService = castleService;
         this.gameService = gameService;
+        this.stockfishService = stockfishService;
     }
 
-    public async Task<IActionResult> Game(ClockViewModel clock)
+    [HttpGet]
+    public async Task<IActionResult> Game(ClockViewModel clock, string gameType)
     {
-        string userId = string.Empty;
+        string userId = User.GetId() ?? string.Empty;
         HttpContext.Session.Clear();
         BoardViewModel board = HttpContext.Session.GetBoard<BoardViewModel>();
-
-        if (User?.Identity?.IsAuthenticated == true)
-        {
-            userId = User.GetId();
-        }
 
         if (board == null)
         {
             board = await gameService.GetBoard(clock, userId);
+            board.GameType = gameType;
             HttpContext.Session.SetBoard(board);
         }
 
@@ -57,70 +62,54 @@ public class GameController : BaseController
     public async Task<IActionResult> MakeMove([FromBody] Move request)
     {
         var board = HttpContext.Session.GetBoard<BoardViewModel>();
-        if (board == null)
-            return Json(new { success = false });
+        if (board == null) return BadRequest();
 
-        double toX = request.ToX * 12.5;
-        double toY = request.ToY * 12.5;
+        board.Success = await engineService.TryMove(board, request.PieceId, request.ToX, request.ToY);
 
-        bool success = await engineService.TryMove(board, request.PieceId, toX, toY);
-
-        bool isCheck = false;
-        bool gameOver = false;
-
-        if (success)
+        if (board.Success)
         {
-            await gameService.AddtoMoveHistory(board, request.PieceId, toX, toY);
+            await gameService.AddtoMoveHistory(board, request.PieceId, request.ToX, request.ToY);
+
+            if (board.GameType == "AI" && !board.IsGameOver)
+            {
+                string activeColor = board.CurrentTurn == "White" ? "w" : "b";
+                string fen = FenCoordinatesConverter.Generate(board, activeColor);
+
+                string moveUci = await stockfishService.GetBestMoveAsync(fen, 10);
+
+                if (!string.IsNullOrEmpty(moveUci))
+                {
+                    var aiMove = FromUci(moveUci, board);
+                    if (aiMove.PieceId != null)
+                    {
+                        await engineService.TryMove(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
+                        await gameService.AddtoMoveHistory(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
+                    }
+                }
+            }
+
+            board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
+            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
 
             HttpContext.Session.SetBoard(board);
-
-            isCheck = await checkService.IsCheck(board, board.CurrentTurn);
-            gameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
         }
 
         return Json(new
         {
-            success,
-            isCheck,
-            gameOver,
+            success = board.Success,
+            isCheck = board.IsCheck,
+            gameOver = board.IsGameOver,
             currentTurn = board.CurrentTurn,
-            figures = board.Figures.Select(f => new
-            {
-                id = f.Id,
-                x = f.PositionX,
-                y = f.PositionY,
-                name = f.Name,
-                color = f.Color,
-                image = f.Image,
-                isMoved = f.IsMoved,
-            }),
-            captured = board.CapturedFigures.Select(f => new
-            {
-                color = f.Color,
-                image = f.Image,
-            }),
-            moveHistory = board.MoveHistory.Select(m => new
-            {
-                coordinate = m.Coordinate,
-                figureImage = m.FigureImage,
-            }),
+            figures = board.FiguresJson,  
+            captured = board.CapturedJson,
+            moveHistory = board.HistoryJson
         });
     }
 
     [HttpGet]
     public async Task<IActionResult> EndGame()
     {
-        string userId = string.Empty;
-
-        if (User.Identity.IsAuthenticated)
-        {
-            userId = User.GetId();
-        }
-
-        if(userId == string.Empty)
-        {
-            return RedirectToAction("Index", "Home");
-        }
+        string userId = User.GetId();
 
         BoardViewModel board = this.HttpContext.Session.GetBoard<BoardViewModel>();
         gameService.SaveBoard(board, userId);
