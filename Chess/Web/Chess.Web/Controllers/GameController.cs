@@ -64,6 +64,12 @@ public class GameController : BaseController
         var board = HttpContext.Session.GetBoard<BoardViewModel>();
         if (board == null) return BadRequest();
 
+        // Check if game is over due to time running out
+        if (request.isGameOver && !board.IsGameOver)
+        {
+            board.IsGameOver = true;
+        }
+
         board.Success = await engineService.TryMove(board, request.PieceId, request.ToX, request.ToY);
 
         if (board.Success)
@@ -89,7 +95,12 @@ public class GameController : BaseController
             }
 
             board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
-            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+            
+            // Only check for checkmate if game is not already over due to timeout
+            if (!board.IsGameOver)
+            {
+                board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+            }
 
             HttpContext.Session.SetBoard(board);
         }
