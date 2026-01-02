@@ -18,6 +18,8 @@ public class UserBoardsViewModel : IBoardViewModel
 
     public string Date { get; set; }
 
+    public int Step { get; set; }
+
     public IList<SquareViewModel> MoveHistory { get; set; } = new List<SquareViewModel>();
 
     public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();

@@ -54,6 +54,7 @@ public class GameService : IGameService
 
     private ClockViewModel SetClock(ClockViewModel model)
     {
+
         ClockViewModel clock = new ClockViewModel();
         ClockViewModel whiteClock = new ClockViewModel();
         ClockViewModel blackClock = new ClockViewModel();

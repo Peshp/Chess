@@ -14,29 +14,25 @@ public class EngineService : IEngineService
     private readonly IMoveService moveService;
     private readonly ICheckService checkService;
     private readonly ICastleService castleService;
-    private readonly Dictionary<string, IMoveValidator> moveValidators;
+    private readonly IEnumerable<IMoveValidator> validators;
 
-    public EngineService(IMoveService moveService, ICheckService checkService, ICastleService castleService)
+    public EngineService( 
+        ICheckService checkService, 
+        ICastleService castleService,
+        IMoveService moveService,
+        IEnumerable<IMoveValidator> validators)
     {
-        this.moveService = moveService;
         this.checkService = checkService;
         this.castleService = castleService;
-        this.moveValidators = new Dictionary<string, IMoveValidator>
-        {
-            { "Pawn", new Pawn() },
-            { "Bishop", new Bishop() },
-            { "Rook", new Rook() },
-            { "Queen", new Queen() },
-            { "King", new King() },
-            { "Knight", new Knight() },
-        };
+        this.validators = validators;
+        this.moveService = moveService;
     }
 
     public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
     {
         var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
         if (piece.Color != board.CurrentTurn) return false;
-        if (!this.moveValidators.TryGetValue(piece.Name, out var validator)) return false;
+        var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
 
         if (piece.Name == "King" &&
             validator is King kingValidator &&
@@ -49,8 +45,8 @@ public class EngineService : IEngineService
             return true;
         }
 
-        if (!await moveService.IsValidMove(board, piece, toX, toY)) return false;
-        if (await checkService.IsSelfCheckAfterMove(board, piece, toX, toY, moveService)) return false;
+        if (!validator.IsValidMove(piece, toX, toY, board)) return false;
+        if (await checkService.IsSelfCheckAfterMove(board, piece, toX, toY)) return false;
 
         var target = moveService.FindPiece(board, toX, toY);
         if (target != null && target.Color != piece.Color)
@@ -81,13 +77,13 @@ public class EngineService : IEngineService
                     )
             )
             .Where(m => (Math.Abs(m.piece.PositionX - m.toX) > 0.1 || Math.Abs(m.piece.PositionY - m.toY) > 0.1) &&
-                        moveValidators.TryGetValue(m.piece.Name, out var validator) &&
-                        validator.IsValidMove(m.piece, m.toX, m.toY, board))
+                        validators.FirstOrDefault(v => v.GetType().Name == m.piece.Name)
+                        .IsValidMove(m.piece, m.toX, m.toY, board))
             .ToList();
 
         foreach (var move in legalMoves)
         {
-            if (!await checkService.IsSelfCheckAfterMove(board, move.piece, move.toX, move.toY, moveService))
+            if (!await checkService.IsSelfCheckAfterMove(board, move.piece, move.toX, move.toY))
                 return false;
         }
         return true;

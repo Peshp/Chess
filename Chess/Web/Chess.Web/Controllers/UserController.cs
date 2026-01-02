@@ -13,7 +13,9 @@ using Chess.Web.ViewModels.Chess;
 using Chess.Web.ViewModels.User;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
+[Authorize]
 public class UserController : BaseController
 {
     private readonly IUserService userService;
@@ -35,31 +37,32 @@ public class UserController : BaseController
     [HttpGet]
     public async Task<IActionResult> Details(int boardId)
     {
-        string userId = string.Empty;
         HttpContext.Session.Clear();
+        string? userId = User.GetId();
 
-        if (User.Identity.IsAuthenticated)
-        {
-            userId = User.GetId();
-        }
+        var board = await userService.GetBoardDetails(boardId, userId);
 
-        UserBoardsViewModel board = HttpContext.Session.GetBoard<UserBoardsViewModel>();
-        if (board == null)
-        {
-            board = await userService.GetBoardDetails(boardId, userId);
-            HttpContext.Session.SetBoard(board);
-        }
+        board.Step = 0;
 
+        HttpContext.Session.SetBoard(board);
         return View(board);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Details(int figureId, double toX, double toY)
+    public async Task<IActionResult> Details()
     {
         var board = HttpContext.Session.GetBoard<UserBoardsViewModel>();
-        var boardUpdated = await userService.Next(board, figureId, toX, toY);
 
-        HttpContext.Session.SetBoard(boardUpdated);
+        var nextMove = board.MoveHistory.ElementAtOrDefault(board.Step);
+
+        if (nextMove != null)
+        {
+            board = await userService.Next(board, nextMove.FigureId, nextMove.PositionX, nextMove.PositionY);
+
+            board.Step++;
+
+            HttpContext.Session.SetBoard(board);
+        }
 
         return View(board);
     }
