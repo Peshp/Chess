@@ -13,6 +13,6 @@
 
         Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY);
 
-        Task DeleteAsync(int boardId);
+
     }
 }
