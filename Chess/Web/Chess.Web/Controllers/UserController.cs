@@ -66,4 +66,11 @@ public class UserController : BaseController
 
         return View(board);
     }
+
+    public async Task<IActionResult> Delete(int boardId)
+    {
+        await userService.DeleteAsync(boardId);
+
+        return RedirectToAction("Profile");
+    }
 }
