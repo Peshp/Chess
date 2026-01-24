@@ -20,7 +20,7 @@ public class UserBoardsViewModel : IBoardViewModel
 
     public int Step { get; set; }
 
-    public IList<SquareViewModel> MoveHistory { get; set; } = new List<SquareViewModel>();
+    public IEnumerable<SquareViewModel> MoveHistory { get; set; } = new HashSet<SquareViewModel>();
 
-    public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();
+    public IEnumerable<FigureViewModel> Figures { get; set; } = new HashSet<FigureViewModel>();
 }
