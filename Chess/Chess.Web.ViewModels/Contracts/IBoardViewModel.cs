@@ -12,8 +12,8 @@
 
         string Image { get; set; }
 
-        public IList<SquareViewModel> MoveHistory { get; set; }
+        public IEnumerable<SquareViewModel> MoveHistory { get; set; }
 
-        public IList<FigureViewModel> Figures { get; set; }
+        public IEnumerable<FigureViewModel> Figures { get; set; }
     }
 }
