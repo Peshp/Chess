@@ -31,11 +31,11 @@ public class BoardViewModel : IBoardViewModel
 
     public ClockViewModel Clock { get; set; }
 
-    public IList<SquareViewModel> MoveHistory { get; set; } = new List<SquareViewModel>();
+    public IEnumerable<SquareViewModel> MoveHistory { get; set; } = new HashSet<SquareViewModel>();
 
-    public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();
+    public IEnumerable<FigureViewModel> Figures { get; set; } = new HashSet<FigureViewModel>();
 
-    public IList<FigureViewModel> CapturedFigures { get; set; } = new List<FigureViewModel>();
+    public IEnumerable<FigureViewModel> CapturedFigures { get; set; } = new HashSet<FigureViewModel>();
 
     public object FiguresJson => Figures.Select(f => new
     {
