@@ -10,8 +10,6 @@ using Chess.Services.Services.Contracts;
 using Chess.Web.Infrastructure.Extension;
 using Chess.Web.ViewModels.Chess;
 
-using Humanizer;
-
 using Microsoft.AspNetCore.Mvc;
 
 using static Chess.Services.Helpers.ParseUciMove;
