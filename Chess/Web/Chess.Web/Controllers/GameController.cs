@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Chess.Services.Helpers;
 using Chess.Services.Requests;
+using Chess.Services.Services;
 using Chess.Services.Services.Contracts;
 using Chess.Web.Infrastructure.Extension;
 using Chess.Web.ViewModels.Chess;
@@ -14,37 +15,21 @@ using Microsoft.AspNetCore.Mvc;
 
 using static Chess.Services.Helpers.ParseUciMove;
 
-public class GameController : BaseController
+// .NET 10 Primary Constructor: Clean, concise injection
+public class GameController(
+    IEngineService engineService,
+    IMoveService moveService,
+    ICheckService checkService,
+    IGameService gameService,
+    StockfishService stockfishService) : BaseController
 {
-    private readonly IEngineService engineService;
-    private readonly IMoveService moveService;
-    private readonly ICheckService checkService;
-    private readonly ICastleService castleService;
-    private readonly IGameService gameService;
-    private readonly IStockfishService stockfishService;
-
-    public GameController(
-        IEngineService engineService,
-        IMoveService moveService,
-        ICheckService checkService,
-        ICastleService castleService,
-        IGameService gameService,
-        IStockfishService stockfishService)
-    {
-        this.engineService = engineService;
-        this.moveService = moveService;
-        this.checkService = checkService;
-        this.castleService = castleService;
-        this.gameService = gameService;
-        this.stockfishService = stockfishService;
-    }
 
     [HttpGet]
     public async Task<IActionResult> Game(ClockViewModel clock, string gameType)
     {
         string userId = User.GetId() ?? string.Empty;
-        HttpContext.Session.Clear();
-        BoardViewModel board = HttpContext.Session.GetBoard<BoardViewModel>();
+
+        var board = HttpContext.Session.GetBoard<BoardViewModel>();
 
         if (board == null)
         {
@@ -73,13 +58,15 @@ public class GameController : BaseController
                 string activeColor = board.CurrentTurn == "White" ? "w" : "b";
                 string fen = FenCoordinatesConverter.Generate(board, activeColor);
 
-                string moveUci = await stockfishService.GetBestMoveAsync(fen, 10);
+                // This line calls the background service and waits for the AI move
+                string moveUci = await stockfishService.GetBestMoveAsync(fen);
 
                 if (!string.IsNullOrEmpty(moveUci))
                 {
-                    var aiMove = FromUci(moveUci, board);
+                    var aiMove = ParseUciMove.FromUci(moveUci, board);
                     if (aiMove.PieceId != null)
                     {
+                        // Apply AI move to the board
                         await engineService.TryMove(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
                         await gameService.AddtoMoveHistory(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
                     }
@@ -98,7 +85,7 @@ public class GameController : BaseController
             isCheck = board.IsCheck,
             gameOver = board.IsGameOver,
             currentTurn = board.CurrentTurn,
-            figures = board.FiguresJson,  
+            figures = board.FiguresJson,
             captured = board.CapturedJson,
             moveHistory = board.HistoryJson
         });
@@ -107,10 +94,14 @@ public class GameController : BaseController
     [HttpGet]
     public async Task<IActionResult> EndGame()
     {
-        string userId = User.GetId();
+        string userId = User.GetId() ?? string.Empty;
+        var board = HttpContext.Session.GetBoard<BoardViewModel>();
 
-        BoardViewModel board = this.HttpContext.Session.GetBoard<BoardViewModel>();
-        gameService.SaveBoard(board, userId);
+        if (board != null)
+        {
+            await gameService.SaveBoard(board, userId);
+            HttpContext.Session.Remove("Board"); 
+        }
 
         return RedirectToAction("Index", "Home");
     }
