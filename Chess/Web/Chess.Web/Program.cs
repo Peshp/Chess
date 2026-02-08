@@ -32,6 +32,8 @@ builder.Services
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession();
+builder.Services.AddSingleton<StockfishService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<StockfishService>());
 builder.Services.AddApplicationService(typeof(IGameService));
 builder.Services.AddApplicationValidator(typeof(IMoveValidator));
 
