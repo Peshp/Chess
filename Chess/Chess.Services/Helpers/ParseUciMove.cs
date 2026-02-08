@@ -1,22 +1,25 @@
-﻿namespace Chess.Services.Helpers
+﻿namespace Chess.Services.Helpers;
+
+using Chess.Web.ViewModels.Chess;
+
+public record ChessMove(string? PieceId, double ToX, double ToY);
+
+public static class ParseUciMove
 {
-    using Chess.Web.ViewModels.Chess;
-
-    public static class ParseUciMove
+    public static ChessMove FromUci(ReadOnlySpan<char> uci, BoardViewModel board)
     {
-        public static (string? PieceId, double ToX, double ToY) FromUci(string uci, BoardViewModel board)
-        {
-            double fromX = (uci[0] - 'a') * 12.5;
-            double fromY = (8 - (int)char.GetNumericValue(uci[1])) * 12.5;
+        const double GridSize = 12.5;
 
-            double targetX = (uci[2] - 'a') * 12.5;
-            double targetY = (8 - (int)char.GetNumericValue(uci[3])) * 12.5;
+        double fromX = (uci[0] - 'a') * GridSize;
+        double fromY = (8 - (int)char.GetNumericValue(uci[1])) * GridSize;
 
-            var piece = board.Figures.FirstOrDefault(f =>
-                Math.Abs(f.PositionX - fromX) < 0.1 &&
-                Math.Abs(f.PositionY - fromY) < 0.1);
+        double targetX = (uci[2] - 'a') * GridSize;
+        double targetY = (8 - (int)char.GetNumericValue(uci[3])) * GridSize;
 
-            return (piece?.Id.ToString(), targetX, targetY);
-        }
+        var piece = board.Figures.FirstOrDefault(f =>
+            Math.Abs(f.PositionX - fromX) < 0.1 &&
+            Math.Abs(f.PositionY - fromY) < 0.1);
+
+        return new ChessMove(piece?.Id.ToString(), targetX, targetY);
     }
 }
