@@ -1,69 +1,80 @@
 ﻿namespace Chess.Services.Services
 {
     using System.Diagnostics;
+    using System.Threading;
+    using System.Threading.Channels;
     using System.Threading.Tasks;
 
     using Chess.Services.Services.Contracts;
 
     using Microsoft.Extensions.Hosting;
 
-    public class StockfishService : IStockfishService, IDisposable
+    public record StockfishRequest(string Fen, TaskCompletionSource<string> ResultSource);
+
+    public class StockfishService : BackgroundService
     {
-        private readonly Process _stockfishProcess;
-        private readonly StreamWriter _input;
-        private readonly StreamReader _output;
-        private readonly object _lock = new object();
+        private readonly Channel<StockfishRequest> _channel = Channel.CreateUnbounded<StockfishRequest>();
 
-        public StockfishService(IHostEnvironment env)
+        public async Task<string> GetBestMoveAsync(string fen)
         {
-            string path = Path.Combine(env.ContentRootPath, "stockfish.exe");
+            var tcs = new TaskCompletionSource<string>();
+            await _channel.Writer.WriteAsync(new StockfishRequest(fen, tcs));
 
-            _stockfishProcess = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = path,
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-
-            _stockfishProcess.Start();
-            _input = _stockfishProcess.StandardInput;
-            _output = _stockfishProcess.StandardOutput;
-
-            _input.WriteLine("uci");
-            _input.WriteLine("isready");
-
-            while (_output.ReadLine() != "readyok") { }
+            // This line waits until the BackgroundService calls SetResult()
+            return await tcs.Task;
         }
 
-        public async Task<string> GetBestMoveAsync(string fen, int skillLevel)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await _input.WriteLineAsync("stop");
-            await _input.WriteLineAsync($"setoption name Skill Level value {skillLevel}");
-            await _input.WriteLineAsync($"position fen {fen}");
-            await _input.WriteLineAsync("go depth 10");
-            await _input.FlushAsync();
+            using var process = StartStockfish();
 
-            string line;
-            while ((line = await _output.ReadLineAsync()) != null)
+            await foreach (var request in _channel.Reader.ReadAllAsync(stoppingToken))
             {
-                if (line.StartsWith("bestmove"))
+                await process.StandardInput.WriteLineAsync($"position fen {request.Fen}");
+                await process.StandardInput.WriteLineAsync("go movetime 1000");
+
+                string? line;
+                while ((line = await process.StandardOutput.ReadLineAsync(stoppingToken)) != null)
                 {
-                    return line.Split(' ')[1];
+                    if (line.StartsWith("bestmove"))
+                    {
+                        string move = line.Split(' ')[1];
+                        // Fulfill the "claim check" - the Controller wakes up now
+                        request.ResultSource.SetResult(move);
+                        break;
+                    }
                 }
             }
-
-            return string.Empty;
         }
 
-        public void Dispose()
+        private Process StartStockfish() 
         {
-            _input.WriteLine("quit");
-            _stockfishProcess.Close();
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "stockfish.exe",
+                RedirectStandardInput = true,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+
+                WorkingDirectory = AppContext.BaseDirectory
+            };
+
+            Process? process = Process.Start(startInfo);
+
+            if (process is null)
+            {
+                throw new InvalidOperationException("Failed to start the Stockfish.");
+            }
+
+            process.StandardInput.WriteLine("uci");
+
+            process.StandardInput.WriteLine("setoption name Threads value 1");
+            process.StandardInput.WriteLine("setoption name Hash value 32");
+            process.StandardInput.WriteLine("isready");
+
+            return process;
         }
     }
 }
