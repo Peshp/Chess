@@ -3,32 +3,37 @@
 using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 public static class WebApplicationServiceExtension
 {
-    public static void AddApplicationService(this IServiceCollection service, Type serviceType)
+    public static void AddApplicationService(this IServiceCollection services, Type serviceType)
     {
         Assembly? serviceAssembly = Assembly.GetAssembly(serviceType);
         if (serviceAssembly == null)
-        {
             throw new InvalidOperationException("Invalid service type provided!");
-        }
 
-        Type[] serviceTypes = serviceAssembly
+        var serviceTypes = serviceAssembly
             .GetTypes()
-            .Where(t => t.Name.EndsWith("Service") && !t.IsInterface)
-            .ToArray();
+            .Where(t => t is { IsClass: true, IsAbstract: false } && t.Name.EndsWith("Service"));
 
         foreach (Type implementationType in serviceTypes)
         {
-            Type? interfaceType = implementationType
-                .GetInterface($"I{implementationType.Name}");
+            if (typeof(BackgroundService).IsAssignableFrom(implementationType))
+            {
+                continue;
+            }
+
+            Type? interfaceType = implementationType.GetInterface($"I{implementationType.Name}");
+
             if (interfaceType == null)
             {
                 throw new InvalidOperationException(
-                    $"No interface is provided for the service with name {implementationType.Name}");
+                    $"No interface is provided for the service with name {implementationType.Name}. " +
+                    $"Ensure I{implementationType.Name} exists or skip BackgroundServices.");
             }
-            service.AddScoped(interfaceType, implementationType);
+
+            services.AddScoped(interfaceType, implementationType);
         }
     }
 
