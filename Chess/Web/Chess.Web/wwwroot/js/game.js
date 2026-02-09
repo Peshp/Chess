@@ -1,6 +1,5 @@
-﻿// Prevent double initialization when the script is included more than once
+﻿
 if (window.__chessGameInitialized) {
-    // already initialized
 } else {
     window.__chessGameInitialized = true;
 
@@ -20,7 +19,6 @@ if (window.__chessGameInitialized) {
         };
 
         let selectedPieceId = null;
-        // track server-side current turn in lower-case ('white'|'black')
         let currentTurn = 'white';
 
         const clockManager = {
@@ -79,9 +77,7 @@ if (window.__chessGameInitialized) {
             },
 
             handleMove(moverColor) {
-                // moverColor is the color that made the move (white/black)
                 this.stop(moverColor);
-                // Increment logic: only if time hasn't run out
                 if (this[moverColor].seconds > 0) {
                     this[moverColor].seconds += this[moverColor].increment;
                 }
@@ -110,17 +106,13 @@ if (window.__chessGameInitialized) {
                     renderBoard(data.figures, data.captured);
                     renderMoveHistory(data.moveHistory);
 
-                    // Server sends currentTurn as "White" or "Black" (capitalized) — map to lower-case
                     const serverCurrentTurn = data.currentTurn ? data.currentTurn.toLowerCase() : null;
-                    // moverColor is the player who just moved (the opposite of the server's currentTurn)
                     let moverColor;
                     if (serverCurrentTurn === 'white' || serverCurrentTurn === 'black') {
                         moverColor = serverCurrentTurn === 'white' ? 'black' : 'white';
-                        // apply clock changes for the mover, and then set local currentTurn to server value
                         clockManager.handleMove(moverColor);
                         currentTurn = serverCurrentTurn;
                     } else {
-                        // fallback: assume local currentTurn was mover
                         clockManager.handleMove(currentTurn);
                         currentTurn = currentTurn === 'white' ? 'black' : 'white';
                     }
@@ -131,7 +123,6 @@ if (window.__chessGameInitialized) {
                         setTimeout(() => window.location.href = '/Game/EndGame', 1000);
                     }
                 } else {
-                    // If move not allowed by server, clear selection UI
                     clearSelection();
                 }
             } catch (err) {
@@ -142,10 +133,8 @@ if (window.__chessGameInitialized) {
         function renderBoard(figures, captured) {
             if (!elements.board) return;
 
-            // Remove existing piece images
             elements.board.querySelectorAll('.figure-img').forEach(i => i.remove());
 
-            // Add new pieces from server JSON (figures have id, x, y, image, color)
             (figures || []).forEach(f => {
                 const img = document.createElement('img');
                 img.id = `piece-${f.id}`;
@@ -183,7 +172,6 @@ if (window.__chessGameInitialized) {
         function rebindEvents() {
             if (!elements.board) return;
 
-            // safely iterate over pieces
             elements.board.querySelectorAll('.figure-img').forEach(img => {
                 img.setAttribute('draggable', 'true');
                 img.onclick = (e) => {
@@ -195,7 +183,6 @@ if (window.__chessGameInitialized) {
                     try {
                         e.dataTransfer.setData('pieceId', e.currentTarget.id);
                     } catch (err) {
-                        // some browsers require explicit data type
                         e.dataTransfer.setData('text/plain', e.currentTarget.id);
                     }
                 };
@@ -208,7 +195,6 @@ if (window.__chessGameInitialized) {
             selectedPieceId = null;
         }
 
-        // wire up board squares (guard with optional chaining)
         elements.board?.querySelectorAll('.board-square')?.forEach(sq => {
             sq.onclick = async () => {
                 if (!selectedPieceId) return;
@@ -230,7 +216,6 @@ if (window.__chessGameInitialized) {
             await tryMove(id.replace('piece-', ''), x, y);
         });
 
-        // initialize displays and start clocks
         clockManager.updateDisplay('white');
         clockManager.updateDisplay('black');
         clockManager.start('white');
