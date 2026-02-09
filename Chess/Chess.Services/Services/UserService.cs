@@ -115,4 +115,13 @@ public class UserService : IUserService
 
         return board;
     }
+
+    public async Task DeleteAsync(int boardId)
+    {
+        var board = await context.UserBoards.FirstOrDefaultAsync(ub => ub.Id == boardId);
+
+        context.UserBoards.Remove(board);
+
+        await context.SaveChangesAsync();
+    }
 }
