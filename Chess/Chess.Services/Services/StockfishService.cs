@@ -20,7 +20,6 @@
             var tcs = new TaskCompletionSource<string>();
             await _channel.Writer.WriteAsync(new StockfishRequest(fen, tcs));
 
-            // This line waits until the BackgroundService calls SetResult()
             return await tcs.Task;
         }
 
@@ -39,7 +38,7 @@
                     if (line.StartsWith("bestmove"))
                     {
                         string move = line.Split(' ')[1];
-                        // Fulfill the "claim check" - the Controller wakes up now
+
                         request.ResultSource.SetResult(move);
                         break;
                     }
