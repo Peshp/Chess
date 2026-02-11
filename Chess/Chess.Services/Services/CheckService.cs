@@ -1,6 +1,7 @@
 ﻿namespace Chess.Services.Services;
 
 using Chess.Services.Services.Contracts;
+using Chess.Services.Validations.Engine;
 using Chess.Web.ViewModels.Chess;
 
 using System.Collections.Generic;
@@ -9,11 +10,13 @@ using System.Threading.Tasks;
 
 public class CheckService : ICheckService
 {
+    private readonly IEnumerable<IMoveValidator> validators;
     private readonly IMoveService moveService;
 
-    public CheckService(IMoveService moveService)
+    public CheckService(IEnumerable<IMoveValidator> validators, IMoveService service)
     {
-        this.moveService = moveService;
+        this.validators = validators;
+        moveService = service;
     }
 
     public async Task<bool> IsCheck(BoardViewModel board, string color)
@@ -26,14 +29,16 @@ public class CheckService : ICheckService
 
         foreach (var piece in opponentPieces)
         {
-            if (await moveService.IsValidMove(board, piece, king.PositionX, king.PositionY))
+            var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+
+            if (validator.IsValidMove(piece, king.PositionX, king.PositionY, board))
                 return true;
         }
 
         return false;
     }
 
-    public async Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY, IMoveService moveService)
+    public async Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY)
     {
         var originalX = piece.PositionX;
         var originalY = piece.PositionY;

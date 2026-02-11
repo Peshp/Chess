@@ -12,17 +12,40 @@
             <div class="d-flex flex-row align-items-start gap-4">
                 <div>
                     @await Html.PartialAsync("_ClockPartial", Model.BlackClock,
-                         new ViewDataDictionary(ViewData){{"Color","black"}})
+                    new ViewDataDictionary(ViewData) { { "Color", "black" } })
 
                     @await Html.PartialAsync("_GamePartial", Model)
 
                     @await Html.PartialAsync("_ClockPartial", Model.WhiteClock,
-                         new ViewDataDictionary(ViewData){{"Color","white"}})
+                                        new ViewDataDictionary(ViewData) { { "Color", "white" } })
                 </div>
 
                 <div class="d-flex flex-column gap-3">
                     @await Html.PartialAsync("_CapturedPiecesPanel", Model)
                     @await Html.PartialAsync("_MoveHistoryPanel", Model)
+
+                    <div class="mt-3">
+                        <div class="d-flex gap-2">
+                            <form asp-controller="Game" asp-action="EndGame" method="get" class="flex-fill m-0">
+                                <button type="submit"
+                                        class="btn btn-danger w-100"
+                                        onclick="return confirm('Are you sure you want to surrender?');"
+                                        aria-label="Surrender">
+                                    Surrender
+                                </button>
+                            </form>
+
+                            <form asp-controller="Game" asp-action="EndGame" method="get" class="flex-fill m-0">
+                                <button type="submit"
+                                        class="btn btn-outline-secondary w-100"
+                                        onclick="return confirm('Offer or accept a draw?');"
+                                        aria-label="Draw">
+                                    Draw
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

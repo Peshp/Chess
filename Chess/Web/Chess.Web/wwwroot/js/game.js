@@ -1,209 +1,224 @@
-﻿document.addEventListener('DOMContentLoaded', () => {
-    const whiteClockDiv = document.getElementById('clock-white');
-    const blackClockDiv = document.getElementById('clock-black');
-    const whiteClockSpan = document.getElementById('clock-value-white');
-    const blackClockSpan = document.getElementById('clock-value-black');
-    if (!whiteClockDiv) console.error('Missing #clock-white in HTML');
-    if (!blackClockDiv) console.error('Missing #clock-black in HTML');
-    if (!whiteClockSpan) console.error('Missing #clock-value-white in HTML');
-    if (!blackClockSpan) console.error('Missing #clock-value-black in HTML');
-    if (!whiteClockDiv || !blackClockDiv || !whiteClockSpan || !blackClockSpan) return;
+﻿
+if (window.__chessGameInitialized) {
+} else {
+    window.__chessGameInitialized = true;
 
-    const clocks = {
-        white: {
-            secondsRemaining: parseInt(whiteClockDiv.dataset.minutes || '0', 10) * 60,
-            incrementSeconds: parseInt(whiteClockDiv.dataset.increment || '0', 10),
-            running: false,
-            interval: null,
-            display: whiteClockSpan
-        },
-        black: {
-            secondsRemaining: parseInt(blackClockDiv.dataset.minutes || '0', 10) * 60,
-            incrementSeconds: parseInt(blackClockDiv.dataset.increment || '0', 10),
-            running: false,
-            interval: null,
-            display: blackClockSpan
-        }
-    };
-
-    let currentTurn = 'white';
-
-    function formatTime(totalSeconds) {
-        totalSeconds = Math.max(0, Math.floor(totalSeconds));
-        const m = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
-        const s = (totalSeconds % 60).toString().padStart(2, '0');
-        return `${m}:${s}`;
-    }
-
-    function updateClockDisplay(color) {
-        const c = clocks[color];
-        c.display.textContent = formatTime(c.secondsRemaining);
-    }
-
-    function stopClock(color) {
-        const c = clocks[color];
-        if (c.interval) {
-            clearInterval(c.interval);
-            c.interval = null;
-        }
-        c.running = false;
-    }
-
-    function startClock(color) {
-        const c = clocks[color];
-        const other = color === 'white' ? 'black' : 'white';
-        // Ensure no other intervals are running
-        stopClock(other);
-        stopClock(color);
-        if (c.secondsRemaining <= 0) {
-            c.running = false;
-            updateClockDisplay(color);
-            return;
-        }
-        c.running = true;
-        updateClockDisplay(color);
-        c.interval = setInterval(() => {
-            c.secondsRemaining -= 1;
-            if (c.secondsRemaining <= 0) {
-                c.secondsRemaining = 0;
-                updateClockDisplay(color);
-                stopClock(color);
-                return;
+    document.addEventListener('DOMContentLoaded', () => {
+        const elements = {
+            board: document.getElementById('chess-board'),
+            captured: document.getElementById('captured-pieces'),
+            history: document.getElementById('move-history-list'),
+            whiteClock: {
+                div: document.getElementById('clock-white'),
+                span: document.getElementById('clock-value-white')
+            },
+            blackClock: {
+                div: document.getElementById('clock-black'),
+                span: document.getElementById('clock-value-black')
             }
-            updateClockDisplay(color);
-        }, 1000);
-    }
+        };
 
-    function addIncrement(color) {
-        const c = clocks[color];
-        if (!c || !Number.isFinite(c.incrementSeconds) || c.incrementSeconds === 0) return;
-        c.secondsRemaining += c.incrementSeconds;
-        updateClockDisplay(color);
-    }
+        let selectedPieceId = null;
+        let currentTurn = 'white';
 
-    function onPlayerMove() {
-        const mover = currentTurn;
-        stopClock(mover);
-        addIncrement(mover);
-        currentTurn = mover === 'white' ? 'black' : 'white';
-        startClock(currentTurn);
-    }
+        const clockManager = {
+            white: {
+                seconds: parseInt(elements.whiteClock.div?.dataset.minutes || '10') * 60,
+                increment: parseInt(elements.whiteClock.div?.dataset.increment || '0'),
+                interval: null
+            },
+            black: {
+                seconds: parseInt(elements.blackClock.div?.dataset.minutes || '10') * 60,
+                increment: parseInt(elements.blackClock.div?.dataset.increment || '0'),
+                interval: null
+            },
 
-    updateClockDisplay('white');
-    updateClockDisplay('black');
-    startClock(currentTurn);
+            format(totalSeconds) {
+                const time = Math.max(0, Math.floor(totalSeconds));
+                const m = Math.floor(time / 60).toString().padStart(2, '0');
+                const s = (time % 60).toString().padStart(2, '0');
+                return `${m}:${s}`;
+            },
 
-    const board = document.getElementById('chess-board');
-    const capturedDiv = document.getElementById('captured-pieces');
-    const moveListDiv = document.getElementById('move-history-list');
-    let selectedPieceId = null;
+            updateDisplay(color) {
+                const data = this[color];
+                const span = color === 'white' ? elements.whiteClock.span : elements.blackClock.span;
+                if (span) span.textContent = this.format(data.seconds);
+            },
 
-    async function tryMove(pieceId, toX, toY) {
-        try {
-            const res = await fetch('/Game/MakeMove', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pieceId, toX, toY })
-            });
-            if (!res.ok) return;
-            const data = await res.json();
-            if (!data.success) return;
-            renderBoard(data.figures, data.captured);
-            renderMoveHistory(data.moveHistory);
-            onPlayerMove();
-            if (data.gameOver) {
-                await fetch('/Game/EndGame', { method: 'POST', headers: { 'Content-Type': 'application/json' } });
-                window.location.href = '/Game/EndGame';
+            start(color) {
+                this.stop('white');
+                this.stop('black');
+
+                const data = this[color];
+                if (data.seconds <= 0) return;
+
+                let lastTick = Date.now();
+                data.interval = setInterval(() => {
+                    const now = Date.now();
+                    const delta = (now - lastTick) / 1000;
+                    lastTick = now;
+
+                    data.seconds -= delta;
+                    if (data.seconds <= 0) {
+                        data.seconds = 0;
+                        this.stop(color);
+                        alert(`${color.toUpperCase()} ran out of time!`);
+                    }
+                    this.updateDisplay(color);
+                }, 200);
+            },
+
+            stop(color) {
+                if (this[color]?.interval) {
+                    clearInterval(this[color].interval);
+                    this[color].interval = null;
+                }
+            },
+
+            handleMove(moverColor) {
+                this.stop(moverColor);
+                if (this[moverColor].seconds > 0) {
+                    this[moverColor].seconds += this[moverColor].increment;
+                }
+                this.updateDisplay(moverColor);
+
+                currentTurn = (moverColor === 'white') ? 'black' : 'white';
+                this.start(currentTurn);
             }
-        } catch (err) {
-            console.error('Move error', err);
+        };
+
+        async function tryMove(pieceId, toX, toY) {
+            try {
+                const response = await fetch('/Game/MakeMove', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pieceId: parseInt(pieceId), toX, toY })
+                });
+
+                if (!response.ok) {
+                    console.error('Move request failed:', response.status, response.statusText);
+                    return;
+                }
+                const data = await response.json();
+
+                if (data.success) {
+                    renderBoard(data.figures, data.captured);
+                    renderMoveHistory(data.moveHistory);
+
+                    const serverCurrentTurn = data.currentTurn ? data.currentTurn.toLowerCase() : null;
+                    let moverColor;
+                    if (serverCurrentTurn === 'white' || serverCurrentTurn === 'black') {
+                        moverColor = serverCurrentTurn === 'white' ? 'black' : 'white';
+                        clockManager.handleMove(moverColor);
+                        currentTurn = serverCurrentTurn;
+                    } else {
+                        clockManager.handleMove(currentTurn);
+                        currentTurn = currentTurn === 'white' ? 'black' : 'white';
+                    }
+
+                    if (data.gameOver) {
+                        clockManager.stop('white');
+                        clockManager.stop('black');
+                        setTimeout(() => window.location.href = '/Game/EndGame', 1000);
+                    }
+                } else {
+                    clearSelection();
+                }
+            } catch (err) {
+                console.error('Move processing error:', err);
+            }
         }
-    }
 
-    function bindDragEvents() {
-        if (!board) return;
-        board.querySelectorAll('.figure-img').forEach(img => {
-            img.setAttribute('draggable', 'true');
-            img.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('pieceId', e.target.id);
-            });
-            img.addEventListener('click', e => {
-                board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
-                selectedPieceId = e.target.id;
-                e.target.classList.add('selected');
-            });
-        });
-    }
+        function renderBoard(figures, captured) {
+            if (!elements.board) return;
 
-    function bindSquareClickEvents() {
-        if (!board) return;
-        board.querySelectorAll('.board-square').forEach(sq => {
-            sq.addEventListener('click', async e => {
-                if (!selectedPieceId) return;
-                const x = parseInt(sq.dataset.x, 10);
-                const y = parseInt(sq.dataset.y, 10);
-                await tryMove(selectedPieceId.replace('piece-', ''), x, y);
-                board.querySelectorAll('.figure-img.selected').forEach(p => p.classList.remove('selected'));
-                selectedPieceId = null;
-            });
-        });
-    }
+            elements.board.querySelectorAll('.figure-img').forEach(i => i.remove());
 
-    function renderBoard(figures, captured) {
-        if (!board) return;
-        board.querySelectorAll('.figure-img').forEach(i => i.remove());
-        if (Array.isArray(figures)) {
-            figures.forEach(f => {
+            (figures || []).forEach(f => {
                 const img = document.createElement('img');
-                img.id = `piece-${f.id ?? f.pieceId ?? (f.name ?? Math.random().toString(36).slice(2))}`;
+                img.id = `piece-${f.id}`;
                 img.className = 'figure-img';
                 img.src = `/images/pieces/${f.image}`;
                 img.style.left = `${f.x}%`;
                 img.style.top = `${f.y}%`;
-                img.style.position = 'absolute';
-                img.dataset.color = f.color || '';
-                if (typeof f.gridX !== 'undefined') img.dataset.x = String(f.gridX);
-                if (typeof f.gridY !== 'undefined') img.dataset.y = String(f.gridY);
-                board.appendChild(img);
+                img.dataset.color = f.color;
+                img.setAttribute('draggable', 'true');
+                elements.board.appendChild(img);
+            });
+
+            if (elements.captured) {
+                elements.captured.innerHTML = (captured || []).map(pc =>
+                    `<img src="/images/pieces/${pc.image}" class="captured-piece" style="width:25px; margin:2px">`
+                ).join('');
+            }
+            rebindEvents();
+        }
+
+        function renderMoveHistory(list) {
+            if (!elements.history || !list) return;
+            let html = '<table class="table table-sm"><tbody>';
+            for (let i = 0; i < list.length; i += 2) {
+                const w = list[i];
+                const b = list[i + 1];
+                html += `<tr>
+                    <td>${w ? `<img src="/images/pieces/${w.figureImage}" width="20"> ${w.coordinate}` : ''}</td>
+                    <td>${b ? `<img src="/images/pieces/${b.figureImage}" width="20"> ${b.coordinate}` : ''}</td>
+                </tr>`;
+            }
+            elements.history.innerHTML = html + '</tbody></table>';
+        }
+
+        function rebindEvents() {
+            if (!elements.board) return;
+
+            elements.board.querySelectorAll('.figure-img').forEach(img => {
+                img.setAttribute('draggable', 'true');
+                img.onclick = (e) => {
+                    elements.board.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+                    selectedPieceId = e.currentTarget.id;
+                    e.currentTarget.classList.add('selected');
+                };
+                img.ondragstart = (e) => {
+                    try {
+                        e.dataTransfer.setData('pieceId', e.currentTarget.id);
+                    } catch (err) {
+                        e.dataTransfer.setData('text/plain', e.currentTarget.id);
+                    }
+                };
             });
         }
-        if (capturedDiv) {
-            capturedDiv.innerHTML = Array.isArray(captured) && captured.length > 0
-                ? captured.map(pc => `<img src="/images/pieces/${pc.image}" class="captured-piece" alt="${pc.name || ''}" style="width:20px;height:20px;margin:2px">`).join('')
-                : '';
-        }
-        bindDragEvents();
-        bindSquareClickEvents();
-    }
 
-    function renderMoveHistory(list) {
-        if (!moveListDiv) return;
-        if (!list || list.length === 0) {
-            moveListDiv.innerHTML = '<div class="text-muted">No moves yet.</div>';
-            return;
+        function clearSelection() {
+            if (!elements.board) return;
+            elements.board.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+            selectedPieceId = null;
         }
-        let html = '<div class="table-responsive"><table class="table table-sm align-middle mb-0"><thead><tr><th class="text-start" style="width:45%">White</th><th class="text-end" style="width:45%">Black</th></tr></thead><tbody>';
-        for (let i = 0; i < list.length; i += 2) {
-            const w = list[i];
-            const b = list[i + 1];
-            html += `<tr><td class="text-start">${w ? `<img src="/images/pieces/${w.figureImage}" style="width:20px;height:20px;vertical-align:middle;margin-right:2px;">${w.coordinate}` : ''}</td><td class="text-end">${b ? `<img src="/images/pieces/${b.figureImage}" style="width:20px;height:20px;vertical-align:middle;margin-left:2px;">${b.coordinate}` : ''}</td></tr>`;
-        }
-        html += '</tbody></table></div>';
-        moveListDiv.innerHTML = html;
-    }
 
-    if (board) {
-        board.addEventListener('dragover', e => e.preventDefault());
-        board.addEventListener('drop', async e => {
+        elements.board?.querySelectorAll('.board-square')?.forEach(sq => {
+            sq.onclick = async () => {
+                if (!selectedPieceId) return;
+                const x = parseInt(sq.dataset.x);
+                const y = parseInt(sq.dataset.y);
+                await tryMove(selectedPieceId.replace('piece-', ''), x, y);
+                selectedPieceId = null;
+            };
+        });
+
+        elements.board?.addEventListener('dragover', e => e.preventDefault());
+        elements.board?.addEventListener('drop', async e => {
             e.preventDefault();
-            const pieceId = e.dataTransfer.getData('pieceId');
-            if (!pieceId) return;
-            const rect = board.getBoundingClientRect();
+            const id = e.dataTransfer.getData('pieceId') || e.dataTransfer.getData('text/plain');
+            if (!id) return;
+            const rect = elements.board.getBoundingClientRect();
             const x = Math.floor((e.clientX - rect.left) / (rect.width / 8));
             const y = Math.floor((e.clientY - rect.top) / (rect.height / 8));
-            await tryMove((pieceId || '').replace('piece-', ''), x, y);
+            await tryMove(id.replace('piece-', ''), x, y);
         });
-        bindDragEvents();
-        bindSquareClickEvents();
-    }
-});
+
+        clockManager.updateDisplay('white');
+        clockManager.updateDisplay('black');
+        clockManager.start('white');
+        rebindEvents();
+    });
+}

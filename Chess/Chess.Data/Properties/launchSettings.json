@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Chess.Data": {
+      "commandName": "Project",
+      "workingDirectory": "D:\\anton\\Programming\\Chess\\Chess\\Chess\\Web"
+    }
+  }
+}

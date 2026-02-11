@@ -13,9 +13,17 @@ public class BoardViewModel : IBoardViewModel
 
     public string CurrentTurn { get; set; } = "White";
 
+    public string UserId { get; set; }
+
+    public string GameType { get; set; }
+
+    public string Date { get; set; }
+
+    public bool Success { get; set; }
+
     public bool IsCheck { get; set; }
 
-    public string UserId { get; set; }
+    public bool IsGameOver { get; set; }
 
     public ClockViewModel WhiteClock { get; set; }
 
@@ -28,4 +36,27 @@ public class BoardViewModel : IBoardViewModel
     public IList<FigureViewModel> Figures { get; set; } = new List<FigureViewModel>();
 
     public IList<FigureViewModel> CapturedFigures { get; set; } = new List<FigureViewModel>();
+
+    public object FiguresJson => Figures.Select(f => new
+    {
+        id = f.Id,
+        x = f.PositionX,
+        y = f.PositionY,
+        name = f.Name,
+        color = f.Color,
+        image = f.Image,
+        isMoved = f.IsMoved
+    });
+
+    public object CapturedJson => CapturedFigures.Select(f => new
+    {
+        color = f.Color,
+        image = f.Image
+    });
+
+    public object HistoryJson => MoveHistory.Select(m => new
+    {
+        coordinate = m.Coordinate,
+        figureImage = m.FigureImage
+    });
 }

@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Chess.Services.Services.Contracts;
+using Chess.Services.Validations.Engine;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,7 +32,10 @@ builder.Services
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddSession();
+builder.Services.AddSingleton<StockfishService>();
+builder.Services.AddHostedService(sp => sp.GetRequiredService<StockfishService>());
 builder.Services.AddApplicationService(typeof(IGameService));
+builder.Services.AddApplicationValidator(typeof(IMoveValidator));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

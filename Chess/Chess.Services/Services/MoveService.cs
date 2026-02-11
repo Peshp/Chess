@@ -11,26 +11,11 @@ using Chess.Web.ViewModels.Chess;
 
 public class MoveService : IMoveService
 {
-    private readonly Dictionary<string, IMoveValidator> moveValidators;
+    private readonly IEnumerable<IMoveValidator> validators;
 
-    public MoveService()
+    public MoveService(IEnumerable<IMoveValidator> validators)
     {
-        this.moveValidators = new Dictionary<string, IMoveValidator>
-        {
-            { "Pawn", new Pawn() },
-            { "Bishop", new Bishop() },
-            { "Rook", new Rook() },
-            { "Queen", new Queen() },
-            { "King", new King() },
-            { "Knight", new Knight() },
-        };
-    }
-
-    public async Task<bool> IsValidMove(BoardViewModel board, FigureViewModel piece, double toX, double toY)
-    {
-        if (this.moveValidators.TryGetValue(piece.Name, out var validator))
-            return validator.IsValidMove(piece, toX, toY, board);
-        return false;
+        this.validators = validators;
     }
 
     public FigureViewModel? FindPiece(BoardViewModel board, double x, double y)
