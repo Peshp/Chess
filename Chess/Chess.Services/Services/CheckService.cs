@@ -11,12 +11,10 @@ using System.Threading.Tasks;
 public class CheckService : ICheckService
 {
     private readonly IEnumerable<IMoveValidator> validators;
-    private readonly IMoveService moveService;
 
-    public CheckService(IEnumerable<IMoveValidator> validators, IMoveService service)
+    public CheckService(IEnumerable<IMoveValidator> validators)
     {
         this.validators = validators;
-        moveService = service;
     }
 
     public async Task<bool> IsCheck(BoardViewModel board, string color)
@@ -31,7 +29,7 @@ public class CheckService : ICheckService
         {
             var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
 
-            if (validator.IsValidMove(piece, king.PositionX, king.PositionY, board))
+            if (await validator.IsValidMoveAsync(piece, king.PositionX, king.PositionY, board))
                 return true;
         }
 
@@ -42,7 +40,8 @@ public class CheckService : ICheckService
     {
         var originalX = piece.PositionX;
         var originalY = piece.PositionY;
-        var captured = moveService.FindPiece(board, toX, toY);
+        var captured = board.Figures.FirstOrDefault(f =>
+            Math.Abs(f.PositionX - toX) < 0.1 && Math.Abs(f.PositionY - toY) < 0.1);
 
         if (captured != null) board.Figures.Remove(captured);
         piece.PositionX = toX;
