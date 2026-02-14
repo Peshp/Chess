@@ -11,21 +11,15 @@ using Chess.Web.ViewModels.Chess;
 
 public class EngineService : IEngineService
 {
-    private readonly IMoveService moveService;
     private readonly ICheckService checkService;
-    private readonly ICastleService castleService;
     private readonly IEnumerable<IMoveValidator> validators;
 
     public EngineService( 
         ICheckService checkService, 
-        ICastleService castleService,
-        IMoveService moveService,
         IEnumerable<IMoveValidator> validators)
     {
         this.checkService = checkService;
-        this.castleService = castleService;
         this.validators = validators;
-        this.moveService = moveService;
     }
 
     public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
@@ -38,20 +32,20 @@ public class EngineService : IEngineService
             validator is King kingValidator &&
             kingValidator.IsCastleAttempt(piece, toX, toY))
         {
-            if (!kingValidator.CanCastle(piece, board, toX, toY)) return false;
-            if (!await castleService.IsCastleLegal(board, piece, toX, toY, checkService)) return false;
-            castleService.PerformCastleMove(board, piece, toX, toY);
+            if (!await kingValidator.CanCastle(piece, board, toX, toY)) return false;
+            if (!await kingValidator.CanCastle(piece, board, toX, toY)) return false;
+            kingValidator.PerformCastleMove(board, piece, toX, toY);
             board.CurrentTurn = (board.CurrentTurn == "White") ? "Black" : "White";
             return true;
         }
 
-        if (!validator.IsValidMove(piece, toX, toY, board)) return false;
+        if (!await validator.IsValidMoveAsync(piece, toX, toY, board)) return false;
         if (await checkService.IsSelfCheckAfterMove(board, piece, toX, toY)) return false;
 
-        var target = moveService.FindPiece(board, toX, toY);
+        var target = await this.FindPiece(board, toX, toY);
         if (target != null && target.Color != piece.Color)
         {
-            moveService.CapturePiece(board, target);
+            await this.CapturePiece(board, target);
         }
 
         piece.PositionX = toX;
@@ -67,19 +61,27 @@ public class EngineService : IEngineService
         if (!await checkService.IsCheck(board, currentColor))
             return false;
 
-        var legalMoves =
-            board.Figures
-            .Where(f => f.Color == currentColor)
-            .SelectMany(piece =>
-                Enumerable.Range(0, 8)
-                    .SelectMany(x => Enumerable.Range(0, 8)
-                        .Select(y => new { piece, toX = x * 12.5, toY = y * 12.5 })
-                    )
-            )
-            .Where(m => (Math.Abs(m.piece.PositionX - m.toX) > 0.1 || Math.Abs(m.piece.PositionY - m.toY) > 0.1) &&
-                        validators.FirstOrDefault(v => v.GetType().Name == m.piece.Name)
-                        .IsValidMove(m.piece, m.toX, m.toY, board))
-            .ToList();
+        var legalMoves = new List<(FigureViewModel piece, double toX, double toY)>();
+
+        foreach (var piece in board.Figures.Where(f => f.Color == currentColor))
+        {
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    double toX = x * 12.5;
+                    double toY = y * 12.5;
+                    if (Math.Abs(piece.PositionX - toX) > 0.1 || Math.Abs(piece.PositionY - toY) > 0.1)
+                    {
+                        var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+                        if (validator != null && await validator.IsValidMoveAsync(piece, toX, toY, board))
+                        {
+                            legalMoves.Add((piece, toX, toY));
+                        }
+                    }
+                }
+            }
+        }
 
         foreach (var move in legalMoves)
         {
@@ -87,5 +89,15 @@ public class EngineService : IEngineService
                 return false;
         }
         return true;
+    }
+
+    public async Task<FigureViewModel> FindPiece(BoardViewModel board, double x, double y)
+        => board.Figures.FirstOrDefault(f =>
+            Math.Abs(f.PositionX - x) < 0.1 && Math.Abs(f.PositionY - y) < 0.1);
+
+    public async Task CapturePiece(BoardViewModel board, FigureViewModel target)
+    {
+        board.CapturedFigures.Add(target);
+        board.Figures.Remove(target);
     }
 }
