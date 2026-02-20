@@ -7,7 +7,7 @@ using Chess.Web.ViewModels.Chess;
 
 public class Knight : IMoveValidator
 {
-    public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
+    public async Task<bool> IsValidMoveAsync(FigureViewModel piece, double toX, double toY, BoardViewModel board)
     {
         double dx = Math.Abs(piece.PositionX - toX);
         double dy = Math.Abs(piece.PositionY - toY);
