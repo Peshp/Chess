@@ -47,6 +47,19 @@ public class EngineService : IEngineService
         {
             await this.CapturePiece(board, target);
         }
+        else if (piece.Name == "Pawn" && target == null && Math.Abs(toX - piece.PositionX) > 0.1)
+        {
+            var enPassantTarget = board.Figures.FirstOrDefault(f => 
+                Math.Abs(f.PositionX - toX) < 0.1 && 
+                Math.Abs(f.PositionY - piece.PositionY) < 0.1 &&
+                f.Color != piece.Color &&
+                f.Name == "Pawn");
+            
+            if (enPassantTarget != null)
+            {
+                await this.CapturePiece(board, enPassantTarget);
+            }
+        }
 
         piece.PositionX = toX;
         piece.PositionY = toY;
