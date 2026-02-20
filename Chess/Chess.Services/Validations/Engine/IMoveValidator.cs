@@ -4,5 +4,5 @@ using Chess.Web.ViewModels.Chess;
 
 public interface IMoveValidator
 {
-    bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board);
+    Task<bool> IsValidMoveAsync(FigureViewModel piece, double toX, double toY, BoardViewModel board);
 }
