@@ -1,41 +1,53 @@
 ﻿.user-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     cursor: pointer;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.user-icon:hover {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
 }
 
 .dropdown-menu {
     min-width: 220px;
     right: 0;
     left: auto !important;
-    margin-right: 24px;
-    background-color: #23272b;
-    color: #f8f9fa;
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+    margin-top: 8px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 8px;
 }
 
-.dropdown-menu .dropdown-item {
-    color: #f8f9fa;
-    font-size: 17px;
-    padding: 8px 24px;
+.dropdown-menu .dropdown-item,
+.dropdown-menu .btn {
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    padding: 10px 16px;
     display: flex;
     align-items: center;
     gap: 10px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    border: none;
+    background: transparent;
 }
 
-.dropdown-menu .dropdown-item:hover {
-    background-color: #343a40;
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .btn:hover {
+    background: rgba(0, 212, 255, 0.1);
+    color: var(--accent-primary);
 }
 
-.icon-status {
-    width: 10px;
-    height: 10px;
-    background: #4CAF50;
-    border-radius: 50%;
-    display: inline-block;
-    margin-right: 8px;
+.dropdown-menu .dropdown-item i,
+.dropdown-menu .btn i {
+    font-size: 1.1rem;
+    width: 20px;
 }
