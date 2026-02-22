@@ -1,15 +1,114 @@
 ﻿@model BoardViewModel
 
-<div class="card captured-panel shadow-sm mb-2" style="min-width:180px;max-width:260px;">
-    <div class="card-header py-2">
-        <span class="h6 mb-0">Captured Pieces</span>
+<div class="captured-pieces-container">
+    <div class="captured-header">
+        <i class="bi bi-trophy me-2"></i>
+        <span>Captured Pieces</span>
     </div>
-    <div class="card-body py-2 d-flex flex-row flex-wrap gap-2" id="captured-pieces">
-        @foreach (var figure in Model.CapturedFigures)
+    <div class="captured-body" id="captured-pieces">
+        @if (Model.CapturedFigures != null && Model.CapturedFigures.Any())
         {
-            <img src="~/images/pieces/@figure.Image"
-                 alt="@figure.Name"
-                 class="captured-figure-img" />
+            <div class="captured-grid">
+                @foreach (var figure in Model.CapturedFigures)
+                {
+                    <div class="captured-piece-wrapper">
+                        <img src="~/images/pieces/@figure.Image"
+                             alt="@figure.Name"
+                             class="captured-piece-large"
+                             title="@figure.Color @figure.Name" />
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="captured-empty">
+                <i class="bi bi-inbox"></i>
+                <span>No captures yet</span>
+            </div>
         }
     </div>
 </div>
+
+<style>
+    .captured-pieces-container {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        overflow: hidden;
+        min-width: 280px;
+        max-width: 340px;
+    }
+    
+    .captured-header {
+        background: rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid var(--border-color);
+        padding: 12px 16px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+    }
+    
+    .captured-body {
+        padding: 16px;
+        min-height: 150px;
+        background: rgba(148, 163, 184, 0.08);
+    }
+    
+    .captured-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 12px;
+        justify-items: center;
+    }
+    
+    .captured-piece-wrapper {
+        background: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 8px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .captured-piece-wrapper:hover {
+        transform: translateY(-4px) scale(1.05);
+        border-color: var(--accent-primary);
+        background: rgba(0, 212, 255, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+    }
+    
+    .captured-piece-large {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+    }
+    
+    .captured-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        color: var(--text-muted);
+        gap: 12px;
+        min-height: 150px;
+    }
+    
+    .captured-empty i {
+        font-size: 3rem;
+        opacity: 0.3;
+    }
+    
+    .captured-empty span {
+        font-size: 0.9rem;
+    }
+</style>
