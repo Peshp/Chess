@@ -9,5 +9,7 @@
         Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
 
         Task<bool> IsCheckmate(BoardViewModel board, string currentColor);
+
+        Task<bool> PawnOnEdge(BoardViewModel board, int pieceId);
     }
 }
