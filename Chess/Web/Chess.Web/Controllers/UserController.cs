@@ -49,20 +49,34 @@ public class UserController : BaseController
     }
 
     [HttpPost]
-    public async Task<IActionResult> Details()
+    public async Task<IActionResult> Details(string direction)
     {
         var board = HttpContext.Session.GetBoard<UserBoardsViewModel>();
 
         var nextMove = board.MoveHistory.ElementAtOrDefault(board.Step);
+        board = await userService.Next(board, nextMove.FigureId, nextMove.PositionX, nextMove.PositionY);
 
-        if (nextMove != null)
+        if (direction == "forward")
         {
-            board = await userService.Next(board, nextMove.FigureId, nextMove.PositionX, nextMove.PositionY);
-
             board.Step++;
-
-            HttpContext.Session.SetBoard(board);
         }
+        else if (direction == "back" && board.Step > 0)
+        {
+            board.Step--;
+
+            var originalBoard = await userService.GetBoardDetails(board.BoardId, board.UserId);
+
+            for (int i = 0; i < board.Step; i++)
+            {
+                var move = board.MoveHistory[i];
+                originalBoard = await userService.Next(originalBoard, move.FigureId, move.PositionX, move.PositionY);
+            }
+
+            originalBoard.MoveHistory = board.MoveHistory;
+            originalBoard.Step = board.Step;
+            board = originalBoard;
+        }
+        HttpContext.Session.SetBoard(board);
 
         return View(board);
     }
