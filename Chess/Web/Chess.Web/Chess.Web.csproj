@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\Chess.Web.ViewModels\Chess.Web.ViewModels.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Identity\Pages\Account\" />
+  </ItemGroup>
+
 </Project>
