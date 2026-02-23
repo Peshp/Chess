@@ -69,6 +69,20 @@ public class EngineService : IEngineService
         return true;
     }
 
+    public async Task<bool> PawnOnEdge(BoardViewModel board, int pieceId)
+    {
+        var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
+        var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+
+        bool onEdge = false;
+        if (piece.Name == "Pawn" && validator is Pawn pawnValidator)
+        {
+            onEdge = pawnValidator.OnEdge(piece);
+        }
+
+        return onEdge;
+    }
+
     public async Task<bool> IsCheckmate(BoardViewModel board, string currentColor)
     {
         if (!await checkService.IsCheck(board, currentColor))
