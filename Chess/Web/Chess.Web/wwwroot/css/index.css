@@ -1,0 +1,499 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800;900&display=swap');
+
+:root {
+    --bg-primary: #0a0a0f;
+    --bg-secondary: #151520;
+    --bg-card: #1a1a2e;
+    --accent-primary: #00d4ff;
+    --accent-secondary: #7c3aed;
+    --accent-gold: #fbbf24;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --border-color: #2d2d44;
+    --glow-primary: rgba(0, 212, 255, 0.3);
+    --glow-secondary: rgba(124, 58, 237, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+}
+
+.chess-arena {
+    position: relative;
+    z-index: 1;
+    padding: 60px 40px;
+}
+
+/* ===== HERO SECTION ===== */
+.hero-content {
+    padding: 40px 0;
+}
+
+.badge-wrapper {
+    display: inline-block;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 212, 255, 0.1);
+    border: 1px solid var(--accent-primary);
+    color: var(--accent-primary);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+.hero-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+}
+
+.primary-text {
+    display: block;
+    color: var(--text-primary);
+    letter-spacing: -2px;
+}
+
+.gradient-text {
+    display: block;
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -2px;
+    filter: drop-shadow(0 0 30px var(--glow-primary));
+}
+
+.hero-description {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 500px;
+    font-weight: 400;
+}
+
+/* ===== STATS ===== */
+.stats-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    text-align: left;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border-color);
+}
+
+/* ===== TILES GRID ===== */
+.tiles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.tile-form {
+    display: block;
+    margin: 0;
+}
+
+.game-tile {
+    position: relative;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 30px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    overflow: hidden;
+    width: 100%;
+    text-align: left;
+}
+
+.game-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    border-radius: 20px;
+}
+
+.game-tile:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-primary);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow-primary);
+}
+
+.game-tile:hover::before {
+    opacity: 0.05;
+}
+
+/* Featured Tile */
+.featured-tile {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(124, 58, 237, 0.08));
+    border: 2px solid var(--accent-primary);
+    padding: 40px;
+}
+
+.featured-tile .tile-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--glow-primary), transparent);
+    transform: translate(-50%, -50%);
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.tile-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.tile-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 212, 255, 0.15);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--accent-primary);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.game-tile:hover .tile-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(0, 212, 255, 0.25);
+}
+
+.ai-icon {
+    background: rgba(99, 102, 241, 0.15);
+    color: #818cf8;
+}
+
+.trophy-icon {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--accent-gold);
+}
+
+.profile-icon {
+    background: rgba(124, 58, 237, 0.15);
+    color: #a78bfa;
+}
+
+.tile-info {
+    flex: 1;
+}
+
+.tile-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 6px 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.secondary-tile .tile-title {
+    font-size: 1.25rem;
+}
+
+.tile-description {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 500;
+}
+
+.tile-arrow {
+    font-size: 1.8rem;
+    color: var(--accent-primary);
+    transition: transform 0.3s ease;
+}
+
+.game-tile:hover .tile-arrow {
+    transform: translateX(8px);
+}
+
+/* ===== MODAL ===== */
+.custom-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.modal-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-secondary);
+}
+
+.time-control-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+}
+
+.time-option {
+    background: rgba(255, 255, 255, 0.03);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-option:hover {
+    border-color: var(--accent-primary);
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.btn-check:checked + .time-option {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 20px var(--glow-primary);
+}
+
+.time-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.time-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.btn-check:checked + .time-option .time-value,
+.btn-check:checked + .time-option .time-label {
+    color: #000;
+}
+
+.btn-start-match {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    border: none;
+    color: #000;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-start-match:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px var(--glow-primary);
+}
+
+/* ===== ANIMATED BACKGROUND ===== */
+.chess-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.chess-piece {
+    position: absolute;
+    font-size: 10rem;
+    color: rgba(255, 255, 255, 0.02);
+    animation: float 20s ease-in-out infinite;
+    user-select: none;
+}
+
+.piece-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.piece-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 5s;
+}
+
+.piece-3 {
+    bottom: 20%;
+    left: 20%;
+    animation-delay: 10s;
+}
+
+.piece-4 {
+    top: 30%;
+    right: 30%;
+    animation-delay: 15s;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-30px) rotate(5deg);
+    }
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.delay-1 {
+    animation-delay: 0.2s;
+    animation-fill-mode: both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .tiles-grid {
+        margin-top: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chess-arena {
+        padding: 40px 20px;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    
+    .time-control-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-container {
+        gap: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-title {
+        font-size: 2.2rem;
+    }
+    
+    .hero-description {
+        font-size: 1rem;
+    }
+    
+    .game-tile {
+        padding: 24px;
+    }
+    
+    .featured-tile {
+        padding: 30px;
+    }
+    
+    .tile-title {
+        font-size: 1.25rem;
+    }
+}

@@ -6,7 +6,7 @@ using System.Linq;
 
 public class Rook : IMoveValidator
 {
-    public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
+    public async Task<bool> IsValidMoveAsync(FigureViewModel piece, double toX, double toY, BoardViewModel board)
     {
         if (piece.PositionX != toX && piece.PositionY != toY)
         {

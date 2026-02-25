@@ -18,7 +18,6 @@ using static Chess.Services.Helpers.ParseUciMove;
 // .NET 10 Primary Constructor: Clean, concise injection
 public class GameController(
     IEngineService engineService,
-    IMoveService moveService,
     ICheckService checkService,
     IGameService gameService,
     StockfishService stockfishService) : BaseController
@@ -51,6 +50,23 @@ public class GameController(
 
         if (board.Success)
         {
+            var movedPiece = board.Figures.FirstOrDefault(f => f.Id == request.PieceId);
+
+            if (await engineService.PawnOnEdge(board, request.PieceId))
+            {
+                HttpContext.Session.SetBoard(board);
+                return Json(new
+                {
+                    success = true,
+                    needsPromotion = true,
+                    pieceId = movedPiece.Id,
+                    currentTurn = board.CurrentTurn,
+                    figures = board.FiguresJson,
+                    captured = board.CapturedJson,
+                    moveHistory = board.HistoryJson
+                });
+            }
+            
             await gameService.AddtoMoveHistory(board, request.PieceId, request.ToX, request.ToY);
 
             if (board.GameType == "AI" && !board.IsGameOver)
@@ -58,7 +74,6 @@ public class GameController(
                 string activeColor = board.CurrentTurn == "White" ? "w" : "b";
                 string fen = FenCoordinatesConverter.Generate(board, activeColor);
 
-                // This line calls the background service and waits for the AI move
                 string moveUci = await stockfishService.GetBestMoveAsync(fen);
 
                 if (!string.IsNullOrEmpty(moveUci))
@@ -66,7 +81,6 @@ public class GameController(
                     var aiMove = ParseUciMove.FromUci(moveUci, board);
                     if (aiMove.PieceId != null)
                     {
-                        // Apply AI move to the board
                         await engineService.TryMove(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
                         await gameService.AddtoMoveHistory(board, int.Parse(aiMove.PieceId), aiMove.ToX, aiMove.ToY);
                     }
@@ -91,13 +105,45 @@ public class GameController(
         });
     }
 
+    [HttpPost]
+    public async Task<IActionResult> PromotePawn([FromBody] PromotionRequest request)
+    {
+        var board = HttpContext.Session.GetBoard<BoardViewModel>();
+
+        var pawn = board.Figures.FirstOrDefault(f => f.Id == request.PieceId);
+
+        if (!new[] { "Queen", "Rook", "Bishop", "Night" }.Contains(request.PromoteTo))
+            return BadRequest("Invalid promotion piece");
+
+        pawn.Name = request.PromoteTo;
+        pawn.Image = $"{char.ToLower(pawn.Color[0])}{request.PromoteTo[0]}.png";
+
+        await gameService.AddtoMoveHistory(board, request.PieceId, pawn.PositionX, pawn.PositionY);
+
+        board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
+        board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+
+        HttpContext.Session.SetBoard(board);
+
+        return Json(new
+        {
+            success = true,
+            isCheck = board.IsCheck,
+            gameOver = board.IsGameOver,
+            currentTurn = board.CurrentTurn,
+            figures = board.FiguresJson,
+            captured = board.CapturedJson,
+            moveHistory = board.HistoryJson
+        });
+    }
+
     [HttpGet]
     public async Task<IActionResult> EndGame()
     {
         string userId = User.GetId() ?? string.Empty;
         var board = HttpContext.Session.GetBoard<BoardViewModel>();
 
-        if (board != null)
+        if (board != null && !string.IsNullOrEmpty(userId))
         {
             await gameService.SaveBoard(board, userId);
             HttpContext.Session.Remove("Board"); 

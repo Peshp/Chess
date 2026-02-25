@@ -13,7 +13,7 @@ public class King : IMoveValidator
         return Math.Abs(king.PositionY - toY) == 0 && Math.Abs(king.PositionX - toX) == 25;
     }
 
-    public bool CanCastle(FigureViewModel king, BoardViewModel board, double toX, double toY)
+    public async Task<bool> CanCastle(FigureViewModel king, BoardViewModel board, double toX, double toY)
     {
         if (king.IsMoved)
         {
@@ -47,7 +47,7 @@ public class King : IMoveValidator
         return true;
     }
 
-    public bool IsValidMove(FigureViewModel piece, double toX, double toY, BoardViewModel board)
+    public async Task<bool> IsValidMoveAsync(FigureViewModel piece, double toX, double toY, BoardViewModel board)
     {
         double dx = Math.Abs(piece.PositionX - toX);
         double dy = Math.Abs(piece.PositionY - toY);
@@ -63,9 +63,29 @@ public class King : IMoveValidator
 
         if (this.IsCastleAttempt(piece, toX, toY))
         {
-            return this.CanCastle(piece, board, toX, toY);
+            return await this.CanCastle(piece, board, toX, toY);
         }
 
         return false;
+    }
+
+    public void PerformCastleMove(BoardViewModel board, FigureViewModel king, double toX, double toY)
+    {
+        double direction = toX > king.PositionX ? 1 : -1;
+        double rookX = direction == 1 ? 87.5 : 0;
+        double rookY = king.PositionY;
+
+        var rook = board.Figures.FirstOrDefault(f =>
+            f.PositionX == rookX && f.PositionY == rookY && f.Color == king.Color && f.Name == "Rook");
+        double toSquare = direction == 1 ? -12.5 : 12.5;
+
+        king.PositionX = toX;
+        king.PositionY = toY;
+        king.IsMoved = true;
+        if (rook != null)
+        {
+            rook.PositionX = toX + toSquare;
+            rook.IsMoved = true;
+        }
     }
 }

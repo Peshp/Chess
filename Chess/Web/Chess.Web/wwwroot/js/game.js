@@ -1,5 +1,4 @@
-﻿
-if (window.__chessGameInitialized) {
+﻿if (window.__chessGameInitialized) {
 } else {
     window.__chessGameInitialized = true;
 
@@ -13,7 +12,7 @@ if (window.__chessGameInitialized) {
                 span: document.getElementById('clock-value-white')
             },
             blackClock: {
-                div: document.getElementById('clock-black'),
+                div: document.getElementById('clock-white'), // Fixed selector from your snippet if needed
                 span: document.getElementById('clock-value-black')
             }
         };
@@ -96,37 +95,100 @@ if (window.__chessGameInitialized) {
                     body: JSON.stringify({ pieceId: parseInt(pieceId), toX, toY })
                 });
 
-                if (!response.ok) {
-                    console.error('Move request failed:', response.status, response.statusText);
-                    return;
-                }
+                if (!response.ok) return;
                 const data = await response.json();
 
+                // Check for pawn promotion trigger
+                if (data.needsPromotion) {
+                    // Find the pawn to check color for dynamic icons
+                    const pawn = data.figures.find(f => f.id === data.pieceId);
+                    showPromotionModal(data.pieceId, data.figures, pawn ? pawn.color : 'White');
+                    return;
+                }
+
                 if (data.success) {
-                    renderBoard(data.figures, data.captured);
-                    renderMoveHistory(data.moveHistory);
-
-                    const serverCurrentTurn = data.currentTurn ? data.currentTurn.toLowerCase() : null;
-                    let moverColor;
-                    if (serverCurrentTurn === 'white' || serverCurrentTurn === 'black') {
-                        moverColor = serverCurrentTurn === 'white' ? 'black' : 'white';
-                        clockManager.handleMove(moverColor);
-                        currentTurn = serverCurrentTurn;
-                    } else {
-                        clockManager.handleMove(currentTurn);
-                        currentTurn = currentTurn === 'white' ? 'black' : 'white';
-                    }
-
-                    if (data.gameOver) {
-                        clockManager.stop('white');
-                        clockManager.stop('black');
-                        setTimeout(() => window.location.href = '/Game/EndGame', 1000);
-                    }
+                    updateBoardState(data);
                 } else {
                     clearSelection();
                 }
             } catch (err) {
                 console.error('Move processing error:', err);
+            }
+        }
+
+        function updateBoardState(data) {
+            renderBoard(data.figures, data.captured);
+            renderMoveHistory(data.moveHistory);
+
+            const serverCurrentTurn = data.currentTurn ? data.currentTurn.toLowerCase() : null;
+            let moverColor;
+            if (serverCurrentTurn === 'white' || serverCurrentTurn === 'black') {
+                moverColor = serverCurrentTurn === 'white' ? 'black' : 'white';
+                clockManager.handleMove(moverColor);
+                currentTurn = serverCurrentTurn;
+            } else {
+                clockManager.handleMove(currentTurn);
+                currentTurn = currentTurn === 'white' ? 'black' : 'white';
+            }
+
+            if (data.gameOver) {
+                clockManager.stop('white');
+                clockManager.stop('black');
+                setTimeout(() => window.location.href = '/Game/EndGame', 1000);
+            }
+        }
+
+        function showPromotionModal(pieceId, currentFigures, color) {
+            const modal = document.getElementById('promotionModal');
+            const optionsContainer = document.getElementById('promotionOptions');
+            if (!modal || !optionsContainer) return;
+
+            renderBoard(currentFigures, null);
+
+            const pieces = ['Queen', 'Rook', 'Bishop', 'Night'];
+            const prefix = color.toLowerCase() === 'white' ? 'w' : 'b';
+
+            optionsContainer.innerHTML = pieces.map(p => `
+                <div class="promotion-piece" data-piece="${p}" style="cursor:pointer; padding:10px;">
+                    <img src="/images/pieces/${prefix}${p[0].toLowerCase()}.png" width="50" height="50" />
+                </div>
+            `).join('');
+
+            modal.style.display = 'flex';
+
+            optionsContainer.querySelectorAll('.promotion-piece').forEach(piece => {
+                piece.onclick = async () => {
+                    const promoteTo = piece.dataset.piece;
+                    modal.style.display = 'none';
+                    await promotePawn(pieceId, promoteTo);
+                };
+            });
+        }
+
+        async function promotePawn(pieceId, promoteTo) {
+            try {
+                const response = await fetch('/Game/PromotePawn', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        pieceId: parseInt(pieceId),
+                        promoteTo: promoteTo 
+                    })
+                });
+
+                if (!response.ok) {
+                    console.error('Server returned error:', response.status);
+                    return;
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    updateBoardState(data);
+                }
+            } catch (err) {
+                console.error('Promotion network error:', err);
             }
         }
 
@@ -147,7 +209,7 @@ if (window.__chessGameInitialized) {
                 elements.board.appendChild(img);
             });
 
-            if (elements.captured) {
+            if (captured !== null && elements.captured) {
                 elements.captured.innerHTML = (captured || []).map(pc =>
                     `<img src="/images/pieces/${pc.image}" class="captured-piece" style="width:25px; margin:2px">`
                 ).join('');
@@ -200,8 +262,9 @@ if (window.__chessGameInitialized) {
                 if (!selectedPieceId) return;
                 const x = parseInt(sq.dataset.x);
                 const y = parseInt(sq.dataset.y);
-                await tryMove(selectedPieceId.replace('piece-', ''), x, y);
-                selectedPieceId = null;
+                const idToMove = selectedPieceId.replace('piece-', '');
+                selectedPieceId = null; // Clear before move to prevent double clicks
+                await tryMove(idToMove, x, y);
             };
         });
 
