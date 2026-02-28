@@ -18,7 +18,6 @@ using static Chess.Services.Helpers.ParseUciMove;
 // .NET 10 Primary Constructor: Clean, concise injection
 public class GameController(
     IEngineService engineService,
-    ICheckService checkService,
     IGameService gameService,
     StockfishService stockfishService) : BaseController
 {
@@ -87,7 +86,7 @@ public class GameController(
                 }
             }
 
-            board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
+            board.IsCheck = await engineService.IsInCheck(board, board.CurrentTurn);
             board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
 
             HttpContext.Session.SetBoard(board);
@@ -120,7 +119,7 @@ public class GameController(
 
         await gameService.AddtoMoveHistory(board, request.PieceId, pawn.PositionX, pawn.PositionY);
 
-        board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
+        board.IsCheck = await engineService.IsInCheck(board, board.CurrentTurn);
         board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
 
         HttpContext.Session.SetBoard(board);
