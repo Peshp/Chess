@@ -28,9 +28,7 @@ public class Pawn : IMoveValidator
         {
             var target = board.Figures.FirstOrDefault(f => f.PositionX == toX && f.PositionY == toY);
 
-            // Standard Capture
             if (target != null && target.Color != piece.Color) return true;
-
             if (target == null && await IsEnPassantMove(piece, toX, toY, board)) return true;
         }
 
