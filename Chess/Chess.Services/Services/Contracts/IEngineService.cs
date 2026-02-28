@@ -11,5 +11,7 @@
         Task<bool> IsCheckmate(BoardViewModel board, string currentColor);
 
         Task<bool> PawnOnEdge(BoardViewModel board, int pieceId);
+
+        Task<bool> IsInCheck(BoardViewModel board, string color);
     }
 }
