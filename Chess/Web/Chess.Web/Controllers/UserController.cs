@@ -54,11 +54,11 @@ public class UserController : BaseController
         var board = HttpContext.Session.GetBoard<UserBoardsViewModel>();
 
         var nextMove = board.MoveHistory.ElementAtOrDefault(board.Step);
-        board = await userService.Next(board, nextMove.FigureId, nextMove.PositionX, nextMove.PositionY);
 
         if (direction == "forward")
         {
             board.Step++;
+            board = await userService.Next(board, nextMove.FigureId, nextMove.PositionX, nextMove.PositionY);
         }
         else if (direction == "back" && board.Step > 0)
         {
@@ -76,6 +76,7 @@ public class UserController : BaseController
             originalBoard.Step = board.Step;
             board = originalBoard;
         }
+        
         HttpContext.Session.SetBoard(board);
 
         return View(board);
