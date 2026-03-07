@@ -86,8 +86,8 @@ public class GameController(
                 }
             }
 
-            board.IsCheck = await engineService.IsInCheck(board, board.CurrentTurn);
-            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+            board.IsCheck = await engineService.IsCheck(board, board.CurrentTurn);
+            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn, User.GetId());
 
             HttpContext.Session.SetBoard(board);
         }
@@ -119,8 +119,8 @@ public class GameController(
 
         await gameService.AddtoMoveHistory(board, request.PieceId, pawn.PositionX, pawn.PositionY);
 
-        board.IsCheck = await engineService.IsInCheck(board, board.CurrentTurn);
-        board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+        board.IsCheck = await engineService.IsCheck(board, board.CurrentTurn);
+        board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn, User.GetId());
 
         HttpContext.Session.SetBoard(board);
 
