@@ -10,4 +10,6 @@ public class ApplicationUser : IdentityUser
     }
 
     public IEnumerable<UserBoard> Boards { get; set; }
+
+    public int ELO { get; set; }
 }
