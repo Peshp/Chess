@@ -8,10 +8,12 @@
     {
         Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
 
-        Task<bool> IsCheckmate(BoardViewModel board, string currentColor);
+        Task<bool> IsCheckmate(BoardViewModel board, string currentColor, string userId);
 
         Task<bool> PawnOnEdge(BoardViewModel board, int pieceId);
 
-        Task<bool> IsInCheck(BoardViewModel board, string color);
+        Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY);
+
+        Task<bool> IsCheck(BoardViewModel board, string color);
     }
 }
