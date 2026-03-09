@@ -6,17 +6,23 @@ using System.IO.Pipelines;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Chess.Data;
 using Chess.Services.Services.Contracts;
 using Chess.Services.Validations.Engine;
 using Chess.Web.ViewModels.Chess;
 
+using Microsoft.EntityFrameworkCore;
+
 public class EngineService : IEngineService
 {
+    private readonly ChessDbContext _context;
     private readonly IEnumerable<IMoveValidator> validators;
 
     public EngineService(  
-        IEnumerable<IMoveValidator> validators)
+        IEnumerable<IMoveValidator> validators,
+        ChessDbContext cpntext)
     {
+        _context = cpntext;
         this.validators = validators;
     }
 
@@ -25,13 +31,15 @@ public class EngineService : IEngineService
         var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
         if (piece.Color != board.CurrentTurn) return false;
         var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
-        King kingValidator = (King)validators.FirstOrDefault(v => v.GetType().Name == "King");
 
         if (!await validator.IsValidMoveAsync(piece, toX, toY, board)) return false;
-        if (await kingValidator.IsSelfCheckAfterMove(board, piece, toX, toY)) return false;
+        if (await this.IsSelfCheckAfterMove(board, piece, toX, toY)) return false;
 
-        if(piece.Name == "King")
+        if (piece.Name == "King" &&
+            validator is King kingValidator &&
+            kingValidator.IsCastleAttempt(piece, toX, toY))
         {
+            if (!await kingValidator.CanCastle(piece, board, toX, toY)) return false;
             kingValidator.PerformCastleMove(board, piece, toX, toY);
             return true;
         }
@@ -77,11 +85,9 @@ public class EngineService : IEngineService
         return onEdge;
     }
 
-    public async Task<bool> IsCheckmate(BoardViewModel board, string currentColor)
+    public async Task<bool> IsCheckmate(BoardViewModel board, string currentColor, string userId)
     {
-        var kingValidator = (King)validators.FirstOrDefault(v => v.GetType().Name == "King");
-
-        if (!await kingValidator.IsCheck(board, currentColor))
+        if (!await this.IsCheck(board, currentColor))
             return false;
 
         var myPieces = board.Figures.Where(f => f.Color == currentColor).ToList();
@@ -103,7 +109,7 @@ public class EngineService : IEngineService
 
                     if (await validator.IsValidMoveAsync(piece, targetX, targetY, board))
                     {
-                        if (!await kingValidator.IsSelfCheckAfterMove(board, piece, targetX, targetY))
+                        if (!await this.IsSelfCheckAfterMove(board, piece, targetX, targetY))
                         {
                             return false;
                         }
@@ -115,13 +121,6 @@ public class EngineService : IEngineService
         return true;
     }
 
-    public async Task<bool> IsInCheck(BoardViewModel board, string color)
-    {
-        King kingValidator = (King)validators.FirstOrDefault(v => v.GetType().Name == "King");
-
-        return await kingValidator.IsCheck(board, color);
-    }
-
     public async Task<FigureViewModel> FindPiece(BoardViewModel board, double x, double y)
         => board.Figures.FirstOrDefault(f =>
             Math.Abs(f.PositionX - x) < 0.1 && Math.Abs(f.PositionY - y) < 0.1);
@@ -130,5 +129,44 @@ public class EngineService : IEngineService
     {
         board.CapturedFigures.Add(target);
         board.Figures.Remove(target);
+    }
+
+    public async Task<bool> IsCheck(BoardViewModel board, string color)
+    {
+        var king = board.Figures.FirstOrDefault(f => f.Name == "King" && f.Color == color);
+        if (king == null) return false;
+
+        var opponentColor = (color == "White") ? "Black" : "White";
+        var opponentPieces = board.Figures.Where(f => f.Color == opponentColor);
+
+        foreach (var piece in opponentPieces)
+        {
+            var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+
+            if (await validator.IsValidMoveAsync(piece, king.PositionX, king.PositionY, board))
+                return true;
+        }
+
+        return false;
+    }
+
+    public async Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY)
+    {
+        var originalX = piece.PositionX;
+        var originalY = piece.PositionY;
+        var captured = board.Figures.FirstOrDefault(f =>
+            Math.Abs(f.PositionX - toX) < 0.1 && Math.Abs(f.PositionY - toY) < 0.1);
+
+        if (captured != null) board.Figures.Remove(captured);
+        piece.PositionX = toX;
+        piece.PositionY = toY;
+
+        bool leavesKingInCheck = await IsCheck(board, piece.Color);
+
+        piece.PositionX = originalX;
+        piece.PositionY = originalY;
+        if (captured != null) board.Figures.Add(captured);
+
+        return leavesKingInCheck;
     }
 }
