@@ -1,4 +1,6 @@
-﻿namespace Chess.Services.Services;
+﻿#nullable disable
+
+namespace Chess.Services.Services;
 
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +15,16 @@ using Microsoft.EntityFrameworkCore;
 
 public class UserService : IUserService
 {
-    private readonly ChessDbContext context;
+    private readonly ChessDbContext _context;
 
     public UserService(ChessDbContext context)
     {
-        this.context = context;
+        _context = context;
     }
 
     public async Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId)
     {
-        var boards = await this.context
+        var boards = await _context
             .UserBoards
             .Where(ub => ub.UserId == userId)
             .Select(b => new UserBoardsViewModel
@@ -59,10 +61,10 @@ public class UserService : IUserService
 
     public async Task<UserBoardsViewModel> GetBoardDetails(int boardId, string userId)
     {
-        var board = await this.context.Boards.ToArrayAsync();
-        var figures = await this.context.Figures.ToArrayAsync();
+        var board = await _context.Boards.ToArrayAsync();
+        var figures = await _context.Figures.ToArrayAsync();
 
-        IEnumerable<SquareViewModel> currentMoves = await this.context.BoardSquares
+        IEnumerable<SquareViewModel> currentMoves = await _context.BoardSquares
             .Where(sb => sb.BoardId == boardId)
             .Select(sb => new SquareViewModel
             {
@@ -118,10 +120,10 @@ public class UserService : IUserService
 
     public async Task DeleteAsync(int boardId)
     {
-        var board = await context.UserBoards.FirstOrDefaultAsync(ub => ub.Id == boardId);
+        var board = await _context.UserBoards.FirstOrDefaultAsync(ub => ub.Id == boardId);
 
-        context.UserBoards.Remove(board);
+        _context.UserBoards.Remove(board);
 
-        await context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }
