@@ -1,41 +1,40 @@
 ﻿#nullable disable
 
-namespace Chess.Web.Areas.Identity.Pages.Account
+namespace Chess.Web.Areas.Identity.Pages.Account;
+
+using System;
+using System.Threading.Tasks;
+
+using Chess.Data.Models;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+
+public class LogoutModel : PageModel
 {
-    using System;
-    using System.Threading.Tasks;
+    private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly ILogger<LogoutModel> _logger;
 
-    using Chess.Data.Models;
-
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.RazorPages;
-    using Microsoft.Extensions.Logging;
-
-    public class LogoutModel : PageModel
+    public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
     {
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<LogoutModel> _logger;
+        _signInManager = signInManager;
+        _logger = logger;
+    }
 
-        public LogoutModel(SignInManager<ApplicationUser> signInManager, ILogger<LogoutModel> logger)
+    public async Task<IActionResult> OnPost(string returnUrl = null)
+    {
+        await _signInManager.SignOutAsync();
+        _logger.LogInformation("User logged out.");
+        if (returnUrl != null)
         {
-            _signInManager = signInManager;
-            _logger = logger;
+            return LocalRedirect(returnUrl);
         }
-
-        public async Task<IActionResult> OnPost(string returnUrl = null)
+        else
         {
-            await _signInManager.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            if (returnUrl != null)
-            {
-                return LocalRedirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToPage();
-            }
+            return RedirectToPage();
         }
     }
 }
