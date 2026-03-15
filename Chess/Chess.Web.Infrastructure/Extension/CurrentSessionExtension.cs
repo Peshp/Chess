@@ -1,4 +1,6 @@
-﻿namespace Chess.Web.Infrastructure.Extension;
+﻿#nullable disable
+
+namespace Chess.Web.Infrastructure.Extension;
 
 using System.Text.Json;
 
