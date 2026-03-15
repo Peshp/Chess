@@ -1,19 +1,18 @@
-﻿namespace Chess.Web.ViewModels.Contracts
+﻿namespace Chess.Web.ViewModels.Contracts;
+
+
+using ViewModels.Chess;
+
+
+public interface IBoardViewModel
 {
+    int Id { get; set; }
 
-    using ViewModels.Chess;
+    string UserId { get; set; }
 
+    string Image { get; set; }
 
-    public interface IBoardViewModel
-    {
-        int Id { get; set; }
+    public IList<SquareViewModel> MoveHistory { get; set; }
 
-        string UserId { get; set; }
-
-        string Image { get; set; }
-
-        public IList<SquareViewModel> MoveHistory { get; set; }
-
-        public IList<FigureViewModel> Figures { get; set; }
-    }
+    public IList<FigureViewModel> Figures { get; set; }
 }
