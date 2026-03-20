@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Caching;
 using Chess.Services.Services.Contracts;
 using Chess.Services.Validations.Engine;
 
@@ -38,6 +39,12 @@ builder.Services.AddApplicationService(typeof(IGameService));
 builder.Services.AddApplicationValidator(typeof(IMoveValidator));
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetSection("RedisOptions")["ConnectionString"];
+    options.InstanceName = builder.Configuration.GetSection("RedisOptions")["InstanceName"];
+});
 
 var app = builder.Build();
 
