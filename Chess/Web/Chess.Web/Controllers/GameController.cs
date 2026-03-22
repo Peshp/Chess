@@ -1,4 +1,6 @@
-﻿namespace Chess.Web.Controllers;
+﻿#nullable disable
+
+namespace Chess.Web.Controllers;
 
 using System;
 using System.Linq;
