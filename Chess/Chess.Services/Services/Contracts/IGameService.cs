@@ -1,16 +1,17 @@
-﻿namespace Chess.Services.Services.Contracts
+﻿#nullable disable
+
+namespace Chess.Services.Services.Contracts;
+
+using System;
+using System.Threading.Tasks;
+
+using Chess.Web.ViewModels.Chess;
+
+public interface IGameService
 {
-    using System;
-    using System.Threading.Tasks;
+    Task<BoardViewModel> GetBoard(ClockViewModel model, string userId);
 
-    using Chess.Web.ViewModels.Chess;
+    Task SaveBoard(BoardViewModel board, string userId);
 
-    public interface IGameService
-    {
-        Task<BoardViewModel> GetBoard(ClockViewModel model, string userId);
-
-        Task SaveBoard(BoardViewModel board, string userId);
-
-        Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
-    }
+    Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY);
 }
