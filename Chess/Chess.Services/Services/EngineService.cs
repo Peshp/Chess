@@ -1,4 +1,6 @@
-﻿namespace Chess.Services.Services;
+﻿#nullable disable
+
+namespace Chess.Services.Services;
 
 using System;
 using System.Collections.Generic;
@@ -16,21 +18,21 @@ using Microsoft.EntityFrameworkCore;
 public class EngineService : IEngineService
 {
     private readonly ChessDbContext _context;
-    private readonly IEnumerable<IMoveValidator> validators;
+    private readonly IEnumerable<IMoveValidator> _validators;
 
     public EngineService(  
         IEnumerable<IMoveValidator> validators,
         ChessDbContext cpntext)
     {
         _context = cpntext;
-        this.validators = validators;
+        _validators = validators;
     }
 
     public async Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY)
     {
         var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
         if (piece.Color != board.CurrentTurn) return false;
-        var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+        var validator = _validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
 
         if (!await validator.IsValidMoveAsync(piece, toX, toY, board)) return false;
         if (await this.IsSelfCheckAfterMove(board, piece, toX, toY)) return false;
@@ -40,6 +42,7 @@ public class EngineService : IEngineService
             kingValidator.IsCastleAttempt(piece, toX, toY))
         {
             if (!await kingValidator.CanCastle(piece, board, toX, toY)) return false;
+            if(await this.IsCheck(board, board.CurrentTurn)) return false;
             kingValidator.PerformCastleMove(board, piece, toX, toY);
             return true;
         }
@@ -74,7 +77,7 @@ public class EngineService : IEngineService
     public async Task<bool> PawnOnEdge(BoardViewModel board, int pieceId)
     {
         var piece = board.Figures.FirstOrDefault(f => f.Id == pieceId);
-        var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+        var validator = _validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
 
         bool onEdge = false;
         if (piece.Name == "Pawn" && validator is Pawn pawnValidator)
@@ -94,7 +97,7 @@ public class EngineService : IEngineService
 
         foreach (var piece in myPieces)
         {
-            var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+            var validator = _validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
             if (validator == null) continue;
 
             for (int x = 0; x < 8; x++)
@@ -141,7 +144,7 @@ public class EngineService : IEngineService
 
         foreach (var piece in opponentPieces)
         {
-            var validator = validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
+            var validator = _validators.FirstOrDefault(v => v.GetType().Name == piece.Name);
 
             if (await validator.IsValidMoveAsync(piece, king.PositionX, king.PositionY, board))
                 return true;
