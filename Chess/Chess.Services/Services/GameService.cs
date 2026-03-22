@@ -1,4 +1,6 @@
-﻿namespace Chess.Services.Services;
+﻿#nullable disable
+
+namespace Chess.Services.Services;
 
 using System;
 using System.Collections.Generic;
@@ -12,19 +14,14 @@ using Chess.Web.ViewModels.Chess;
 
 using Microsoft.EntityFrameworkCore;
 
-public class GameService : IGameService
+public class GameService(ChessDbContext context) : IGameService
 {
-    private readonly ChessDbContext context;
-
-    public GameService(ChessDbContext context)
-    {
-        this.context = context;
-    }
+    private readonly ChessDbContext _context = context;
 
     public async Task<BoardViewModel> GetBoard(ClockViewModel model, string userId)
     {
-        var board = await this.context.Boards.ToArrayAsync();
-        var figures = await this.context.Figures.ToArrayAsync();
+        var board = await _context.Boards.ToArrayAsync();
+        var figures = await _context.Figures.ToArrayAsync();
 
         BoardViewModel viewModel = new BoardViewModel
         {
@@ -71,10 +68,10 @@ public class GameService : IGameService
 
     public async Task AddtoMoveHistory(BoardViewModel board, int pieceId, double toX, double toY)
     {
-        FigureViewModel? currentPiece = board.Figures
+        FigureViewModel currentPiece = board.Figures
             .FirstOrDefault(f => f.Id == pieceId);
 
-        var model = await this.context.Squares
+        var model = await _context.Squares
                 .Where(s => s.PositionX == toX && s.PositionY == toY)
                 .Select(s => new SquareViewModel
                 {
@@ -124,7 +121,7 @@ public class GameService : IGameService
         board.Squares = newSquares;
         board.Boards = newFigures;
 
-        this.context.UserBoards.Add(board);
-        this.context.SaveChanges();
+        _context.UserBoards.Add(board);
+        _context.SaveChanges();
     }
 }
