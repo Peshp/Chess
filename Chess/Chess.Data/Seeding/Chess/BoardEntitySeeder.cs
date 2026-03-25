@@ -1,32 +1,31 @@
-﻿namespace Chess.Data.Seeding.Chess
+﻿namespace Chess.Data.Seeding.Chess;
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using global::Chess.Data.Models;
+
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Configuration;
+
+public class BoardEntitySeeder : IEntityTypeConfiguration<Board>
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
-
-    using global::Chess.Data.Models;
-
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Metadata.Builders;
-    using Microsoft.Extensions.Configuration;
-
-    public class BoardEntitySeeder : IEntityTypeConfiguration<Board>
+    public void Configure(EntityTypeBuilder<Board> builder)
     {
-        public void Configure(EntityTypeBuilder<Board> builder)
+        Board board = this.SeedBoard();
+
+        builder.HasData(board);
+    }
+
+    private Board SeedBoard()
+    {
+        var board = new Board
         {
-            Board board = this.SeedBoard();
+            Id = 1,
+            Image = "board.png",
+        };
 
-            builder.HasData(board);
-        }
-
-        private Board SeedBoard()
-        {
-            var board = new Board
-            {
-                Id = 1,
-                Image = "board.png",
-            };
-
-            return board;
-        }
+        return board;
     }
 }
