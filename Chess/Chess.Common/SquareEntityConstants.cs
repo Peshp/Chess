@@ -1,7 +1,6 @@
-﻿namespace Chess.Common
+﻿namespace Chess.Common;
+
+public static class SquareEntityConstants
 {
-    public static class SquareEntityConstants
-    {
-        public const int SquareStringMaxLength = 2;
-    }
+    public const int SquareStringMaxLength = 2;
 }
