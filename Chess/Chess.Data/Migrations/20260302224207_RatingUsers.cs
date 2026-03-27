@@ -1,29 +1,28 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#nullable disable
 
-#nullable disable
+namespace Chess.Data.Migrations;
 
-namespace Chess.Data.Migrations
+using Microsoft.EntityFrameworkCore.Migrations;
+
+/// <inheritdoc />
+public partial class RatingUsers : Migration
 {
     /// <inheritdoc />
-    public partial class RatingUsers : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<int>(
-                name: "ELO",
-                table: "AspNetUsers",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
-        }
+        migrationBuilder.AddColumn<int>(
+            name: "ELO",
+            table: "AspNetUsers",
+            type: "int",
+            nullable: false,
+            defaultValue: 0);
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "ELO",
-                table: "AspNetUsers");
-        }
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(
+            name: "ELO",
+            table: "AspNetUsers");
     }
 }
