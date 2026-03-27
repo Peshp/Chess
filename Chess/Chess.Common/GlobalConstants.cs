@@ -1,9 +1,8 @@
-﻿namespace Chess.Common
-{
-    public static class GlobalConstants
-    {
-        public const string SystemName = "Chess";
+﻿namespace Chess.Common;
 
-        public const string AdministratorRoleName = "Administrator";
-    }
+public static class GlobalConstants
+{
+    public const string SystemName = "Chess";
+
+    public const string AdministratorRoleName = "Administrator";
 }
