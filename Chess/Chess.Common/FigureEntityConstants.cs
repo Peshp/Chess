@@ -1,7 +1,6 @@
-﻿namespace Chess.Common
+﻿namespace Chess.Common;
+
+public static class FigureEntityConstants
 {
-    public static class FigureEntityConstants
-    {
-        public const int FigureImageMaxLength = 6;
-    }
+    public const int FigureImageMaxLength = 6;
 }
