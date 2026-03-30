@@ -1,7 +1,6 @@
-﻿namespace Chess.Common
+﻿namespace Chess.Common;
+
+public static class BoardEntityConstants
 {
-    public static class BoardEntityConstants
-    {
-        public const int BoardImageMaxLength = 9;
-    }
+    public const int BoardImageMaxLength = 9;
 }

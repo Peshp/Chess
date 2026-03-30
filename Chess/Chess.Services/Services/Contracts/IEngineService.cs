@@ -1,15 +1,18 @@
-﻿namespace Chess.Services.Services.Contracts
+﻿namespace Chess.Services.Services.Contracts;
+
+using System.Threading.Tasks;
+
+using Chess.Web.ViewModels.Chess;
+
+public interface IEngineService
 {
-    using System.Threading.Tasks;
+    Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
 
-    using Chess.Web.ViewModels.Chess;
+    Task<bool> IsCheckmate(BoardViewModel board, string currentColor, string userId);
 
-    public interface IEngineService
-    {
-        Task<bool> TryMove(BoardViewModel board, int pieceId, double toX, double toY);
+    Task<bool> PawnOnEdge(BoardViewModel board, int pieceId);
 
-        Task<bool> IsCheckmate(BoardViewModel board, string currentColor);
+    Task<bool> IsSelfCheckAfterMove(BoardViewModel board, FigureViewModel piece, double toX, double toY);
 
-        Task<bool> PawnOnEdge(BoardViewModel board, int pieceId);
-    }
+    Task<bool> IsCheck(BoardViewModel board, string color);
 }

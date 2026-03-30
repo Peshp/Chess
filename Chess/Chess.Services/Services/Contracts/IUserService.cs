@@ -1,18 +1,17 @@
-﻿namespace Chess.Services.Services.Contracts
+﻿namespace Chess.Services.Services.Contracts;
+
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Chess.Web.ViewModels.User;
+
+public interface IUserService
 {
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId);
 
-    using Chess.Web.ViewModels.User;
+    Task<UserBoardsViewModel> GetBoardDetails(int boardId, string userId);
 
-    public interface IUserService
-    {
-        Task<IEnumerable<UserBoardsViewModel>> GetHistory(string userId);
+    Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY);
 
-        Task<UserBoardsViewModel> GetBoardDetails(int boardId, string userId);
-
-        Task<UserBoardsViewModel> Next(UserBoardsViewModel board, int figureId, double toX, double toY);
-
-        Task DeleteAsync(int boardId);
-    }
+    Task DeleteAsync(int boardId);
 }

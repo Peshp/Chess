@@ -1,4 +1,6 @@
-﻿namespace Chess.Web.ViewModels.Chess;
+﻿#nullable disable
+
+namespace Chess.Web.ViewModels.Chess;
 
 using System;
 using System.Collections.Generic;

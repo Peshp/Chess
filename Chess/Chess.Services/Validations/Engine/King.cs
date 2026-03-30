@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 
-using Chess.Services.Services.Contracts;
 using Chess.Web.ViewModels.Chess;
 
 public class King : IMoveValidator
@@ -87,5 +86,7 @@ public class King : IMoveValidator
             rook.PositionX = toX + toSquare;
             rook.IsMoved = true;
         }
+
+        board.CurrentTurn = (board.CurrentTurn == "White") ? "Black" : "White";
     }
 }

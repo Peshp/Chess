@@ -1,4 +1,6 @@
-﻿namespace Chess.Web.Controllers;
+﻿#nullable disable
+
+namespace Chess.Web.Controllers;
 
 using System;
 using System.Linq;
@@ -12,13 +14,14 @@ using Chess.Web.Infrastructure.Extension;
 using Chess.Web.ViewModels.Chess;
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 
 using static Chess.Services.Helpers.ParseUciMove;
 
 // .NET 10 Primary Constructor: Clean, concise injection
 public class GameController(
+    IDistributedCache _cache,
     IEngineService engineService,
-    ICheckService checkService,
     IGameService gameService,
     StockfishService stockfishService) : BaseController
 {
@@ -26,16 +29,12 @@ public class GameController(
     [HttpGet]
     public async Task<IActionResult> Game(ClockViewModel clock, string gameType)
     {
-        string userId = User.GetId() ?? string.Empty;
+        string userId = User.GetId();
 
-        var board = HttpContext.Session.GetBoard<BoardViewModel>();
+        var board = await gameService.GetBoard(clock, userId);
+        board.GameType = gameType;
 
-        if (board == null)
-        {
-            board = await gameService.GetBoard(clock, userId);
-            board.GameType = gameType;
-            HttpContext.Session.SetBoard(board);
-        }
+        await _cache.SetRecordAsync($"board.{userId}", board, TimeSpan.FromHours(1));
 
         return View(board);
     }
@@ -43,8 +42,8 @@ public class GameController(
     [HttpPost]
     public async Task<IActionResult> MakeMove([FromBody] Move request)
     {
-        var board = HttpContext.Session.GetBoard<BoardViewModel>();
-        if (board == null) return BadRequest();
+        string userId = User?.GetId();
+        var board = await _cache.GetRecordAsync<BoardViewModel>($"board.{userId}");
 
         board.Success = await engineService.TryMove(board, request.PieceId, request.ToX, request.ToY);
 
@@ -54,7 +53,7 @@ public class GameController(
 
             if (await engineService.PawnOnEdge(board, request.PieceId))
             {
-                HttpContext.Session.SetBoard(board);
+                await _cache.SetRecordAsync($"board.{userId}", board, TimeSpan.FromHours(1));
                 return Json(new
                 {
                     success = true,
@@ -87,10 +86,10 @@ public class GameController(
                 }
             }
 
-            board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
-            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+            board.IsCheck = await engineService.IsCheck(board, board.CurrentTurn);
+            board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn, User.GetId());
 
-            HttpContext.Session.SetBoard(board);
+            await _cache.SetRecordAsync($"board.{userId}", board, TimeSpan.FromHours(1));
         }
 
         return Json(new
@@ -108,7 +107,8 @@ public class GameController(
     [HttpPost]
     public async Task<IActionResult> PromotePawn([FromBody] PromotionRequest request)
     {
-        var board = HttpContext.Session.GetBoard<BoardViewModel>();
+        string userId = User.GetId();
+        var board = await _cache.GetRecordAsync<BoardViewModel>($"board.{userId}");
 
         var pawn = board.Figures.FirstOrDefault(f => f.Id == request.PieceId);
 
@@ -120,10 +120,10 @@ public class GameController(
 
         await gameService.AddtoMoveHistory(board, request.PieceId, pawn.PositionX, pawn.PositionY);
 
-        board.IsCheck = await checkService.IsCheck(board, board.CurrentTurn);
-        board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn);
+        board.IsCheck = await engineService.IsCheck(board, board.CurrentTurn);
+        board.IsGameOver = await engineService.IsCheckmate(board, board.CurrentTurn, User.GetId());
 
-        HttpContext.Session.SetBoard(board);
+        await _cache.SetRecordAsync($"board.{userId}", board, TimeSpan.FromHours(1));
 
         return Json(new
         {
@@ -141,12 +141,12 @@ public class GameController(
     public async Task<IActionResult> EndGame()
     {
         string userId = User.GetId() ?? string.Empty;
-        var board = HttpContext.Session.GetBoard<BoardViewModel>();
+        var board = await _cache.GetRecordAsync<BoardViewModel>($"board.{userId}");
 
         if (board != null && !string.IsNullOrEmpty(userId))
         {
             await gameService.SaveBoard(board, userId);
-            HttpContext.Session.Remove("Board"); 
+            await _cache.RemoveAsync($"board.{userId}"); 
         }
 
         return RedirectToAction("Index", "Home");

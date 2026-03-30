@@ -1,79 +1,78 @@
-﻿namespace Chess.Services.Services
+﻿namespace Chess.Services.Services;
+
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Channels;
+using System.Threading.Tasks;
+
+using Chess.Services.Services.Contracts;
+
+using Microsoft.Extensions.Hosting;
+
+public record StockfishRequest(string Fen, TaskCompletionSource<string> ResultSource);
+
+public class StockfishService : BackgroundService
 {
-    using System.Diagnostics;
-    using System.Threading;
-    using System.Threading.Channels;
-    using System.Threading.Tasks;
+    private readonly Channel<StockfishRequest> _channel = Channel.CreateUnbounded<StockfishRequest>();
 
-    using Chess.Services.Services.Contracts;
-
-    using Microsoft.Extensions.Hosting;
-
-    public record StockfishRequest(string Fen, TaskCompletionSource<string> ResultSource);
-
-    public class StockfishService : BackgroundService
+    public async Task<string> GetBestMoveAsync(string fen)
     {
-        private readonly Channel<StockfishRequest> _channel = Channel.CreateUnbounded<StockfishRequest>();
+        var tcs = new TaskCompletionSource<string>();
+        await _channel.Writer.WriteAsync(new StockfishRequest(fen, tcs));
 
-        public async Task<string> GetBestMoveAsync(string fen)
+        return await tcs.Task;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        using var process = StartStockfish();
+
+        await foreach (var request in _channel.Reader.ReadAllAsync(stoppingToken))
         {
-            var tcs = new TaskCompletionSource<string>();
-            await _channel.Writer.WriteAsync(new StockfishRequest(fen, tcs));
+            await process.StandardInput.WriteLineAsync($"position fen {request.Fen}");
+            await process.StandardInput.WriteLineAsync("go movetime 1000");
 
-            return await tcs.Task;
-        }
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            using var process = StartStockfish();
-
-            await foreach (var request in _channel.Reader.ReadAllAsync(stoppingToken))
+            string? line;
+            while ((line = await process.StandardOutput.ReadLineAsync(stoppingToken)) != null)
             {
-                await process.StandardInput.WriteLineAsync($"position fen {request.Fen}");
-                await process.StandardInput.WriteLineAsync("go movetime 1000");
-
-                string? line;
-                while ((line = await process.StandardOutput.ReadLineAsync(stoppingToken)) != null)
+                if (line.StartsWith("bestmove"))
                 {
-                    if (line.StartsWith("bestmove"))
-                    {
-                        string move = line.Split(' ')[1];
+                    string move = line.Split(' ')[1];
 
-                        request.ResultSource.SetResult(move);
-                        break;
-                    }
+                    request.ResultSource.SetResult(move);
+                    break;
                 }
             }
         }
+    }
 
-        private Process StartStockfish() 
+    private Process StartStockfish() 
+    {
+        var startInfo = new ProcessStartInfo
         {
-            var startInfo = new ProcessStartInfo
-            {
-                FileName = "stockfish.exe",
-                RedirectStandardInput = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
+            FileName = "stockfish.exe",
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true,
 
-                WorkingDirectory = AppContext.BaseDirectory
-            };
+            WorkingDirectory = AppContext.BaseDirectory
+        };
 
-            Process? process = Process.Start(startInfo);
+        Process? process = Process.Start(startInfo);
 
-            if (process is null)
-            {
-                throw new InvalidOperationException("Failed to start the Stockfish.");
-            }
-
-            process.StandardInput.WriteLine("uci");
-
-            process.StandardInput.WriteLine("setoption name Threads value 1");
-            process.StandardInput.WriteLine("setoption name Hash value 32");
-            process.StandardInput.WriteLine("isready");
-
-            return process;
+        if (process is null)
+        {
+            throw new InvalidOperationException("Failed to start the Stockfish.");
         }
+
+        process.StandardInput.WriteLine("uci");
+
+        process.StandardInput.WriteLine("setoption name Threads value 1");
+        process.StandardInput.WriteLine("setoption name Hash value 32");
+        process.StandardInput.WriteLine("isready");
+
+        return process;
     }
 }
